@@ -1,0 +1,354 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-08-07 15:22+0700\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: .\app\constants.py:4
+msgid "Male"
+msgstr "Nam"
+
+#: .\app\constants.py:5
+msgid "Female"
+msgstr "Nữ"
+
+#: .\app\constants.py:6
+msgid "Other"
+msgstr "Khác"
+
+#: .\app\constants.py:19
+msgid "Wait for pay"
+msgstr "Chờ thanh toán"
+
+#: .\app\constants.py:20
+msgid "Wait for preparing"
+msgstr "Chờ chuẩn bị"
+
+#: .\app\constants.py:21
+msgid "Wait for delivery"
+msgstr "Chờ giao hàng"
+
+#: .\app\constants.py:22
+msgid "Completed"
+msgstr "Hoàn thành"
+
+#: .\app\constants.py:23
+msgid "Cancelled"
+msgstr "Đã hủy"
+
+#: .\app\constants.py:27
+msgid "Cash"
+msgstr "Tiền mặt"
+
+#: .\app\constants.py:28
+msgid "Visa"
+msgstr "Thẻ Visa"
+
+#: .\app\constants.py:29
+msgid "Bank"
+msgstr "Ngân hàng"
+
+#: .\app\models.py:24
+msgid "A user with that username already exists."
+msgstr "Người dùng với tên đăng nhập đó đã tồn tại."
+
+#: .\app\models.py:26
+msgid "username"
+msgstr "tên đăng nhập"
+
+#: .\app\models.py:31
+msgid "A user with that email already exists."
+msgstr "Người dùng với email đó đã tồn tại."
+
+#: .\app\models.py:33
+msgid "email"
+msgstr "email"
+
+#: .\app\models.py:35
+msgid "first name"
+msgstr "tên"
+
+#: .\app\models.py:36
+msgid "last name"
+msgstr "họ"
+
+#: .\app\models.py:42
+msgid "gender"
+msgstr "giới tính"
+
+#: .\app\models.py:45
+msgid "avatar"
+msgstr "Ảnh đại diện"
+
+#: .\app\models.py:47
+msgid "default address"
+msgstr "địa chỉ mặc định"
+
+#: .\app\models.py:53
+msgid "Phone number must be 10 digits and start with 0."
+msgstr "Số điện thoại phải có 10 chữ số và bắt đầu bằng số 0."
+
+#: .\app\models.py:58
+msgid "default phone number"
+msgstr "số điện thoại mặc định"
+
+#: .\app\models.py:65
+msgid "OTP secret"
+msgstr "Mã OTP"
+
+#: .\app\models.py:70
+msgid "OTP created at"
+msgstr "Mã OTP được tạo vào lúc"
+
+#: .\app\models.py:73 .\app\models.py:123 .\app\models.py:153
+#: .\app\models.py:194 .\app\models.py:243 .\app\models.py:267
+#: .\app\models.py:288 .\app\models.py:328 .\app\models.py:376
+#: .\app\models.py:400
+msgid "created at"
+msgstr "được tạo vào lúc"
+
+#: .\app\models.py:75 .\app\models.py:127 .\app\models.py:155
+#: .\app\models.py:196 .\app\models.py:245 .\app\models.py:269
+#: .\app\models.py:290 .\app\models.py:330 .\app\models.py:378
+#: .\app\models.py:402
+msgid "updated at"
+msgstr "được cập nhật vào lúc"
+
+#: .\app\models.py:99
+msgid "Email must end with @gmail.com"
+msgstr "Email phải kết thúc bằng @gmail.com"
+
+#: .\app\models.py:103
+msgid "Email prefix cannot be the same as username prefix."
+msgstr "Tiền tố email không thể giống với tiền tố tên đăng nhập."
+
+#: .\app\models.py:110 .\app\models.py:217 .\app\models.py:282
+#: .\app\models.py:324 .\app\models.py:358 .\app\models.py:372
+msgid "user"
+msgstr "người dùng"
+
+#: .\app\models.py:111
+msgid "users"
+msgstr "người dùng"
+
+#: .\app\models.py:118 .\app\models.py:140
+msgid "name"
+msgstr "tên"
+
+#: .\app\models.py:119
+msgid "Enter the name of the category."
+msgstr "Nhập tên của danh mục."
+
+#: .\app\models.py:134 .\app\models.py:143
+msgid "category"
+msgstr "danh mục"
+
+#: .\app\models.py:135 .\app\models.py:307
+msgid "categories"
+msgstr "danh mục"
+
+#: .\app\models.py:141 .\app\models.py:180
+msgid "image"
+msgstr "hình ảnh"
+
+#: .\app\models.py:147 .\app\models.py:191
+msgid "price"
+msgstr "giá"
+
+#: .\app\models.py:150
+msgid "description"
+msgstr "mô tả"
+
+#: .\app\models.py:151
+msgid "average rating"
+msgstr "đánh giá trung bình"
+
+#: .\app\models.py:171 .\app\models.py:178 .\app\models.py:284
+msgid "product"
+msgstr "sản phẩm"
+
+#: .\app\models.py:172
+msgid "products"
+msgstr "sản phẩm"
+
+#: .\app\models.py:185
+msgid "size"
+msgstr "kích thước"
+
+#: .\app\models.py:189
+msgid "color"
+msgstr "màu sắc"
+
+#: .\app\models.py:192
+msgid "remaining quantity"
+msgstr "số lượng còn lại"
+
+#: .\app\models.py:210 .\app\models.py:264 .\app\models.py:397
+msgid "product detail"
+msgstr "chi tiết sản phẩm"
+
+#: .\app\models.py:211
+msgid "product details"
+msgstr "chi tiết sản phẩm"
+
+#: .\app\models.py:218
+msgid "address"
+msgstr "địa chỉ"
+
+#: .\app\models.py:220
+msgid "phone number"
+msgstr "số điện thoại"
+
+#: .\app\models.py:226 .\app\models.py:352 .\app\models.py:360
+msgid "voucher"
+msgstr "phiếu giảm giá"
+
+#: .\app\models.py:230
+msgid "status"
+msgstr "trạng thái"
+
+#: .\app\models.py:232
+msgid "note content"
+msgstr "nội dung ghi chú"
+
+#: .\app\models.py:234 .\app\models.py:374
+msgid "total"
+msgstr "tổng cộng"
+
+#: .\app\models.py:238
+msgid "payment method"
+msgstr "phương thức thanh toán"
+
+#: .\app\models.py:241
+msgid "expired at"
+msgstr "hết hạn vào"
+
+#: .\app\models.py:254 .\app\models.py:260
+msgid "bill"
+msgstr "hóa đơn"
+
+#: .\app\models.py:255
+msgid "bills"
+msgstr "hóa đơn"
+
+#: .\app\models.py:265 .\app\models.py:398
+msgid "quantity"
+msgstr "số lượng"
+
+#: .\app\models.py:275
+msgid "bill detail"
+msgstr "chi tiết hóa đơn"
+
+#: .\app\models.py:276
+msgid "bill details"
+msgstr "chi tiết hóa đơn"
+
+#: .\app\models.py:285
+msgid "content"
+msgstr "nội dung"
+
+#: .\app\models.py:286
+msgid "star"
+msgstr "sao"
+
+#: .\app\models.py:296
+msgid "comment"
+msgstr "bình luận"
+
+#: .\app\models.py:297
+msgid "comments"
+msgstr "bình luận"
+
+#: .\app\models.py:301
+msgid "discount"
+msgstr "giảm giá"
+
+#: .\app\models.py:302
+msgid "started at"
+msgstr "bắt đầu vào"
+
+#: .\app\models.py:303
+msgid "ended at"
+msgstr "kết thúc vào"
+
+#: .\app\models.py:308
+msgid "Categories this condition applies to."
+msgstr "Danh mục điều kiện này áp dụng cho."
+
+#: .\app\models.py:315
+msgid "minimum amount"
+msgstr "số tiền tối thiểu"
+
+#: .\app\models.py:316
+msgid "Minimum amount required to apply this voucher."
+msgstr "Số tiền tối thiểu để áp dụng phiếu giảm giá này."
+
+#: .\app\models.py:318
+msgid "is global"
+msgstr "là toàn cầu"
+
+#: .\app\models.py:325
+msgid "User to whom this voucher is assigned."
+msgstr "Người dùng được chỉ định phiếu giảm giá này."
+
+#: .\app\models.py:340
+msgid "Date ended must be after date started."
+msgstr "Ngày kết thúc phải sau ngày bắt đầu."
+
+#: .\app\models.py:343
+msgid "A non-global voucher must have an assigned user."
+msgstr "Phiếu giảm giá không toàn cầu phải có người dùng được chỉ định."
+
+#: .\app\models.py:346
+msgid "A global voucher cant not be assigned to an customer."
+msgstr "Phiếu giảm giá toàn cầu không thể được chỉ định cho một khách hàng."
+
+#: .\app\models.py:353
+msgid "vouchers"
+msgstr "phiếu giảm giá"
+
+#: .\app\models.py:366
+msgid "voucher history"
+msgstr "lịch sử phiếu giảm giá"
+
+#: .\app\models.py:367
+msgid "voucher histories"
+msgstr "lịch sử phiếu giảm giá"
+
+#: .\app\models.py:387 .\app\models.py:393
+msgid "cart"
+msgstr "giỏ hàng"
+
+#: .\app\models.py:388
+msgid "carts"
+msgstr "giỏ hàng"
+
+#: .\app\models.py:408
+msgid "cart detail"
+msgstr "chi tiết giỏ hàng"
+
+#: .\app\models.py:409
+msgid "cart details"
+msgstr "chi tiết giỏ hàng"
+
+#: .\pet_shop\settings.py:128
+msgid "English"
+msgstr "Tiếng Anh"
+
+#: .\pet_shop\settings.py:129
+msgid "Vietnamese"
+msgstr "Tiếng Việt"
