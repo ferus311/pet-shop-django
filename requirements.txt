@@ -1,0 +1,6 @@
+mysqlclient
+cloudinary
+Django
+python-dotenv
+django-bootstrap-v5
+six
