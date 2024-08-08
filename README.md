@@ -9,3 +9,11 @@ pip install -r requirements.txt
 python3 manage.py migrate
 ## run
 python3 manage.py runserver
+
+## Kiểm thử format với pep8
+pip install pycodestyle
+pycodestyle .
+
+## auto format code
+pip install autopep8
+autopep8 --in-place --aggressive --aggressive path/to/your/code.py

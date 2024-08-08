@@ -1,0 +1,51 @@
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        {% block title %}
+        <title>{% trans 'Pet Shop' %}</title>
+        {% endblock %}
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        {% load static %}
+        <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}" />
+        <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+        <link rel="stylesheet" href="{% static 'css/vendor.css' %}" />
+        <link rel="stylesheet" href="{% static 'css/swiper.css' %}" />
+
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Chilanka&family=Montserrat:wght@300;400;500&display=swap"
+            rel="stylesheet"
+        />
+    </head>
+    <body>
+        <object
+            type="image/svg+xml"
+            data="{% static 'images/svg/icons.svg' %}"
+            style="display: none"
+        ></object>
+        <div class="preloader-wrapper">
+            <div class="preloader"></div>
+        </div>
+        <div class="layout">
+            {% include 'components/header.html' %}
+            {% block content %}
+            {% endblock content %}
+            {% include 'components/footer.html' %}
+        </div>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="{% static 'js/jquery-1.11.0.min.js' %}"></script>
+        <script src="{% static 'js/swiper.js' %}"></script>
+        <script src="{% static 'js/bootstrap.bundle.js' %}"></script>
+        <script src="{% static 'js/plugins.js' %}"></script>
+        <script src="{% static 'js/script.js' %}"></script>
+        <script src="{% static 'js/iconify.js' %}"></script>
+        <script src="{% static 'js/main.js' %}"></script>
+    </body>
+</html>
