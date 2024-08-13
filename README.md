@@ -16,4 +16,4 @@ pycodestyle .
 
 ## auto format code
 pip install autopep8
-autopep8 --in-place --aggressive --aggressive path/to/your/code.py
+autopep8 --in-place --recursive --aggressive --aggressive .

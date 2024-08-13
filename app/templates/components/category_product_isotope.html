@@ -1,0 +1,53 @@
+{% block category_product_isotope %} {% load i18n %} {% load static %}
+<section id="isotope" class="my-5">
+    <div class="container my-5 py-5">
+        <div
+            class="section-header d-md-flex justify-content-between align-items-center"
+        >
+            <h2 class="display-3 fw-normal">{{ category.name }}</h2>
+            <div class="mb-4 mb-md-0">
+                <p class="m-0">
+                    <button class="filter-button me-4 active" data-filter="*">
+                        {% trans "ALL" %}
+                    </button>
+                    {% for sp in species|slice:':5' %}
+                    <button
+                        class="filter-button me-4"
+                        data-filter=".{{ sp.name }}"
+                    >
+                        {{ sp.name }}
+                    </button>
+                    {% endfor %}
+                </p>
+            </div>
+            <div>
+                <a
+                    href="#"
+                    class="btn btn-outline-dark btn-lg text-uppercase fs-6 rounded-1"
+                >
+                    {% trans 'Shop Now' %}
+                    <svg
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        class="mb-1"
+                    >
+                        <use xlink:href="#arrow-right"></use>
+                    </svg>
+                </a>
+            </div>
+        </div>
+
+        <div class="isotope-container row">
+            <!-- Product Item -->
+            {% for product in products|slice:':15' %}
+            <div
+                class="item {{ product.get_species_list }} col-md-4 col-lg-3 my-4"
+            >
+                {% include 'components/product_card.html' with product=product %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}
