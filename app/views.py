@@ -1,10 +1,12 @@
 import re
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.translation import gettext_lazy as _
 from django.contrib import messages
 from .forms import SignInForm
 from django.contrib.auth import login, authenticate
 from django.urls import reverse
+from .models import *
+from django.http import JsonResponse
 
 
 def index(request):
@@ -50,3 +52,57 @@ def login_view(request):
         form = SignInForm()
 
     return render(request, 'registration/sign_in.html', {'form': form})
+
+
+def get_price(request):
+    if request.method == 'GET':
+        size = request.GET.get('size')
+        color = request.GET.get('color')
+        price = get_price_from_database(size, color)
+
+        if price is not None:
+            return JsonResponse({'price': price})
+        else:
+            return JsonResponse({'price': None})
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+
+def get_available_options(request):
+    if request.method == 'GET':
+        available_sizes = ProductDetail.objects.values_list('size', flat=True).distinct()
+        available_colors = ProductDetail.objects.values_list('color', flat=True).distinct()
+
+        sizes = list(available_sizes)
+        colors = list(available_colors)
+        return JsonResponse({'sizes': sizes, 'colors': colors})
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+
+def get_price_from_database(size, color):
+    try:
+        product_detail = ProductDetail.objects.get(size=size, color=color)
+        return product_detail.price
+    except ProductDetail.DoesNotExist:
+        return None
+
+
+def product_detail_view(request, id):
+    product = get_object_or_404(Product, pk=id)
+    product_details = ProductDetail.objects.filter(product=product)
+    average_rating = product.average_rating
+    review_count = product.review_count
+    sizes = product_details.values_list('size', flat=True).distinct()
+    colors = product_details.values_list('color', flat=True).distinct()
+    category = product.category
+    comments = Comment.objects.filter(product=product).select_related('user')
+
+    context = {
+        "product": product,
+        "category": category,
+        "sizes": sizes,
+        "colors": colors,
+        "comments": comments,
+        "average_rating": average_rating,
+        "review_count": review_count,  # Sử dụng review_count từ property
+    }
+    return render(request, "product_detail.html", context)
