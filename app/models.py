@@ -169,6 +169,10 @@ class Product(models.Model):
             self.price = min_price
             self.save()
 
+    @property
+    def review_count(self):
+        return self.comment_set.count()
+
     def __str__(self):
         return self.name
 
