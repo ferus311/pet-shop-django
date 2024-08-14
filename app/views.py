@@ -4,7 +4,7 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-from .forms import SignInForm
+from .forms import SignInForm, SignUpForm
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
@@ -110,13 +110,11 @@ def get_price(request):
 
 
 def get_available_options(request):
-    if request.method == "GET":
+    if request.method == 'GET':
         available_sizes = ProductDetail.objects.values_list(
-            "size", flat=True
-        ).distinct()
+            'size', flat=True).distinct()
         available_colors = ProductDetail.objects.values_list(
-            "color", flat=True
-        ).distinct()
+            'color', flat=True).distinct()
 
         sizes = list(available_sizes)
         colors = list(available_colors)
@@ -207,3 +205,20 @@ def add_to_cart(request):
     return JsonResponse({'success': True,
                          'message': _('Product added to cart successfully!'),
                          'cart_length': cart_length})
+
+
+def signup_view(request):
+    if request.method == 'POST':
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            messages.success(
+                request, _("Account created successfully. Please check your email to activate your account."))
+            return redirect('/sign-in')
+        else:
+            for error in list(form.errors.values()):
+                messages.error(request, clean_message(error))
+    else:
+        form = SignUpForm()
+
+    return render(request, 'registration/sign_up.html', {'form': form})

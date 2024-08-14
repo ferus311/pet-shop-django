@@ -16,6 +16,10 @@ urlpatterns = [
         views.login_view,
         name="sign-in"),
     path(
+        'sign-up/',
+        views.signup_view,
+        name="sign-up"),
+    path(
         '',
         include('django.contrib.auth.urls')),
     path(
