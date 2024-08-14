@@ -1,10 +1,18 @@
 import re
-from django import forms
-from django.utils.translation import gettext_lazy as _
+import pyotp
 from .models import CustomUser
 from .constants import (MAX_LENGTH_NAME, MAX_LENGTH_PASSWORD, REGEX_USERNAME,
                         REGEX_USERNAME, REGEX_PHONENUM, REGEX_EMAIL)
 from django.contrib.auth.forms import UserCreationForm
+from django import forms
+from django.utils.translation import gettext_lazy as _
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.forms import UserCreationForm
+from django.conf import settings
+from django.contrib.auth import login, authenticate, get_user_model
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.contrib import messages
 
 
 class SignInForm(forms.Form):
@@ -57,7 +65,7 @@ class SignUpForm(UserCreationForm):
 
     def save(self, commit=True):
         user = super().save(commit=False)
-        user.is_active = True
+        user.is_active = False
         if commit:
             user.save()
         return user

@@ -1,18 +1,17 @@
 {% load i18n %}
-{% load static %}
-<link rel="stylesheet" href="{% static 'css/verify_input.css' %}">
-<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-<div class="container OTP-message-container my-5">
-    <div class="border-bottom mb-4 pb-3">
-        <a href="#" class="h4 text-primary font-weight-bold text-decoration-none">{% trans "Your Brand" %}</a>
-    </div>
-    <p class="h5">{% trans "Hi," %}</p>
-    <p>{% blocktrans %}Thank you for choosing Pet Shop. Use the following OTP to complete your Sign Up procedures. OTP is valid for 5 minutes{% endblocktrans %}</p>
-    <h2 class="bg-primary text-white py-2 px-3 rounded mx-auto d-inline-block">{{ otp }}</h2>
-    <p class="small mt-3">{% trans "Regards," %}<br>{% trans "Pet Shop" %}</p>
-    <hr class="my-4" />
-    <div class="text-muted small float-right">
-        <p>Pet Shop Inc</p>
-        <p>Hanoi-Danang</p>
+<div style="font-family: Helvetica, Arial, sans-serif; min-width: 1000px; overflow: auto; line-height: 2;">
+    <div style="margin: 50px auto; width: 70%; padding: 20px 0;">
+        <div style="border-bottom: 1px solid #eee;">
+            <a href="" style="font-size: 1.4em; color: #00466a; text-decoration: none; font-weight: 600;">{% trans "Your Brand" %}</a>
+        </div>
+        <p style="font-size: 1.1em;">{% trans "Hi," %}</p>
+        <p>{% blocktrans %}Thank you for choosing Pet Shop. Use the following OTP to complete your Sign Up procedures. OTP is valid for 5 minutes{% endblocktrans %}</p>
+        <h2 style="background: #00466a; margin: 0 auto; width: max-content; padding: 0 10px; color: #fff; border-radius: 4px;">{{ otp }}</h2>
+        <p style="font-size: 0.9em;">{% trans "Regards," %}<br />{% trans "Your Brand" %}</p>
+        <hr style="border: none; border-top: 1px solid #eee;" />
+        <div style="float: right; padding: 8px 0; color: #aaa; font-size: 0.8em; line-height: 1; font-weight: 300;">
+            <p>Pet Shop Inc</p>
+            <p>Hanoi-Danang</p>
+        </div>
     </div>
 </div>
