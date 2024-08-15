@@ -4,7 +4,7 @@
 {% block content %}
 <link rel="stylesheet" href="{% static 'css/profile.css' %}" />
 <div class="container profile-container">
-    <form method="post" class="user-profile-header" enctype="multipart/form-data" action="">
+    <form method="post" class="user-profile-header" enctype="multipart/form-data" action="{% url 'update-avatar' %}">
         {% csrf_token %}
         <input id="image" name="image" class = "upload-image" type="file" accept=".jpg, .png, .jpeg" onchange="previewImage();" />
         <div class="user-avatar">
@@ -15,7 +15,7 @@
             <button type="submit" name="delete_avatar" class="delete-avatar__btn btn btn-secondary">{% trans 'Upload Image' %}</button>
         </div>
     </form>
-    <form method="post" class="main-infor" action="">
+    <form method="post" class="main-infor" action="{% url 'update-profile' %}">
         {% csrf_token %}
         <div class="row">
             <div class="col-md-6">
@@ -46,7 +46,7 @@
             <a class="btn btn-secondary cancel-btn">{% trans 'Cancel' %}</a>
         </div>
     </form>
-    <form method="post" class="user-profile-password" action="">
+    <form method="post" class="user-profile-password" action="{% url 'change-password' %}">
         {% csrf_token %}
         <h2>{% trans 'Change Password' %}</h2>
         <div class="col-md-12">

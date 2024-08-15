@@ -99,6 +99,18 @@ urlpatterns = [
         place_order,
         name='place_order'),
     path(
+        'profile/update/',
+        update_profile,
+        name='update-profile'),
+    path(
+        'profile/update-avatar/',
+        update_avatar,
+        name='update-avatar'),
+    path(
+        'change-password/',
+        change_password,
+        name='change-password'),
+    path(
         'submit-review/',
         submit_review,
         name='submit_review'),

@@ -3,9 +3,10 @@ import re
 import unicodedata
 import json
 import os
+import cloudinary
 from django.template.loader import render_to_string
 from django.core.mail import EmailMultiAlternatives, EmailMessage
-from django.contrib.auth import login, authenticate, get_user_model
+from django.contrib.auth import login, authenticate, get_user_model, update_session_auth_hash
 from django.http import JsonResponse
 from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404, resolve_url
@@ -24,9 +25,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from decimal import Decimal
 
 from .models import *
-from .forms import SignInForm, SignUpForm, OrderFilterForm
+from .forms import SignInForm, SignUpForm, OrderFilterForm, PasswordCheckForm, AvatarUploadForm, UserProfileForm
 from .constants import DEFAULT_DISPLAY_CATEGORIES, PAGINATE_BY, CITIES
-
 from django.db import transaction
 
 
@@ -847,3 +847,66 @@ def cancel_order(request, order_id):
         order.status = 'Cancelled'
         order.save()
     return redirect('orders')
+
+
+@login_required
+def update_profile(request):
+    user = request.user
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, instance=user)
+        if form.is_valid():
+            form.save()
+            messages.success(
+                request, _('Your profile has been updated successfully!'))
+            return redirect('profile', user.pk)
+    else:
+        form = UserProfileForm(instance=user)
+
+    return render(request, 'app/profile.html', {'form': form, 'user': user})
+
+
+@login_required
+def update_avatar(request):
+    user = request.user
+    if request.method == 'POST':
+        form = AvatarUploadForm(request.POST, request.FILES, instance=user)
+        if 'image' in request.FILES and request.FILES['image'].size > 0:
+            uploaded_file = request.FILES['image']
+            upload_result = cloudinary.uploader.upload(uploaded_file)
+            user.avatar = upload_result['secure_url']
+            user.save()
+            messages.success(
+                request, _('Your avatar has been updated successfully!'))
+            return redirect('profile', user.pk)
+        else:
+            messages.error(request, 'Please select an image file.')
+    else:
+        form = AvatarUploadForm(instance=user)
+
+    return render(request, 'app/profile.html', {'form': form, 'user': user})
+
+
+@login_required
+def change_password(request):
+    user = request.user
+    if request.method == 'POST':
+        form = PasswordCheckForm(request.POST)
+        if form.is_valid():
+            current_password = form.cleaned_data['current_password']
+            new_password = form.cleaned_data['new_password']
+            if not user.check_password(current_password):
+                messages.error(request, _('Current password is incorrect.'))
+            else:
+                user.set_password(new_password)
+                user.save()
+                update_session_auth_hash(request, user)
+                messages.success(request, _(
+                    'Your password was successfully updated!'
+                ))
+                return redirect('profile', user.pk)
+        else:
+            messages.error(request, _('Please correct the errors below.'))
+    else:
+        form = PasswordCheckForm()
+
+    return render(request, 'app/profile.html', {'form': form, 'user': user})

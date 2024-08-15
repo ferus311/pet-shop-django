@@ -532,15 +532,15 @@ msgstr "Đăng nhập"
 msgid "Sign Up"
 msgstr "Đăng ký"
 
-#: .\app\templates\components\header.html:269
+#: .\app\templates\components\header.html:266
 msgid "Shop by Category"
 msgstr "Phân loại"
 
-#: .\app\templates\components\header.html:281
+#: .\app\templates\components\header.html:278
 msgid "Home"
 msgstr "Trang chủ"
 
-#: .\app\templates\components\header.html:300
+#: .\app\templates\components\header.html:297
 msgid "Contact"
 msgstr "Liên lạc"
 
@@ -795,11 +795,11 @@ msgstr "Tên đăng nhập"
 msgid "Password"
 msgstr "Mật khẩu"
 
-#: .\templates\registration\sign_in.html:46
+#: .\templates\registration\sign_in.html:47
 msgid "Don't have an account? Sign Up"
 msgstr "Không có tài khoản? Hãy đăng ký."
 
-#: .\templates\registration\sign_in.html:47
+#: .\templates\registration\sign_in.html:48
 msgid "Forgot Password?"
 msgstr "Quên mật khẩu?"
 
