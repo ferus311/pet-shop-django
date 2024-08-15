@@ -154,12 +154,9 @@
             <div class="d-flex d-lg-none align-items-end mt-3">
                 <ul class="d-flex justify-content-end list-unstyled m-0">
                     <li>
-                        <a href="account.html" class="mx-3"
-                            ><iconify-icon
-                                icon="healthicons:person"
-                                class="fs-4"
-                            ></iconify-icon
-                        ></a>
+                        <a href="{% url 'profile' 0 %}" class="mx-3">
+                            <iconify-icon icon="healthicons:person" class="fs-4"></iconify-icon>
+                        </a>
                     </li>
                     <li>
                         <a href="wishlist.html" class="mx-3"
@@ -280,12 +277,9 @@
                                 {% endif %}
                             </li>
                             <li>
-                                <a href="account.html" class="mx-3"
-                                    ><iconify-icon
-                                        icon="healthicons:person"
-                                        class="fs-4"
-                                    ></iconify-icon
-                                ></a>
+                                <a href="{% url 'profile' 0 %}" class="mx-3">
+                                    <iconify-icon icon="healthicons:person" class="fs-4"></iconify-icon>
+                                </a>
                             </li>
                             <li>
                                 <a href="wishlist.html" class="mx-3"

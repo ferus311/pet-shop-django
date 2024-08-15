@@ -1,30 +1,29 @@
 from django.urls import path, include
-from . import views
 from .views import *
 
 urlpatterns = [
     path(
         '',
-        views.index,
+        index,
         name='index'),
     path(
         'shop/',
-        views.ShopView,
+        ShopView,
         name='shop'),
     path(
         'sign-in/',
-        views.login_view,
+        login_view,
         name="sign-in"),
     path(
         'sign-up/',
-        views.signup_view,
+        signup_view,
         name="sign-up"),
     path(
         '',
         include('django.contrib.auth.urls')),
     path(
         'product/<int:id>/',
-        views.product_detail_view,
+        product_detail_view,
         name='product_detail'),
     path(
         'get-price/',
@@ -56,14 +55,18 @@ urlpatterns = [
         name='remove_from_cart'),
     path(
         'verify-input/',
-        views.verify_input,
+        verify_input,
         name="verify-input"),
     path(
         'search-products/',
-        views.search_products,
+        search_products,
         name='search_products'),
     path(
         'vouchers/',
         voucher_list,
         name='voucher_list'),
+    path(
+        'profile/<int:pk>/',
+        profile_view,
+        name='profile'),
 ]
