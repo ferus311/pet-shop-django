@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-08 16:13+0700\n"
+"POT-Creation-Date: 2024-08-14 10:53+0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -62,21 +62,29 @@ msgstr "Thẻ Visa"
 msgid "Bank"
 msgstr "Ngân hàng"
 
-#: .\app\forms.py:17
+#: .\app\forms.py:18 .\app\forms.py:48
 msgid "Username can only contain alphanumeric characters and the underscore."
 msgstr "Tên người dùng chỉ có thể chứa ký tự chữ và số và dấu gạch dưới."
 
-#: .\app\models.py:25
+#: .\app\forms.py:34 .\app\models.py:32
+msgid "A user with that email already exists."
+msgstr "Người dùng với email đó đã tồn tại."
+
+#: .\app\forms.py:36
+msgid "Email invalid."
+msgstr ""
+
+#: .\app\forms.py:44 .\app\models.py:25
 msgid "A user with that username already exists."
 msgstr "Người dùng với tên đăng nhập đó đã tồn tại."
+
+#: .\app\forms.py:58 .\app\models.py:56
+msgid "Phone number must be 10 digits and start with 0."
+msgstr "Số điện thoại phải có 10 chữ số và bắt đầu bằng số 0."
 
 #: .\app\models.py:27
 msgid "username"
 msgstr "tên đăng nhập"
-
-#: .\app\models.py:32
-msgid "A user with that email already exists."
-msgstr "Người dùng với email đó đã tồn tại."
 
 #: .\app\models.py:34
 msgid "email"
@@ -101,10 +109,6 @@ msgstr "Ảnh đại diện"
 #: .\app\models.py:50
 msgid "default address"
 msgstr "địa chỉ mặc định"
-
-#: .\app\models.py:56
-msgid "Phone number must be 10 digits and start with 0."
-msgstr "Số điện thoại phải có 10 chữ số và bắt đầu bằng số 0."
 
 #: .\app\models.py:61
 msgid "default phone number"
@@ -400,54 +404,29 @@ msgstr "Tìm kiếm"
 msgid "Name"
 msgstr "Tên"
 
-#: .\app\templates\components\header.html:171
+#: .\app\templates\components\header.html:166
 msgid "Logout"
 msgstr "Đăng xuất"
 
-#: .\app\templates\components\header.html:176
+#: .\app\templates\components\header.html:171
 msgid "Sign In"
 msgstr "Đăng nhập"
 
-#: .\app\templates\components\header.html:179
+#: .\app\templates\components\header.html:174
 msgid "Sign Up"
 msgstr "Đăng ký"
 
-#: .\app\templates\components\header.html:274
+#: .\app\templates\components\header.html:269
 msgid "Shop by Category"
 msgstr ""
 
-#: .\app\templates\components\header.html:286
+#: .\app\templates\components\header.html:281
 msgid "Home"
 msgstr "Trang chủ"
 
-#: .\app\templates\components\header.html:305
+#: .\app\templates\components\header.html:300
 msgid "Contact"
 msgstr "Liên lạc"
-
-#: .\app\templates\registration\sign_in.html:10
-msgid "Welcome to Pet Shop"
-msgstr "Chào mừng đến với Cửa hàng thú cưng"
-
-#: .\app\templates\registration\sign_in.html:11
-#: .\app\templates\registration\sign_in.html:40
-msgid "Log In"
-msgstr "Đăng nhập"
-
-#: .\app\templates\registration\sign_in.html:21
-msgid "Username"
-msgstr "Tên đăng nhập"
-
-#: .\app\templates\registration\sign_in.html:31
-msgid "Password"
-msgstr "Mật khẩu"
-
-#: .\app\templates\registration\sign_in.html:45
-msgid "Don't have an account? Sign Up"
-msgstr "Không có tài khoản? Hãy đăng ký."
-
-#: .\app\templates\registration\sign_in.html:46
-msgid "Forgot Password?"
-msgstr "Quên mật khẩu?"
 
 #: .\app\views.py:35
 msgid "Your account has been banned."
@@ -461,6 +440,12 @@ msgstr "Đăng nhập thành công."
 msgid "Invalid username or password."
 msgstr "Sai tài khoản hoặc mật khẩu"
 
+#: .\app\views.py:61
+msgid ""
+"Account created successfully. Please check your email to activate your "
+"account."
+msgstr "Tài khoản được tạo thành công. Hãy check mail để xác thực tài khoản"
+
 #: .\pet_shop\settings.py:129
 msgid "English"
 msgstr "Tiếng Anh"
@@ -468,3 +453,81 @@ msgstr "Tiếng Anh"
 #: .\pet_shop\settings.py:130
 msgid "Vietnamese"
 msgstr "Tiếng Việt"
+
+#: .\templates\registration\sign_in.html:11
+msgid "Welcome to Pet Shop"
+msgstr "Chào mừng đến với Cửa hàng thú cưng"
+
+#: .\templates\registration\sign_in.html:12
+#: .\templates\registration\sign_in.html:41
+msgid "Log In"
+msgstr "Đăng nhập"
+
+#: .\templates\registration\sign_in.html:22
+msgid "Username"
+msgstr "Tên đăng nhập"
+
+#: .\templates\registration\sign_in.html:32
+msgid "Password"
+msgstr "Mật khẩu"
+
+#: .\templates\registration\sign_in.html:46
+msgid "Don't have an account? Sign Up"
+msgstr "Không có tài khoản? Hãy đăng ký."
+
+#: .\templates\registration\sign_in.html:47
+msgid "Forgot Password?"
+msgstr "Quên mật khẩu?"
+
+#: .\templates\registration\sign_up.html:11
+#| msgid "Don't have an account? Sign Up"
+msgid "You don't have an account?"
+msgstr "Không có tài khoản? Hãy đăng ký."
+
+#: .\templates\registration\sign_up.html:12
+#| msgid "Sign Up"
+msgid "Let's Sign Up"
+msgstr "Đăng ký"
+
+#: .\templates\registration\sign_up.html:30
+msgid "Enter Your First Name"
+msgstr "Nhập tên"
+
+#: .\templates\registration\sign_up.html:42
+msgid "Enter Your Last Name"
+msgstr "Nhập họ"
+
+#: .\templates\registration\sign_up.html:54
+#, fuzzy
+#| msgid "Username"
+msgid "Choose a Username"
+msgstr "Tên đăng nhập"
+
+#: .\templates\registration\sign_up.html:64
+msgid "Enter Your Email Address"
+msgstr "Nhập địa chỉ mail"
+
+#: .\templates\registration\sign_up.html:75
+#, fuzzy
+#| msgid "Forgot Password?"
+msgid "Create Password"
+msgstr "Quên mật khẩu?"
+
+#: .\templates\registration\sign_up.html:85
+#| msgid "Password"
+msgid "Repeat Password"
+msgstr "Mật khẩu"
+
+#: .\templates\registration\sign_up.html:96
+#| msgid "default phone number"
+msgid "Enter Your Phone Number"
+msgstr "số điện thoại mặc định"
+
+#: .\templates\registration\sign_up.html:106
+msgid "Enter Your Address"
+msgstr "Nhập địa chỉ"
+
+#: .\templates\registration\sign_up.html:115
+#| msgid "Sign Up"
+msgid "Sign up"
+msgstr "Đăng ký"

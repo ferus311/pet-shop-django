@@ -1,0 +1,126 @@
+{% extends "base.html" %} 
+{% load static %}
+{% load i18n %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/sign_form.css' %}" />
+<div id="sign-up" class="sign-up-background">
+    <div class="sign-up-container">
+        <div class="row">
+            <div>
+                <h2 class="display-3 fs-1 fw-normal text-center mt-4">
+                    {% trans "You don't have an account?" %}
+                    <div class="text-primary">{% trans "Let's Sign Up" %}</div>
+                </h2>
+                <div class ="container-fluid text-center mb-3">
+                    <div class ="row align-items-center">
+                        <div class="col">
+                            <img src="{% static 'images/banner-img.png'%}" class="img-fluid">
+                        </div>
+                        <div class ="col">
+                            <form method="post" action="{% url 'sign-up' %}">
+                                {% csrf_token %}
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="mb-3">
+                                            <input
+                                                type="text"
+                                                class="form-control form-control-lg"
+                                                name="first_name"
+                                                id="first_name"
+                                                placeholder="{% trans 'Enter Your First Name' %}"
+                                                required
+                                            />
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="mb-3">
+                                            <input
+                                                type="text"
+                                                class="form-control form-control-lg"
+                                                name="last_name"
+                                                id="last_name"
+                                                placeholder="{% trans 'Enter Your Last Name' %}"
+                                                required
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <input
+                                        type="text"
+                                        class="form-control form-control-lg"
+                                        name="username"
+                                        id="username"
+                                        placeholder="{% trans 'Choose a Username' %}"
+                                        required
+                                    />
+                                </div>
+                                <div class="mb-3">
+                                    <input
+                                        type="email"
+                                        class="form-control form-control-lg"
+                                        name="email"
+                                        id="email"
+                                        placeholder="{% trans 'Enter Your Email Address' %}"
+                                        required
+                                    />
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col">
+                                        <input
+                                            type="password"
+                                            class="form-control form-control-lg"
+                                            name="password1"
+                                            id="password1"
+                                            placeholder="{% trans 'Create Password' %}"
+                                            required
+                                        />
+                                    </div>
+                                    <div class="col">
+                                        <input
+                                            type="password"
+                                            class="form-control form-control-lg"
+                                            name="password2"
+                                            id="password2"
+                                            placeholder="{% trans 'Repeat Password' %}"
+                                            required
+                                        />
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <input
+                                        type="text"
+                                        class="form-control form-control-lg"
+                                        name="default_phone_number"
+                                        id="default_phone_number"
+                                        placeholder="{% trans 'Enter Your Phone Number' %}"
+                                        required
+                                    />
+                                </div>
+                                <div class="mb-3">
+                                    <input
+                                        type="text"
+                                        class="form-control form-control-lg"
+                                        name="default_address"
+                                        id="default_address"
+                                        placeholder="{% trans 'Enter Your Address' %}"
+                                        required
+                                    ></input>
+                                </div>
+                                <div class="d-grid gap-2">
+                                    <button
+                                        type="submit"
+                                        class="btn btn-dark btn-lg rounded-1"
+                                    >
+                                        {% trans "Sign up" %}
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
