@@ -45,24 +45,44 @@
                                 <a href="#description-section" class="ms-2" id="review-link">{{ review_count }} {% trans "reviews" %}</a>
                             </div>
                             <p class="mb-3">{% trans "Category:" %} {{category}}</p>
-                            <h5 class="fw-bold mb-3" id="price">{{ product.price|floatformat:0|intcomma }} VND</h5>
+                            <h5 class="fw-bold mb-3" id="price">
+                                {{ product.price|floatformat:0|intcomma }} VND</h5>
                             <div class="mb-3">
                                 <label for="size-select" class="form-label">Chọn Size:</label>
-                                <select id="size-select" class="form-select">
-                                    {% for size in sizes %}
-                                        <option value="{{ size }}">{{ size }}</option>
-                                    {% endfor %}
-                                </select>
+                                {% if sizes %}
+                                    <select id="size-select" class="form-select">
+                                        {% for size in sizes %}
+                                            <option value="{{ size }}">{{ size }}</option>
+                                        {% endfor %}
+                                    </select>
+                                {% else %}
+                                    <select id="size-select" class="form-select" style="display: none;">
+                                        <option value="None">None</option>
+                                    </select>
+                                {% endif %}
                             </div>
                             <div class="mb-3">
                                 <label for="color-select" class="form-label">Chọn Màu:</label>
-                                <select id="color-select" class="form-select">
-                                    {% for color in colors %}
-                                        <option value="{{ color }}">{{ color }}</option>
-                                    {% endfor %}
-                                </select>
+                                {% if colors %}
+                                    <select id="color-select" class="form-select">
+                                        {% for color in colors %}
+                                            <option value="{{ color }}">{{ color }}</option>
+                                        {% endfor %}
+                                    </select>
+                                {% else %}
+                                    <select id="color-select" class="form-select" style="display: none;">
+                                        <option value="None">None</option>
+                                    </select>
+                                {% endif %}
                             </div>                                        
-                            <a href="#" class="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary"><iconify-icon icon="gridicons:cart"></iconify-icon> {% trans "Add to cart" %}</a>
+                            <form method="POST" action="{% url 'add_to_cart' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="product_id" id="product-id" value="{{ product.id }}">
+                                <input type="hidden" name="quantity" value="1">
+                                <button type="button" class="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary add-to-cart" data-product-id="{{ product.id }}" data-quantity="1">
+                                    <iconify-icon icon="gridicons:cart"></iconify-icon> {% trans "Add to cart" %}
+                                </button>
+                            </form>
                         </div>
                         <div id="description-section" class="col-lg-12">
                             <nav>
@@ -104,7 +124,9 @@
                                                     <div class="col-6">
                                                         <p class="mb-0">
                                                             {% for size in sizes %}
-                                                                {{ size }}{% if not forloop.last %}, {% endif %}
+                                                                {% if size != "None" %}
+                                                                    {{ size }}{% if not forloop.last %}, {% endif %}
+                                                                {% endif %}
                                                             {% endfor %}
                                                         </p>
                                                     </div>
@@ -160,6 +182,6 @@
         </div>       
     </div>
     <!-- Back to Top -->
-    <a href="#" class="btn btn-primary border-3 border-primary rounded-circle back-to-top right-0" style="right: 0;position: absolute;"><iconify-icon icon="lucide:move-up" width="1.5em" height="1.5em"></iconify-icon></a></html>
+    <a href="#" class="btn btn-primary border-3 border-primary rounded-circle back-to-top right-0" style="right: 0;position: absolute;"><iconify-icon icon="lucide:move-up" width="1.5em" height="1.5em"></iconify-icon></a>
 
 {% endblock %}

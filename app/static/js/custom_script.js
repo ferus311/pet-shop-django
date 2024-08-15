@@ -1,4 +1,4 @@
-$(document).ready(function ($) {
+(function ($) {
     "use strict";
 
     window.addEventListener("load", function () {
@@ -29,13 +29,16 @@ $(document).ready(function ($) {
             method: 'GET',
             data: {
                 size: selectedSize,
-                color: selectedColor
+                color: selectedColor || 'None'
             },
             dataType: 'json',
             success: function (data) {
                 if (data.price) {
                     const formattedPrice = formatPrice(data.price);
                     $priceElement.text(`${formattedPrice} VND`);
+                } else if (data.product_price) {
+                    const formattedProductPrice = formatPrice(data.product_price);
+                    $priceElement.text(`${formattedProductPrice} VND`);
                 } else {
                     $priceElement.text('N/A');
                 }
@@ -66,7 +69,7 @@ $(document).ready(function ($) {
                     $(this).prop('disabled', !availableColors.includes(optionValue));
                 });
 
-                // Update the price once the options are filtered
+
                 updatePrice();
             },
             error: function (error) {
@@ -80,4 +83,73 @@ $(document).ready(function ($) {
 
     filterOptions();
 
+    async function getProductDetailId(productId, selectedColor, selectedSize) {
+        try {
+            const response = await $.ajax({
+                type: 'GET',
+                url: '/get-product-detail-id/',
+                data: {
+                    'product_id': productId,
+                    'color': selectedColor,
+                    'size': selectedSize
+                }
+            });
+            if (response.product_detail_id) {
+                return response.product_detail_id;
+            } else {
+                return null;
+            }
+        } catch (error) {
+            console.error('Error fetching product detail ID:', error);
+            return null;
+        }
+    }
+    
+    $('.add-to-cart').on('click', async function(event) {
+        event.preventDefault();
+    
+        const productId = $(this).data('product-id');
+        const selectedColor = $('#color-select').val();
+        const selectedSize = $('#size-select').val();
+        const quantity = $(this).data('quantity');
+    
+        try {
+            const productDetailId = await getProductDetailId(productId, selectedColor, selectedSize);
+        
+            $.ajax({
+                type: 'POST',
+                url: '/add-to-cart/',
+                data: {
+                    'product_detail_id': productDetailId,
+                    'quantity': quantity,
+                    'csrfmiddlewaretoken': getCookie('csrftoken')
+                },
+                success: function(response) {
+                    console.log('Item added to cart:', response);
+                    location.reload();
+                },
+                error: function(error) {
+                    console.error('Error adding item to cart:', error);
+                    location.reload();
+                }
+            });
+        } catch (error) {
+            console.error('Error fetching product ID:', error);
+        }
+    });
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
 })(jQuery);
