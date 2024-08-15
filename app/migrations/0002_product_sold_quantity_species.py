@@ -13,16 +13,39 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='product',
             name='sold_quantity',
-            field=models.PositiveIntegerField(default=0, verbose_name='sold quantity'),
+            field=models.PositiveIntegerField(
+                default=0,
+                verbose_name='sold quantity'),
         ),
         migrations.CreateModel(
             name='Species',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(help_text='Enter the name of species.', max_length=255, unique=True, verbose_name='name')),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='created at')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='updated at')),
-                ('product', models.ManyToManyField(blank=True, help_text='Products by species', to='app.product', verbose_name='products')),
+                ('id',
+                 models.BigAutoField(
+                     auto_created=True,
+                     primary_key=True,
+                     serialize=False,
+                     verbose_name='ID')),
+                ('name',
+                 models.CharField(
+                     help_text='Enter the name of species.',
+                     max_length=255,
+                     unique=True,
+                     verbose_name='name')),
+                ('created_at',
+                 models.DateTimeField(
+                     auto_now_add=True,
+                     verbose_name='created at')),
+                ('updated_at',
+                 models.DateTimeField(
+                     auto_now=True,
+                     verbose_name='updated at')),
+                ('product',
+                 models.ManyToManyField(
+                     blank=True,
+                     help_text='Products by species',
+                     to='app.product',
+                     verbose_name='products')),
             ],
             options={
                 'verbose_name': 'species',

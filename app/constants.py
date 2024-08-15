@@ -7,6 +7,7 @@ GENDER_CHOICES = [
 ]
 
 SIZE_CHOICES = [
+    ('None', _('None')),
     ('S', 'S'),
     ('XS', 'XS'),
     ('M', 'M'),

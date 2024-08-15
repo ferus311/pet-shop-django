@@ -2,8 +2,11 @@ import re
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.translation import gettext_lazy as _
 from django.contrib import messages
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
 from .forms import SignInForm
 from django.contrib.auth import login, authenticate
+from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from .models import *
 from django.http import JsonResponse
@@ -148,4 +151,59 @@ def product_detail_view(request, id):
         "average_rating": average_rating,
         "review_count": review_count,  # Sử dụng review_count từ property
     }
-    return render(request, "product_detail.html", context)
+    return render(request, "app/product_detail.html", context)
+
+
+def get_product_detail_id(request):
+    size = request.GET.get('size')
+    color = request.GET.get('color')
+    product_id = request.GET.get('product_id')
+    try:
+        product_detail = ProductDetail.objects.get(
+            product_id=product_id, size=size, color=color)
+        return JsonResponse({'product_detail_id': product_detail.id})
+    except ProductDetail.DoesNotExist:
+        messages.error(request, _('Product type does not exist'))
+        return JsonResponse({'error': 'Product detail not found'}, status=404)
+
+
+@login_required
+@require_POST
+@csrf_exempt
+def add_to_cart(request):
+    quantity = int(request.POST.get('quantity', 1))
+    product_detail_id = request.POST.get('product_detail_id')
+
+    product_detail = ProductDetail.objects.get(id=product_detail_id)
+
+    cart, created = Cart.objects.get_or_create(
+        user=request.user, defaults={'total': 0})
+
+    cart_details, created = CartDetail.objects.get_or_create(
+        cart=cart,
+        product_detail=product_detail,
+        defaults={'quantity': quantity}
+    )
+
+    if not created:
+        new_quantity = cart_details.quantity + quantity
+    else:
+        new_quantity = quantity
+
+    if new_quantity > product_detail.remain_quantity:
+        messages.error(request, _('Sorry, We have ran out of this type'))
+        return JsonResponse({'success': False, 'message': _(
+            'Sorry, We have ran out of this type')}, status=400)
+
+    cart_details.quantity = new_quantity
+    cart_details.save()
+
+    cart.total += product_detail.price * quantity
+    cart.save()
+
+    cart_length = CartDetail.objects.filter(cart=cart).count()
+
+    messages.success(request, _('Product added to cart successfully!'))
+    return JsonResponse({'success': True,
+                         'message': _('Product added to cart successfully!'),
+                         'cart_length': cart_length})
