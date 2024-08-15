@@ -419,6 +419,8 @@ class VoucherHistory(models.Model):
         'CustomUser', on_delete=models.CASCADE, verbose_name=_('user'))
     voucher = models.ForeignKey(
         'Voucher', on_delete=models.CASCADE, verbose_name=_('voucher'))
+    created_at = models.DateTimeField(
+        auto_now_add=True, verbose_name=_('created at'))
 
     def __str__(self):
         return f'Voucher history {self.id} - {self.user.username}'

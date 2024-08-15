@@ -11,3 +11,7 @@
     z-index: 1000;
     max-width: 500px;
 }
+.custom-scroll {
+    max-height: 50px;
+    overflow-y: auto;
+}
