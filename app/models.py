@@ -157,6 +157,8 @@ class Product(models.Model):
         blank=True)
     description = models.TextField(verbose_name=_('description'))
     average_rating = models.FloatField(verbose_name=_('average rating'))
+    sold_quantity = models.PositiveIntegerField(
+        default=0, verbose_name=_('sold quantity'))
     created_at = models.DateTimeField(
         auto_now_add=True, verbose_name=_('created at'))
     updated_at = models.DateTimeField(
@@ -173,6 +175,9 @@ class Product(models.Model):
     def review_count(self):
         return self.comment_set.count()
 
+    def get_species_list(self):
+        return ' '.join(species.name for species in self.species_set.all())
+
     def __str__(self):
         return self.name
 
@@ -182,6 +187,37 @@ class Product(models.Model):
     class Meta:
         verbose_name = _('product')
         verbose_name_plural = _('products')
+        ordering = ['name']
+
+
+class Species(models.Model):
+    name = models.CharField(
+        max_length=MAX_LENGTH_NAME,
+        unique=True,
+        verbose_name=_('name'),
+        help_text=_('Enter the name of species.'),
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name=_('created at'),
+    )
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name=_('updated at'),
+    )
+    product = models.ManyToManyField(
+        'Product',
+        blank=True,
+        verbose_name=_('products'),
+        help_text=_('Products by species')
+    )
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = _('species')
+        verbose_name_plural = _('species')
         ordering = ['name']
 
 
@@ -287,6 +323,11 @@ class BillDetail(models.Model):
 
     def __str__(self):
         return f'Bill {self.bill.id} - {self.product_detail.product.name}'
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.product_detail.product.sold_quantity += self.quantity
+        self.product_detail.product.save()
 
     class Meta:
         verbose_name = _('bill detail')
