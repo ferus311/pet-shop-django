@@ -7,14 +7,14 @@
         {% trans "new" %}
     </div>
     <div class="card position-relative">
-        <a href="single-product.html"
+        <a href="{{ product.get_absolute_url }}"
             ><img
                 src="{% if product.image %}{{ product.image }}{% else %}{% static 'images/item1.jpg' %}{% endif %}"
                 class="img-fluid rounded-4"
                 alt="{{ product.name }}"
         /></a>
         <div class="card-body p-0">
-            <a href="single-product.html"
+            <a href="{{ product.get_absolute_url }}"
                 ><h3 class="card-title pt-4 m-0">{{ product.name }}</h3></a
             >
 

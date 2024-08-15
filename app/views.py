@@ -56,6 +56,27 @@ def pagination(products, request):
     return products_paginated
 
 
+def search_products(request):
+    products = Product.objects.all()
+    query = request.GET.get("query")
+    results = products.order_by("-sold_quantity")
+    if query:
+        results = products.filter(
+            Q(name__icontains=query)
+            | Q(category__name__icontains=query)
+            | Q(species__name__icontains=query)
+        )
+    results_list = [
+        {
+            "id": product.id,
+            "name": product.name,
+            "price": product.price,
+        }
+        for product in results
+    ]
+    return JsonResponse({'results': results_list}, safe=False)
+
+
 def ShopView(request):
     """View function for shop page of site."""
     query = request.GET.get("query", "")
@@ -256,7 +277,8 @@ def signup_view(request):
         if form.is_valid():
             user = form.save()
             messages.success(
-                request, _("Account created successfully. Please check your email to activate your account."))
+                request,
+                _("Account created successfully. Please check your email to activate your account."))
             return redirect('/sign-in')
         else:
             for error in list(form.errors.values()):

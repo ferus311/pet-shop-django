@@ -5,3 +5,9 @@
 .scroll-container::-webkit-scrollbar {
     width: 10px;
   }
+#search-results {
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+    max-width: 500px;
+}

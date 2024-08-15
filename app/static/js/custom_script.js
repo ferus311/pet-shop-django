@@ -1,7 +1,7 @@
 (function ($) {
     "use strict";
 
-    window.addEventListener("load", function () {
+    window.addEventListener('load', function () {
         const reviewLink = $('#review-link');
         const reviewTab = $('#nav-mission-tab');
 
@@ -17,7 +17,7 @@
     const $priceElement = $('#price');
 
     function formatPrice(price) {
-        return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     }
 
     function updatePrice() {
@@ -46,7 +46,7 @@
             error: function (error) {
                 console.error('Error fetching price:', error);
                 $priceElement.text('Error fetching price');
-            }
+            },
         });
     }
 
@@ -61,12 +61,18 @@
 
                 $sizeSelect.find('option').each(function () {
                     const optionValue = $(this).val();
-                    $(this).prop('disabled', !availableSizes.includes(optionValue));
+                    $(this).prop(
+                        'disabled',
+                        !availableSizes.includes(optionValue)
+                    );
                 });
 
                 $colorSelect.find('option').each(function () {
                     const optionValue = $(this).val();
-                    $(this).prop('disabled', !availableColors.includes(optionValue));
+                    $(this).prop(
+                        'disabled',
+                        !availableColors.includes(optionValue)
+                    );
                 });
 
 
@@ -74,7 +80,7 @@
             },
             error: function (error) {
                 console.error('Error fetching available options:', error);
-            }
+            },
         });
     }
 
@@ -165,5 +171,128 @@
             $('#priceFilterForm').submit();
         });
     });
+
+    function checkFoucusSearch () {
+        var timeout;
+
+        function search_header() {
+            $('#query-header-search').on('focus', function() {
+                var query = $(this).val();
+
+                clearTimeout(timeout);
+
+                if (query.length === 0) {
+                    timeout = setTimeout(function() {
+                        $.ajax({
+                            url: '/search-products/',
+                            method: 'GET',
+                            dataType: 'json',
+                            data: {
+                                query: ''
+                            },
+                            success: function(data) {
+                                var results = $('#search-results');
+                                results.empty();
+                                if (data.results.length > 0) {
+                                    data.results.forEach(function(item) {
+                                        results.append(
+                                            '<li class="list-group-item">' +
+                                                '<a href="/product/' +
+                                                    item.id +
+                                                    '">' +
+                                                    item.name +
+                                                '</a>' +
+                                            '</li>'
+                                        );
+                                    });
+                                } else {
+                                    results.append(
+                                        '<li class="list-group-item">No products found</li>'
+                                    );
+                                }
+                            }
+                        });
+                    }, 100);
+                }
+            });
+
+            $('#query-header-search').on('input', function() {
+                var query = $(this).val();
+
+                clearTimeout(timeout);
+
+                timeout = setTimeout(function() {
+                    if (query.length > 0) {
+                        $.ajax({
+                            url: '/search-products/',
+                            method: 'GET',
+                            dataType: 'json',
+                            data: {
+                                query: query
+                            },
+                            success: function(data) {
+                                var results = $('#search-results');
+                                results.empty();
+                                if (data.results.length > 0) {
+                                    data.results.forEach(function(item) {
+                                        results.append(
+                                            '<li class="list-group-item">' +
+                                                '<a href="/product/' +
+                                                    item.id +
+                                                    '">' +
+                                                    item.name +
+                                                '</a>' +
+                                            '</li>'
+                                        );
+                                    });
+                                } else {
+                                    results.append(
+                                        '<li class="list-group-item">No products found</li>'
+                                    );
+                                }
+                            }
+                        });
+                    } else {
+                        $.ajax({
+                            url: '/search-products/',
+                            method: 'GET',
+                            dataType: 'json',
+                            data: {
+                                query: ''
+                            },
+                            success: function(data) {
+                                var results = $('#search-results');
+                                results.empty();
+                                if (data.results.length > 0) {
+                                    data.results.forEach(function(item) {
+                                        results.append(
+                                            '<li class="list-group-item">' +
+                                                '<a href="/product/' +
+                                                    item.id +
+                                                    '">' +
+                                                    item.name +
+                                                '</a>' +
+                                            '</li>'
+                                        );
+                                    });
+                                } else {
+                                    results.append(
+                                        '<li class="list-group-item">No products found</li>'
+                                    );
+                                }
+                            }
+                        });
+                    }
+                }, 100);
+            });
+
+            $('#query-header-search').on('blur', function() {
+                $('#search-results').empty();
+            });
+        }
+
+        search_header();
+    };
+    checkFoucusSearch();
 
 })(jQuery);

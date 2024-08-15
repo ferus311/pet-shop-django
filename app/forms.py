@@ -44,10 +44,7 @@ class SignUpForm(UserCreationForm):
                 _("A user with that username already exists."))
         if not re.search(REGEX_USERNAME, username):
             raise forms.ValidationError(
-                _(
-                    "Username can only contain alphanumeric characters and the underscore."
-                )
-            )
+                _("Username can only contain alphanumeric characters and the underscore."))
         return username
 
     def clean_phone_num(self):
