@@ -12,6 +12,7 @@ from .models import *
 from django.http import JsonResponse
 from .constants import DEFAULT_DISPLAY_CATEGORIES, PAGINATE_BY
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from django.db.models import Q
 
 
 def index(request):
@@ -57,7 +58,49 @@ def pagination(products, request):
 
 def ShopView(request):
     """View function for shop page of site."""
-    return render(request, "app/shop.html")
+    query = request.GET.get("query", "")
+    sort_option = request.GET.get("sort", "name")
+    selected_species = request.GET.getlist("species")
+    selected_categories = request.GET.getlist("categories")
+    price_max = request.GET.get("price_max")
+    price_min = request.GET.get("price_min")
+
+    products = Product.objects.all()
+    if query:
+        products = products.filter(
+            Q(name__icontains=query)
+            | Q(category__name__icontains=query)
+            | Q(species__name__icontains=query)
+        )
+    if price_min:
+        products = products.filter(price__gte=price_min)
+    if price_max:
+        products = products.filter(price__lte=price_max)
+    if selected_species:
+        products = products.filter(species__id__in=selected_species)
+    if selected_categories:
+        products = products.filter(category__id__in=selected_categories)
+    if sort_option == "price_asc":
+        products = products.order_by("price")
+    elif sort_option == "price_desc":
+        products = products.order_by("-price")
+    elif sort_option == "name":
+        products = products.order_by("name")
+
+    categories = Category.objects.all()
+
+    products_paginated = pagination(products, request)
+
+    context = {
+        "categories": categories,
+        "products": products_paginated,
+        "query": query,
+        "selected_species": selected_species,
+        "selected_categories": selected_categories,
+        "price_max": price_max,
+        "price_min": price_min,
+    }
+    return render(request, "app/shop.html", context=context)
 
 
 def clean_message(message):

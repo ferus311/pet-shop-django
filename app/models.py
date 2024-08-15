@@ -134,6 +134,9 @@ class Category(models.Model):
         verbose_name=_('updated at'),
     )
 
+    def product_count(self):
+        return self.product_set.count()
+
     def __str__(self):
         return self.name
 

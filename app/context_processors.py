@@ -3,7 +3,6 @@ from .models import (
     Category,
     Species,
 )
-from django.db.models import Count
 
 
 def global_context(request):
