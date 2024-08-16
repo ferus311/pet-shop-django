@@ -104,18 +104,18 @@
             return null;
         }
     }
-    
+
     $('.add-to-cart').on('click', async function(event) {
         event.preventDefault();
-    
+
         const productId = $(this).data('product-id');
         const selectedColor = $('#color-select').val();
         const selectedSize = $('#size-select').val();
         const quantity = $(this).data('quantity');
-    
+
         try {
             const productDetailId = await getProductDetailId(productId, selectedColor, selectedSize);
-        
+
             $.ajax({
                 type: 'POST',
                 url: '/add-to-cart/',
@@ -152,4 +152,18 @@
         }
         return cookieValue;
     }
+    (function($) {
+        $('#rangeInput').on('input', function() {
+            $('#amount').val($(this).val());
+        });
+
+        $('#amount').on('input', function() {
+            $('#rangeInput').val($(this).val());
+        });
+
+        $('#rangeInput, #amount').on('change', function() {
+            $('#priceFilterForm').submit();
+        });
+    });
+
 })(jQuery);

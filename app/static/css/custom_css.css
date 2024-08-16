@@ -1,0 +1,7 @@
+.scroll-container {
+    height: 30vh;
+    overflow-y: auto;
+}
+.scroll-container::-webkit-scrollbar {
+    width: 10px;
+  }
