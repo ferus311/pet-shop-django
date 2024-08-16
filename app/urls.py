@@ -42,4 +42,8 @@ urlpatterns = [
         'add-to-cart/',
         add_to_cart,
         name='add_to_cart'),
+    path(
+        'search-products/',
+        views.search_products,
+        name='search_products'),
 ]
