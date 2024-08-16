@@ -97,7 +97,7 @@ class CustomUser(AbstractUser):
             self.otp_secret = pyotp.random_base32()
         self.otp_created_at = timezone.now()
         self.save()
-        totp = pyotp.TOTP(self.otp_secret)
+        totp = pyotp.TOTP(self.otp_secret, interval=300)
         return totp.now()
 
     def clean(self):

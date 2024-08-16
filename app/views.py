@@ -1,10 +1,19 @@
+import pyotp
+from django.template.loader import render_to_string
+from django.core.mail import EmailMultiAlternatives
+from django.contrib.auth import login, authenticate, get_user_model
+from django.http import JsonResponse
+from .models import *
 import re
+from .forms import SignInForm, SignUpForm
+from .models import CustomUser
+from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.translation import gettext_lazy as _
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-from .forms import SignInForm, SignUpForm
+from .forms import SignInForm, SignUpForm, SignUpForm
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
@@ -129,26 +138,32 @@ def clean_message(message):
 
 
 def login_view(request):
-    if request.method == "POST":
+    next_url = request.GET.get('next', reverse('index'))
+    if request.method == 'POST':
+        User = get_user_model()
         form = SignInForm(request.POST)
         if form.is_valid():
-            username = form.cleaned_data["username"]
-            password = form.cleaned_data["password"]
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
             user = authenticate(username=username, password=password)
+            try:
+                user = User.objects.get(username=username)
+                if not user.is_active:
+                    messages.error(
+                        request, _("Your account is inactive. Please verify your account."))
+                    request.session['user_id'] = user.id
+                    _send_otp_mail(user)
+                    return redirect('verify-input')
+            except User.DoesNotExist:
+                user = None
             if user is not None:
-                if user.is_active:
-                    if user.is_banned:
-                        messages.error(
-                            request, _("Your account has been banned."))
-                    else:
-                        login(request, user)
-                        messages.success(
-                            request, _("You have been logged in successfully.")
-                        )
-                        return redirect("index")
+                if user.is_banned:
+                    messages.error(request, _("Your account has been banned."))
                 else:
-                    request.session["user_id"] = user.id
-                    return redirect(reverse("otp_verify"))
+                    login(request, user)
+                    messages.success(request, _(
+                        "You have been logged in successfully."))
+                    return redirect(next_url)
             else:
                 messages.error(request, _("Invalid username or password."))
         else:
@@ -157,7 +172,7 @@ def login_view(request):
     else:
         form = SignInForm()
 
-    return render(request, "registration/sign_in.html", {"form": form})
+    return render(request, 'registration/sign_in.html', {'form': form})
 
 
 def get_price(request):
@@ -271,6 +286,28 @@ def add_to_cart(request):
                          'cart_length': cart_length})
 
 
+def _send_otp_mail(user):
+    otp = user.generate_otp()
+    context = {
+        'otp': otp,
+        'user': user
+    }
+    subject = _('Your OTP Code')
+    from_email = settings.EMAIL_HOST_USER
+    to_email = user.email
+    html_content = render_to_string(
+        'registration/verify_message.html', context)
+    text_content = f'Your OTP code is {otp}.'
+    email = EmailMultiAlternatives(
+        subject,
+        text_content,
+        from_email,
+        [to_email]
+    )
+    email.attach_alternative(html_content, "text/html")
+    email.send(fail_silently=False)
+
+
 def signup_view(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
@@ -279,11 +316,41 @@ def signup_view(request):
             messages.success(
                 request,
                 _("Account created successfully. Please check your email to activate your account."))
-            return redirect('/sign-in')
+            _send_otp_mail(user=user)
+            request.session['user_id'] = user.id
+            return redirect('/verify-input')
         else:
             for error in list(form.errors.values()):
                 messages.error(request, clean_message(error))
     else:
         form = SignUpForm()
-
     return render(request, 'registration/sign_up.html', {'form': form})
+
+
+def verify_input(request):
+    user_id = request.session.get('user_id')
+    if not user_id:
+        messages.error(request, _("No user information found."))
+        return redirect('login')
+    user = CustomUser.objects.get(id=user_id)
+    if request.method == 'POST':
+        if 'resend_otp' in request.POST:
+            _send_otp_mail(user)
+            messages.success(request, _("OTP has been resent to your email."))
+            return redirect('verify-input')
+        otp_code = request.POST.get('otp', '')
+        if user.is_otp_expired():
+            messages.error(request, _(
+                "OTP code has expired. Please choose resend OTP"))
+            return redirect('verify-input')
+        totp = pyotp.TOTP(user.otp_secret, interval=300)
+        is_valid = totp.verify(otp_code)
+        if is_valid:
+            user.is_active = True
+            user.save()
+            messages.success(request, _("Your account has been activated."))
+            del request.session['user_id']
+            return redirect('sign-in')
+        else:
+            messages.error(request, _("Invalid OTP code."))
+    return render(request, 'registration/verify_input.html')

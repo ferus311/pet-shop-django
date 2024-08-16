@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load static %}
+{% load i18n %}
+{% block content %}
+    <link rel="stylesheet" href="{% static 'css/verify_input.css' %}">
+    <div class="container-verify-input">
+        <header>
+            <img src="{% static 'images/pet_icon.png' %}" alt="{% trans 'Shield Icon' %}">
+        </header>
+        <h4>{% trans "Enter OTP Code" %}</h4>
+        <form method="post" action="{% url 'verify-input' %}">
+            {% csrf_token %}
+            <div class="otp-form" id="otpForm">
+                <div class="input-field">
+                    <input type="number" />
+                    <input type="number" disabled />
+                    <input type="number" disabled />
+                    <input type="number" disabled />
+                    <input type="number" disabled />
+                    <input type="number" disabled />
+                </div>
+                <input type="hidden" name="otp" id="combinedOtp" />
+                <button id="verifyButton">{% trans "Verify OTP" %}</button>
+            </div>
+        </form>
+        <form method="post" action="{% url 'verify-input' %}">
+            {% csrf_token %}
+            <input type="hidden" name="resend_otp" value="true">
+            <button type="submit" class="resend-otp-button">{% trans "Resend OTP" %}</button>
+        </form>
+    </div>
+{% endblock %}
