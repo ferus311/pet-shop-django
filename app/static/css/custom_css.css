@@ -15,3 +15,12 @@
     max-height: 50px;
     overflow-y: auto;
 }
+.back-to-top {
+    right: 0;
+    position: absolute;
+}
+
+.back-to-top .iconify-icon {
+    width: 1.5em;
+    height: 1.5em;
+}

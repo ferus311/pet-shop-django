@@ -30,6 +30,19 @@ PAYMENT_METHOD_CHOICES = [
     ('BANK', _('Bank')),
 ]
 
+CITIES = [
+    'hanoi',
+    'ha noi',
+    'hn',
+    'danang',
+    'da nang',
+    'dn',
+    'hcm',
+    'ho chi minh',
+    'hochiminh',
+    'hcm city',
+    'hcmcity']
+
 DEFAULT_USER_AVATAR = "image/upload/v1723017084/wlwartuoohu21c2wzu8k.png"
 MAX_LENGTH_NAME = 255
 MAX_LENGTH_PHONENUM = 10
