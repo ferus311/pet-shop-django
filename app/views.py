@@ -1,27 +1,24 @@
 import pyotp
+import re
 from django.template.loader import render_to_string
 from django.core.mail import EmailMultiAlternatives
 from django.contrib.auth import login, authenticate, get_user_model
 from django.http import JsonResponse
-from .models import *
-import re
-from .forms import SignInForm, SignUpForm
-from .models import CustomUser
 from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.translation import gettext_lazy as _
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-from .forms import SignInForm, SignUpForm, SignUpForm
-from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
-from .models import *
-from django.http import JsonResponse
-from .constants import DEFAULT_DISPLAY_CATEGORIES, PAGINATE_BY
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import Q
+from django.utils import timezone
+
+from .models import *
+from .forms import SignInForm, SignUpForm
+from .constants import DEFAULT_DISPLAY_CATEGORIES, PAGINATE_BY
 
 
 def index(request):
@@ -131,6 +128,36 @@ def ShopView(request):
         "price_min": price_min,
     }
     return render(request, "app/shop.html", context=context)
+
+
+@login_required
+def voucher_list(request):
+    user = request.user
+    vouchers = Voucher.objects.all()
+    voucher_histories = VoucherHistory.objects.filter(user=user)
+    current_year = timezone.now().year
+    category_id = request.GET.get('category')
+    if category_id:
+        vouchers = vouchers.filter(
+            models.Q(is_global=True) | models.Q(category__id=category_id)
+        )
+
+    min_discount = request.GET.get('min_discount')
+    if min_discount:
+        vouchers = vouchers.filter(discount__gte=min_discount)
+
+    max_discount = request.GET.get('max_discount')
+    if max_discount:
+        vouchers = vouchers.filter(discount__lte=max_discount)
+    vouchers_paginated = pagination(vouchers, request)
+    voucher_histories_paginated = pagination(voucher_histories, request)
+
+    context = {
+        'vouchers': vouchers_paginated,
+        'voucher_histories': voucher_histories_paginated,
+        "current_year": current_year,
+    }
+    return render(request, 'app/voucher_list.html', context)
 
 
 def clean_message(message):

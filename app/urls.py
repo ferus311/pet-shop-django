@@ -51,4 +51,8 @@ urlpatterns = [
         'search-products/',
         views.search_products,
         name='search_products'),
+    path(
+        'vouchers/',
+        voucher_list,
+        name='voucher_list'),
 ]
