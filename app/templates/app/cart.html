@@ -1,0 +1,99 @@
+{% extends 'base.html' %} 
+{% load static %}
+{% load i18n %}
+{% load humanize %}
+{% block content %}
+        <!-- Cart Page Start -->
+        <div class="container-fluid py-5">
+            <div class="container py-5">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                          <tr>
+                            <th scope="col">{% trans "Product Name" %}</th>
+                            <th scope="col">{% trans "Size" %}</th>
+                            <th scope="col">{% trans "Color" %}</th>
+                            <th scope="col">{% trans "Price" %}</th>
+                            <th scope="col">{% trans "Quantity" %}</th>
+                            <th scope="col">{% trans "Total" %}</th>
+                            <th scope="col">{% trans "Handle" %}</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% for item in cart_items %}
+                          <tr>
+                            <td>{{ item.product_detail.product.name }}</td>
+                            <td>{{ item.product_detail.size }}</td>
+                            <td>{{ item.product_detail.color }}</td>
+                            <td>{{ item.product_detail.price|intcomma }} {% trans "VND"%}</td>
+                            <td>
+                                <div class="input-group quantity mt-4" style="width: 120px; align-items: center; justify-content: flex-start; margin-top: 0;">
+                                    <div class="input-group-prepend">
+                                        <button class="btn btn-sm btn-minus rounded-circle bg-light border d-flex align-items-center justify-content-center" type="button" style="width: 2em; height: 2em;" data-item-id="{{ item.id }}" data-action="decrease">
+                                            <iconify-icon icon="ic:baseline-minus" width="1em" height="1em"></iconify-icon>
+                                        </button>
+                                    </div>
+                                    <input type="text" class="form-control form-control-sm text-center border-0" value="{{ item.quantity }}" id="quantity-{{ item.id }}" style="height: 2em; width: 3em; margin-left: -1.5em;" readonly>
+                                    <div class="input-group-append">
+                                        <button class="btn btn-sm btn-plus rounded-circle bg-light border d-flex align-items-center justify-content-center" type="button" style="width: 2em; height: 2em;" data-item-id="{{ item.id }}" data-action="increase">
+                                            <iconify-icon icon="ic:baseline-plus" width="1em" height="1em"></iconify-icon>
+                                        </button>
+                                    </div>
+                                </div>
+                            </td>
+                            <td id="total-{{ item.id }}">{{ item.total|intcomma }} VND</td>
+                            <td>
+                                <button data-item-id="{{ item.id }}" class="btn btn-danger remove-item" type="button">
+                                    {% trans "Remove" %}
+                                </button>
+                            </td>
+                          </tr>
+                          {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="mt-5">
+                    <input type="text" class="border-0 border-bottom rounded me-5 py-3 mb-4" placeholder="Coupon Code">
+                    <button class="btn border-secondary rounded-pill px-4 py-3 text-primary" type="button">{% trans "Apply Coupon" %}</button>
+                </div>
+                <div class="row g-4 justify-content-end">
+                    <div class="col-8"></div>
+                    <div class="col-sm-8 col-md-7 col-lg-6 col-xl-4">
+                        <div class="bg-light rounded">
+                            <div class="p-4">
+                                <h1 class="display-6 mb-4">{% trans "Cart" %} <span class="fw-normal">{% trans "Total"%}</span></h1>
+                                <div class="d-flex justify-content-between mb-4">
+                                    <h5 class="mb-0 me-4">{% trans "Subtotal:"%}</h5>
+                                    <p class="mb-0" id="subtotal">{{subtotal|intcomma }}</p>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <h5 class="mb-0 me-4">{% trans "Shipping" %}</h5>
+                                    <div class="">
+                                        <p class="mb-0" id="shipping_fee">{{shipping_fee|intcomma }}</p>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <h5 class="mb-0 me-4">{% trans "Discount" %}</h5>
+                                    <div class="">
+                                        <p class="mb-0" id="discount_fee">{{ discount_fee|intcomma|default:"0" }}</p>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <h5 class="mb-0 me-4">{% trans "Total:"%}</h5>
+                                    <div class="">
+                                        <p class="mb-0" id="total_price">{{total_price|intcomma }}</p>
+                                    </div>
+                                </div>
+                            <button class="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4" type="button">{% trans "Proceed Checkout"%}</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Cart Page End -->
+
+        <!-- Back to Top -->
+        <a href="#" class="btn btn-primary border-3 border-primary rounded-circle back-to-top">
+            <iconify-icon icon="lucide:move-up"></iconify-icon>
+        </a>  
+{% endblock %}

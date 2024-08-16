@@ -295,4 +295,73 @@
     };
     checkFoucusSearch();
 
+
+    function formatNumberWithCommas(number) {
+        return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+    
+    $('.btn-plus, .btn-minus').on('click', function() {
+        const itemId = $(this).data('item-id');
+        const action = $(this).data('action');
+        const quantityInput = $(`#quantity-${itemId}`);
+        const totalElement = $(`#total-${itemId}`);
+        const subtotalElement = $('#subtotal');
+        const totalPriceElement = $('#total_price');
+        const errorMessage = $(`#error-message-${itemId}`);
+    
+        $.ajax({
+            url: '/update-quantity/',
+            type: 'POST',
+            data: {
+                'item_id': itemId,
+                'action': action,
+                'csrfmiddlewaretoken': getCookie('csrftoken')
+            },
+            success: function(response) {
+                if (response.success) {
+                    if (response.removed) {
+                        $(`#cart-item-${itemId}`).remove();
+                        location.reload();
+                    } else {
+                        quantityInput.val(response.quantity);
+                        totalElement.text(formatNumberWithCommas(response.total) + ' VND');
+                    }
+                    subtotalElement.text(formatNumberWithCommas(response.subtotal) + ' VND');
+                    totalPriceElement.text(formatNumberWithCommas(response.total_price) + ' VND');
+                } else {
+                    errorMessage.text(response.error);
+                    location.reload();
+                }
+            },
+            error: function(xhr, errmsg, err) {
+                errorMessage.text(`Error: ${errmsg}`);
+                location.reload();
+            }
+        });
+    });
+
+    $('.remove-item').on('click', function() {
+        const itemId = $(this).data('item-id');
+        $.ajax({
+            url: `/remove_from_cart/${itemId}/`,
+            type: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            data: JSON.stringify({ item_id: itemId }),
+            contentType: 'application/json',
+            success: function(response) {
+                if (response.success) {
+                    $(`#cart-item-${itemId}`).remove();
+                    location.reload();
+                } else {
+                    alert('Error removing item');
+                }
+            },
+            error: function() {
+                alert('An error occurred while removing the item.');
+            }
+        });
+    });
+
 })(jQuery);
