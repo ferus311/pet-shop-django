@@ -23,9 +23,29 @@
                           {% for item in cart_items %}
                           <tr>
                             <td>{{ item.product_detail.product.name }}</td>
-                            <td>{{ item.product_detail.size }}</td>
-                            <td>{{ item.product_detail.color }}</td>
-                            <td>{{ item.product_detail.price|intcomma }} {% trans "VND"%}</td>
+                            <td>
+                                {% if sizes %}
+                                    <select id="size-select-{{ item.id }}" class="form-select">
+                                        {% for size in sizes %}
+                                            <option value="{{ size }}" {% if size == item.product_detail.size %}selected{% endif %}>{{ size }}</option>
+                                        {% endfor %}
+                                    </select>                               
+                                {% else %}
+                                    {{ item.product_detail.size }}  
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if colors %}
+                                    <select id="color-select-{{ item.id }}" class="form-select">
+                                        {% for color in colors %}
+                                            <option value="{{ color }}" {% if color == item.product_detail.color %}selected{% endif %}>{{ color }}</option>
+                                        {% endfor %}
+                                    </select>                               
+                                {% else %}
+                                    {{ item.product_detail.color }}  
+                                {% endif %}
+                            </td>
+                            <td id = "price-{{ item.id }}">{{ item.product_detail.price|intcomma }} {% trans "VND"%}</td>
                             <td>
                                 <div class="input-group quantity mt-4" style="width: 120px; align-items: center; justify-content: flex-start; margin-top: 0;">
                                     <div class="input-group-prepend">
@@ -41,7 +61,7 @@
                                     </div>
                                 </div>
                             </td>
-                            <td id="total-{{ item.id }}">{{ item.total|intcomma }} VND</td>
+                            <td id="total-{{ item.id }}">{{ item.total|intcomma }} {% trans "VND" %}</td>
                             <td>
                                 <button data-item-id="{{ item.id }}" class="btn btn-danger remove-item" type="button">
                                     {% trans "Remove" %}
@@ -61,19 +81,21 @@
                     <div class="col-sm-8 col-md-7 col-lg-6 col-xl-4">
                         <div class="bg-light rounded">
                             <div class="p-4">
-                                <h1 class="display-6 mb-4">{% trans "Cart" %} <span class="fw-normal">{% trans "Total"%}</span></h1>
+                                <h1 class="display-6 mb-4">
+                                    Cart <span class="fw-normal">{% trans "Total"%}</span>
+                                </h1>
                                 <div class="d-flex justify-content-between mb-4">
                                     <h5 class="mb-0 me-4">{% trans "Subtotal:"%}</h5>
-                                    <p class="mb-0" id="subtotal">{{subtotal|intcomma }}</p>
+                                    <p class="mb-0" id="subtotal">{{subtotal|intcomma }} {% trans "VND" %}</p>
                                 </div>
                                 <div class="d-flex justify-content-between">
                                     <h5 class="mb-0 me-4">{% trans "Shipping" %}</h5>
                                     <div class="">
-                                        <p class="mb-0" id="shipping_fee">{{shipping_fee|intcomma }}</p>
+                                        <p class="mb-0" id="shipping_fee">{{shipping_fee|intcomma }} {% trans "VND" %}</p>
                                     </div>
                                 </div>
                                 <div class="d-flex justify-content-between">
-                                    <h5 class="mb-0 me-4">{% trans "Discount" %}</h5>
+                                    <h5 class="mb-0 me-4">{% trans "Discount" %} {% trans "VND" %}</h5>
                                     <div class="">
                                         <p class="mb-0" id="discount_fee">{{ discount_fee|intcomma|default:"0" }}</p>
                                     </div>
@@ -81,7 +103,7 @@
                                 <div class="d-flex justify-content-between">
                                     <h5 class="mb-0 me-4">{% trans "Total:"%}</h5>
                                     <div class="">
-                                        <p class="mb-0" id="total_price">{{total_price|intcomma }}</p>
+                                        <p class="mb-0" id="total_price">{{total_price|intcomma }} {% trans "VND"%}</p>
                                     </div>
                                 </div>
                             <button class="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4" type="button">{% trans "Proceed Checkout"%}</button>

@@ -20,16 +20,13 @@
         return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     }
 
-    function updatePrice() {
-        const selectedSize = $sizeSelect.val();
-        const selectedColor = $colorSelect.val();
-
-        $.ajax({
+    async function updatePrice(size, color, $priceElement) {
+        await $.ajax({
             url: '/get-price/',
             method: 'GET',
             data: {
-                size: selectedSize,
-                color: selectedColor || 'None'
+                size: size,
+                color: color || 'None'
             },
             dataType: 'json',
             success: function (data) {
@@ -40,7 +37,11 @@
                     const formattedProductPrice = formatPrice(data.product_price);
                     $priceElement.text(`${formattedProductPrice} VND`);
                 } else {
-                    $priceElement.text('N/A');
+                    $priceElement.text('0 VND');
+                }
+                if ($priceElement && $priceElement.attr('id')) {
+                    const itemId = $priceElement.attr('id').split('-').pop();
+                    updateTotalPrice(itemId);
                 }
             },
             error: function (error) {
@@ -50,7 +51,9 @@
         });
     }
 
-    function filterOptions() {
+    async function filterOptions() {
+        const selectedSize = $sizeSelect.val();
+        const selectedColor = $colorSelect.val();
         $.ajax({
             url: '/get-available-options/',
             method: 'GET',
@@ -76,16 +79,17 @@
                 });
 
 
-                updatePrice();
+                updatePrice(selectedSize, selectedColor, $priceElement) ;
             },
             error: function (error) {
                 console.error('Error fetching available options:', error);
             },
         });
     }
+    
 
-    $sizeSelect.on('change', updatePrice);
-    $colorSelect.on('change', updatePrice);
+    $sizeSelect.on('change', filterOptions);
+    $colorSelect.on('change', filterOptions);
 
     filterOptions();
 
@@ -343,25 +347,144 @@
     $('.remove-item').on('click', function() {
         const itemId = $(this).data('item-id');
         $.ajax({
-            url: `/remove_from_cart/${itemId}/`,
+            url: `/cart/remove/${itemId}/`,
             type: 'POST',
             headers: {
                 'X-CSRFToken': getCookie('csrftoken')
             },
-            data: JSON.stringify({ item_id: itemId }),
+            data: JSON.stringify({
+                'item_id': itemId,
+            }),
             contentType: 'application/json',
             success: function(response) {
                 if (response.success) {
                     $(`#cart-item-${itemId}`).remove();
+                    $('#subtotal').text(`${response.subtotal} VND`);
+                    $('#total-price').text(`${response.total_price} VND`);
                     location.reload();
                 } else {
-                    alert('Error removing item');
+                    console.log('An error occurred while removing the item:', response.error);
                 }
             },
             error: function() {
-                alert('An error occurred while removing the item.');
+                console.log(`Error: ${errmsg}`);
             }
         });
     });
 
+    async function updateSubtotal() {
+        let subtotal = 0;
+
+        $('[id^="total-"]').each(function() {
+            const totalText = $(this).text().replace(/[^0-9.]/g, '');
+            const total = parseFloat(totalText);
+            if (!isNaN(total)) {
+                subtotal += total;
+            }
+        });
+        $('#subtotal').text(formatPrice(subtotal) + ' VND');
+    }
+
+    async function updateTotalPrice(itemId) {
+        const $quantityElement = $(`#quantity-${itemId}`);
+        const $priceElement = $(`#price-${itemId}`);
+        const $totalElement = $(`#total-${itemId}`);
+    
+        const quantity = parseInt($quantityElement.val(), 10);
+        const priceText = $priceElement.text().replace(/[^0-9]/g, '');
+        const price = parseFloat(priceText);
+    
+        if (isNaN(price) || isNaN(quantity)) {
+            $totalElement.text('0 VND');
+            return;
+        }
+    
+        const total = price * quantity;
+        $totalElement.text(formatPrice(total) + ' VND');
+    
+        await updateSubtotal();
+        const subtotalText = $('#subtotal').text().replace(/[^0-9.]/g, '');
+        const shippingFeeText = $('#shipping_fee').text().replace(/[^0-9.]/g, '');
+        const discountFeeText = $('#discount_fee').text().replace(/[^0-9.]/g, '');
+        const subtotal = parseFloat(subtotalText);
+        const shippingFee = parseFloat(shippingFeeText);
+        const discountFee = parseFloat(discountFeeText);
+        
+        if (isNaN(subtotal) || isNaN(shippingFee) || isNaN(discountFee)) {
+            console.error('Invalid subtotal, shipping fee, or discount fee:', subtotal, shippingFee, discountFee);
+            $('#total_price').text('0 VND');
+            return;
+        }
+
+        const totalPrice = subtotal + (isNaN(shippingFee) ? 0 : shippingFee) - (isNaN(discountFee) ? 0 : discountFee);
+        $('#total_price').text(formatPrice(totalPrice) + ' VND');
+    }
+
+    async function handleUpdateCartPrice(itemId) {
+        const $sizeSelect = $(`#size-select-${itemId}`);
+        const $colorSelect = $(`#color-select-${itemId}`);
+        const $priceElement = $(`#price-${itemId}`);
+    
+        const selectedSize = $sizeSelect.val();
+        const selectedColor = $colorSelect.val();
+    
+        await $.ajax({
+            url: '/get-available-options/',
+            method: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                const availableSizes = data.sizes || [];
+                const availableColors = data.colors || [];
+    
+                $sizeSelect.find('option').each(function () {
+                    const optionValue = $(this).val();
+                    $(this).prop(
+                        'disabled',
+                        !availableSizes.includes(optionValue)
+                    );
+                });
+    
+                $colorSelect.find('option').each(function () {
+                    const optionValue = $(this).val();
+                    $(this).prop(
+                        'disabled',
+                        !availableColors.includes(optionValue)
+                    );
+                });
+    
+                updatePrice(selectedSize, selectedColor, $priceElement);
+                
+                $.ajax({
+                    url: '/update-cart-item/',
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        item_id: itemId,
+                        quantity: $(`#quantity-${itemId}`).val(),
+                        size: selectedSize,
+                        color: selectedColor
+                    }),
+                    success: function (response) {
+                        console.log('Cart item updated successfully:', response.message);
+                    },
+                    error: function (error) {
+                        console.error('Error updating cart item:', error);
+                        location.reload(true);
+                    }
+                });
+            },
+            error: function (error) {
+                console.error('Error fetching available options:', error);
+                location.reload(true);
+            },
+        });
+    }
+
+    $('select[id^="size-select-"], select[id^="color-select-"], input[id^="quantity-"]').on('change', function () {
+        const itemId = this.id.split('-').pop();
+        handleUpdateCartPrice(itemId);
+    });
 })(jQuery);

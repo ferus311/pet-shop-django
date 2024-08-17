@@ -1,6 +1,7 @@
 import pyotp
 import re
 import unicodedata
+import json
 from django.template.loader import render_to_string
 from django.core.mail import EmailMultiAlternatives
 from django.contrib.auth import login, authenticate, get_user_model
@@ -18,6 +19,7 @@ from django.urls import reverse
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import Q
 from django.utils import timezone
+from django.core.exceptions import ObjectDoesNotExist
 
 from .models import *
 from .forms import SignInForm, SignUpForm
@@ -399,9 +401,7 @@ def verify_input(request):
 
 
 def _normalize_address(address):
-    # Convert to lowercase
     address = address.lower()
-    # Remove diacritics
     address = ''.join(
         c for c in unicodedata.normalize('NFD', address)
         if unicodedata.category(c) != 'Mn'
@@ -417,8 +417,10 @@ def _extract_city(address, cities):
     return None
 
 
-def calculate_cart_totals(user):
-    cart_items = CartDetail.objects.all()
+def _calculate_cart_totals(user):
+    cart, created = Cart.objects.get_or_create(
+        user=user, defaults={'total': 0})
+    cart_items = CartDetail.objects.filter(cart=cart)
     for item in cart_items:
         item.total = item.product_detail.price * item.quantity
 
@@ -440,17 +442,76 @@ def calculate_cart_totals(user):
 
 @login_required
 def cart_view(request):
-    cart_items, subtotal, shipping_fee, total_price = calculate_cart_totals(
-        request.user)
+    current_user = request.user
+    cart_items, subtotal, shipping_fee, total_price = _calculate_cart_totals(
+        current_user)
+    sizes = set()
+    colors = set()
+    for item in cart_items:
+        product_id = item.product_detail.product.id
+        product = get_object_or_404(Product, pk=product_id)
+        product_details = ProductDetail.objects.filter(product=product)
+        sizes.update(product_details.values_list("size", flat=True).distinct())
+        colors.update(
+            product_details.values_list(
+                "color", flat=True).distinct())
 
     context = {
         'cart_items': cart_items,
         'subtotal': subtotal,
         'shipping_fee': shipping_fee,
         'total_price': total_price,
+        'sizes': list(sizes),
+        'colors': list(colors)
     }
 
     return render(request, 'app/cart.html', context)
+
+
+@login_required
+@require_POST
+@transaction.atomic
+def update_cart_item(request):
+    try:
+        data = json.loads(request.body)
+        item_id = data.get('item_id')
+        quantity = data.get('quantity')
+        quantity = int(quantity)
+        size = data.get('size')
+        color = data.get('color')
+
+        cart = Cart.objects.get(user=request.user)
+        cart_item = get_object_or_404(CartDetail, id=item_id, cart=cart)
+        try:
+            product_detail = ProductDetail.objects.get(
+                product=cart_item.product_detail.product,
+                size=size,
+                color=color
+            )
+        except ProductDetail.DoesNotExist:
+            messages.error(request, _('Product detail does not exist.'))
+            return JsonResponse(
+                {'error': _('Product detail does not exist.')}, status=400)
+
+        if quantity > product_detail.remain_quantity:
+            messages.error(request, _('Maximum product type available.'))
+            return JsonResponse(
+                {'error': _('Quantity exceeds available stock.')}, status=400)
+
+        cart_item.quantity = quantity
+        cart_item.product_detail = product_detail
+        cart_item.save()
+
+        cart = cart_item.cart
+        cart.total = sum(item.product_detail.price *
+                         item.quantity for item in cart.cartdetail_set.all())
+        cart.save()
+
+        return JsonResponse(
+            {'message': _('Cart item updated successfully')}, status=200)
+    except Exception as e:
+        transaction.set_rollback(True)
+        return JsonResponse({'error': str(e)}, status=400)
 
 
 @login_required
@@ -480,7 +541,7 @@ def update_quantity(request):
                 cart_item.save()
             else:
                 cart_item.delete()
-                cart_items, subtotal, shipping_fee, total_price = calculate_cart_totals(
+                cart_items, subtotal, shipping_fee, total_price = _calculate_cart_totals(
                     request.user)
                 cart.total = subtotal
                 cart.save()
@@ -488,7 +549,7 @@ def update_quantity(request):
                     {'success': True, 'quantity': 0, 'removed': True})
         new_total = cart_item.quantity * product_detail.price
 
-        cart_items, subtotal, shipping_fee, total_price = calculate_cart_totals(
+        cart_items, subtotal, shipping_fee, total_price = _calculate_cart_totals(
             request.user)
         print(subtotal)
         cart.total = subtotal
@@ -512,21 +573,33 @@ def update_quantity(request):
 
 @login_required
 @require_POST
-def remove_from_cart(request, item_id):
-    item_id = request.POST.get('item_id')
+def remove_cart_item(request, item_id):
+    current_user = request.user
     try:
         cart_item = get_object_or_404(CartDetail, id=item_id)
         cart = Cart.objects.get(id=cart_item.cart.id)
         cart_item.delete()
-        cart_items, subtotal, shipping_fee, total_price = calculate_cart_totals(
-            request.user)
+        cart_items, subtotal, shipping_fee, total_price = _calculate_cart_totals(
+            current_user)
         cart.total = subtotal
         cart.save()
-        return JsonResponse(
-            {'success': True, 'quantity': 0, 'removed': True})
+        return JsonResponse({
+            'success': True,
+            'quantity': 0,
+            'removed': True,
+            'subtotal': subtotal,
+            'total_price': total_price
+        })
     except CartDetail.DoesNotExist:
-        return JsonResponse(
-            {'success': False, 'error': _('Cart item does not exist.')})
+        return JsonResponse({
+            'success': False,
+            'error': _('Cart item does not exist.')
+        })
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': _('An error occurred: ') + str(e)
+        })
 
 
 @login_required(login_url='/sign-in/')
