@@ -1,0 +1,16 @@
+.custom-image-input-container {
+    display: flex;
+    flex-direction: column;
+    padding: 10px; /* Padding cho toàn bộ container */
+}
+
+.image-preview {
+    max-width: 300px; /* Kích cỡ tối đa cho ảnh (thay đổi theo yêu cầu của bạn) */
+    max-height: 300px; /* Kích cỡ tối đa cho ảnh (thay đổi theo yêu cầu của bạn) */
+    margin-bottom: 10px; /* Khoảng cách dưới của ảnh */
+}
+
+input[type="file"] {
+    margin-top: 10px; /* Khoảng cách trên của trường input file */
+    padding: 8px; /* Padding cho trường input file */
+}

@@ -1,0 +1,9 @@
+.page-title {
+    text-align: center; /* Align text to the center */
+    margin: 0 auto; /* Center the element horizontally */
+}
+
+.full-width {
+    width: 100%;
+    box-sizing: border-box; /* Đảm bảo padding và border không làm thay đổi kích thước */
+}
