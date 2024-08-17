@@ -1,6 +1,9 @@
 import re
 import pyotp
 from .models import CustomUser
+from django import forms
+from django.utils.translation import gettext_lazy as _
+from .models import CustomUser, Product, ProductDetail, Bill, Voucher
 from .constants import (MAX_LENGTH_NAME, MAX_LENGTH_PASSWORD, REGEX_USERNAME,
                         REGEX_USERNAME, REGEX_PHONENUM, REGEX_EMAIL)
 from django.contrib.auth.forms import UserCreationForm
@@ -13,6 +16,7 @@ from django.contrib.auth import login, authenticate, get_user_model
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.contrib import messages
+from .widgets import ImagePreviewWidget, DateTimePickerWidget
 from .models import Comment
 from .models import Bill, PAYMENT_STATUS_CHOICES
 
@@ -115,3 +119,88 @@ class ReviewForm(forms.ModelForm):
         self.fields['star'].widget.attrs.update({'class': 'form-control'})
         self.fields['content'].widget.attrs.update({'class': 'form-control'})
         self.fields['image'].widget.attrs.update({'class': 'form-control'})
+
+
+class ProductForm(forms.ModelForm):
+    class Meta:
+        model = Product
+        fields = '__all__'
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter product name'}),
+            'image': ImagePreviewWidget(attrs={'class': 'form-control-file'}),
+            'category': forms.Select(attrs={'class': 'form-control'}),
+            'price': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter product price'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Enter product description'}),
+            'average_rating': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.1', 'placeholder': 'Enter average rating'}),
+            'sold_quantity': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter sold quantity'}),
+        }
+
+
+class ProductDetailForm(forms.ModelForm):
+    class Meta:
+        model = ProductDetail
+        fields = '__all__'  # Hoặc chỉ định các trường cụ thể nếu không cần tất cả
+        widgets = {
+            'image': ImagePreviewWidget(attrs={'class': 'form-control-file'}),
+            'size': forms.Select(attrs={'class': 'form-control'}),
+            'color': forms.TextInput(attrs={'class': 'form-control'}),
+            'price': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter price'}),
+            'remain_quantity': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter remaining quantity'}),
+        }
+
+
+class BillForm(forms.ModelForm):
+    class Meta:
+        model = Bill
+        fields = '__all__'
+        widgets = {
+            'user': forms.Select(attrs={'class': 'form-control'}),
+            'address': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Enter address'}),
+            'phone_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter phone number'}),
+            'voucher': forms.Select(attrs={'class': 'form-control'}),
+            'status': forms.Select(attrs={'class': 'form-control'}),
+            'note_content': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Enter any notes (optional)'}),
+            'total': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter total amount'}),
+            'payment_method': forms.Select(attrs={'class': 'form-control'}),
+            'expired_at': forms.DateTimeInput(attrs={'class': 'form-control', 'placeholder': 'Select expiration date'}),
+        }
+
+
+class CustomUserForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        fields = [
+            'email',
+            'first_name',
+            'last_name',
+            'gender',
+            'avatar',
+            'default_address',
+            'default_phone_number',
+            'is_banned'
+        ]
+        widgets = {
+            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Enter email'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter first name'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter last name'}),
+            'gender': forms.Select(attrs={'class': 'form-control'}),
+            'avatar': forms.FileInput(attrs={'class': 'form-control-file'}),
+            'default_address': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Enter default address'}),
+            'default_phone_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter default phone number'}),
+            'is_banned': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }
+
+
+class VoucherForm(forms.ModelForm):
+    class Meta:
+        model = Voucher
+        fields = '__all__'
+        widgets = {
+            'discount': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01', 'placeholder': 'Enter discount percentage'}),
+            'started_at': DateTimePickerWidget(attrs={'class': 'form-control'}),
+            'ended_at': DateTimePickerWidget(attrs={'class': 'form-control'}),
+            'category': forms.SelectMultiple(attrs={'class': 'form-control'}),
+            'min_amount': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter minimum amount'}),
+            'is_global': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'user': forms.Select(attrs={'class': 'form-control'}),
+        }

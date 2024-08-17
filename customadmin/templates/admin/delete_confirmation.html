@@ -1,0 +1,41 @@
+{% extends "admin/base_site.html" %}
+
+{% load i18n %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-body">
+            {% if perms_lacking %}
+                <p>{% blocktrans with escaped_object=object %}Deleting the {{ object_name }} '{{ escaped_object }}' would result in deleting related objects, but your account doesn't have permission to delete the following types of objects:{% endblocktrans %}</p>
+                <ul class="list-group">
+                    {{ perms_lacking|unordered_list }}
+                </ul>
+            {% elif protected %}
+                <p>{% blocktrans with escaped_object=object %}Deleting the {{ object_name }} '{{ escaped_object }}' would require deleting the following protected related objects:{% endblocktrans %}</p>
+                <ul class="list-group">
+                    {{ protected|unordered_list }}
+                </ul>
+            {% else %}
+                <p>{% blocktrans with escaped_object=object %}Are you sure you want to delete the {{ object_name }} "{{ escaped_object }}"? All of the following related items will be deleted:{% endblocktrans %}</p>
+                <h2>{% translate "Objects" %}</h2>
+                <ul class="list-group">
+                    {{ deleted_objects|unordered_list }}
+                </ul>
+                <form method="post" class="mt-3">
+                    {% csrf_token %}
+                    <input type="hidden" name="post" value="yes">
+                    {% if is_popup %}<input type="hidden" name="{{ is_popup_var }}" value="1">{% endif %}
+                    {% if to_field %}<input type="hidden" name="{{ to_field_var }}" value="{{ to_field }}">{% endif %}
+                    <button class="btn btn-danger" type="submit">{% translate "Yes, I’m sure" %}</button>
+                    {% with 'admin:'|add:opts.app_label|add:'_'|add:opts.model_name|add:'_changelist' as admin_changelist_url %}
+                    <a href="{% url admin_changelist_url %}" class="btn btn-secondary ml-2">
+                        {% translate "No, take me back" %}
+                    </a>
+                    {% endwith %}
+                </form>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

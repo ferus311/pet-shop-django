@@ -7,3 +7,12 @@
     width: 100%;
     box-sizing: border-box; /* Đảm bảo padding và border không làm thay đổi kích thước */
 }
+
+.form-check-input {
+    margin-left: 2px;  /* Thêm khoảng cách giữa checkbox và label */
+}
+
+.form-check-label {
+    display: inline-block;  /* Đảm bảo label được căn chỉnh đúng cách với checkbox */
+    vertical-align: middle; /* Đảm bảo label căn giữa theo chiều dọc với checkbox */
+}
