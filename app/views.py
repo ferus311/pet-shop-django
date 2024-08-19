@@ -6,11 +6,13 @@ from django.core.mail import EmailMultiAlternatives
 from django.contrib.auth import login, authenticate, get_user_model
 from django.http import JsonResponse
 from django.conf import settings
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404, resolve_url
 from django.utils.translation import gettext_lazy as _
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
+from .forms import SignInForm, SignUpForm, SignUpForm
+from django.contrib.auth import authenticate, login as auth_login
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
@@ -168,8 +170,10 @@ def clean_message(message):
 
 
 def login_view(request):
-    next_url = request.GET.get('next', reverse('index'))
-    if request.method == 'POST':
+    next_url = request.POST.get('next', request.GET.get('next'))
+    if next_url:
+        request.session['next_url'] = next_url
+    if request.method == "POST":
         User = get_user_model()
         form = SignInForm(request.POST)
         if form.is_valid():
@@ -187,8 +191,16 @@ def login_view(request):
             except User.DoesNotExist:
                 user = None
             if user is not None:
-                if user.is_banned:
-                    messages.error(request, _("Your account has been banned."))
+                if user.is_active:
+                    if user.is_banned:
+                        messages.error(request, _(
+                            "Your account has been banned."))
+                    else:
+                        auth_login(request, user)
+                        messages.success(request, _(
+                            "You have been logged in successfully."))
+                        next_url = request.session.pop('next_url')
+                        return redirect(next_url)
                 else:
                     login(request, user)
                     messages.success(request, _(
@@ -256,7 +268,7 @@ def product_detail_view(request, id):
         "colors": colors,
         "comments": comments,
         "average_rating": average_rating,
-        "review_count": review_count,  # Sử dụng review_count từ property
+        "review_count": review_count,
     }
     return render(request, "app/product_detail.html", context)
 
@@ -515,3 +527,12 @@ def remove_from_cart(request, item_id):
     except CartDetail.DoesNotExist:
         return JsonResponse(
             {'success': False, 'error': _('Cart item does not exist.')})
+
+
+@login_required(login_url='/sign-in/')
+def profile_view(request, pk):
+    if pk == 0 or pk != request.user.pk:
+        return redirect('profile', pk=request.user.pk)
+
+    user = get_object_or_404(CustomUser, pk=pk)
+    return render(request, 'app/profile.html', {'user': user})

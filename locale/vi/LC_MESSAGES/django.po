@@ -532,11 +532,15 @@ msgstr "Đăng nhập"
 msgid "Sign Up"
 msgstr "Đăng ký"
 
-#: .\app\templates\components\header.html:241
+#: .\app\templates\components\header.html:269
+msgid "Shop by Category"
+msgstr "Phân loại"
+
+#: .\app\templates\components\header.html:281
 msgid "Home"
 msgstr "Trang chủ"
 
-#: .\app\templates\components\header.html:260
+#: .\app\templates\components\header.html:300
 msgid "Contact"
 msgstr "Liên lạc"
 
@@ -779,7 +783,7 @@ msgid "Welcome to Pet Shop"
 msgstr "Chào mừng đến với Cửa hàng thú cưng"
 
 #: .\templates\registration\sign_in.html:12
-#: .\templates\registration\sign_in.html:41
+#: .\templates\registration\sign_in.html:42
 msgid "Log In"
 msgstr "Đăng nhập"
 
@@ -791,7 +795,11 @@ msgstr "Tên đăng nhập"
 msgid "Password"
 msgstr "Mật khẩu"
 
-#: .\templates\registration\sign_in.html:49
+#: .\templates\registration\sign_in.html:46
+msgid "Don't have an account? Sign Up"
+msgstr "Không có tài khoản? Hãy đăng ký."
+
+#: .\templates\registration\sign_in.html:47
 msgid "Forgot Password?"
 msgstr "Quên mật khẩu?"
 
