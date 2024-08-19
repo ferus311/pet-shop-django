@@ -1,0 +1,116 @@
+{% extends 'base.html' %} 
+{% load static %}
+{% load i18n %}
+{% load humanize %}
+{% block content %}
+    <div class="container mt-5">
+        <div class="d-flex justify-content-center row">
+            <div class="col-md-10">
+                <div class="rounded">
+                    <form id="filter-form" method="GET" action="{% url 'filter_orders' %}">
+                        <div class="d-flex flex-wrap justify-content-between align-items-end mb-3">
+                            <div class="form-group mr-3">
+                                <label for="status-filter">{% trans "Status" %}</label>
+                                <select id="status-filter" name="status" class="form-control custom-select-order">
+                                    <option value="">{% trans "All" %}</option>
+                                    {% for status, display_name in payment_status_choices %}
+                                        <option value="{{ status }}" {% if request.GET.status == status %}selected{% endif %}>{{ display_name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group mr-3">
+                                <label for="created-at-filter">{% trans "Created At" %}</label>
+                                <input type="date" id="created-at-filter" name="created_at" class="form-control custom-select-order" value="{{ request.GET.created_at }}">
+                            </div>
+                            <div class="form-group mr-3">
+                                <label for="expired-at-filter">{% trans "Expired At" %}</label>
+                                <input type="date" id="expired-at-filter" name="expired_at" class="form-control custom-select-order" value="{{ request.GET.expired_at }}">
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-primary custom-button-order">{% trans "Filter" %}</button>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="table-responsive table-borderless">
+                        <table class="table table-custom">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">
+                                        <div class="toggle-btn">
+                                            <div class="inner-circle"></div>
+                                        </div>
+                                    </th>
+                                    <th>{% trans "Order" %} #</th>
+                                    <th>{% trans "Address" %}</th>
+                                    <th>{% trans "Phone Number" %}</th>
+                                    <th>{% trans "Total" %}</th>
+                                    <th>{% trans "Created At" %}</th>
+                                    <th>{% trans "Status"%}</th>
+                                    <th>{% trans "Expired At" %}</th>
+                                    <th>{% trans "Actions" %}</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody class="table-body">
+                                {% for order in orders %}
+                                <tr class="cell-1">
+                                    <td class="text-center">
+                                        <div class="toggle-btn">
+                                            <div class="inner-circle"></div>
+                                        </div>
+                                    </td>
+                                    <td>#SO-{{ order.id }}</td>
+                                    <td>{{ order.address }}</td>
+                                    <td>{{ order.phone_number }}</td>
+                                    <td>{{ order.total|floatformat:0|intcomma }} {% trans "VND" %}</td>
+                                    <td>{{ order.created_at|date:"d/m/Y H:i" }}</td>
+                                    <td>
+                                        {% for status, display_name in payment_status_choices %}
+                                            {% if status == order.status %}
+                                                {{ display_name }}
+                                            {% endif %}
+                                        {% endfor %}
+                                    </td>
+                                    {% if order.payment_method != "CASH" %}
+                                    <td>{{ order.expired_at|date:"d/m/Y H:i" }}</td>
+                                    {% else %}
+                                    <td></td>
+                                    {% endif %}
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                             {% if order.status != "Completed" %}
+                                             <form method="POST" action="">         
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-custom btn-custom-danger cancel-item" 
+                                                        {% if order.status == "Cancelled" %}disabled{% endif %}
+                                                        data-cancel-confirmation="{% trans 'Are you sure you want to cancel this order?' %}">
+                                                    {% trans "Cancel Order" %}
+                                                </button>
+                                            </form>
+                                            {% endif %}
+                                            <form method="POST" action="">
+                                                {% if order.payment_method != "CASH" and order.status == "Wait_for_pay" %}
+                                                <button data-item-id="{{ order.id }}" class="btn btn-custom btn-custom-primary pay-order" type="button">
+                                                    {% trans "Pay Order" %}
+                                                </button>
+                                                {% endif %}
+                                            </form>
+                                            {% if order.status == "Completed" %}
+                                            <form method="GET" action="">
+                                                <button class="btn btn-custom btn-custom-review review-order" type="submit">
+                                                    {% trans "Review" %}
+                                                </button>
+                                            </form>
+                                            {% endif %}
+                                        </div>
+                                    </td>                                
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

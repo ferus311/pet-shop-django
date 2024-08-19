@@ -40,3 +40,54 @@
     cursor: pointer;
     color: red;
 }
+
+
+.btn-custom {
+    padding: 5px 10px;
+    font-size: 12px;
+    border-radius: 4px;
+    width: 100px;
+}
+
+.btn-custom-danger {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+}
+
+.btn-custom-primary {
+    background-color: #007bff;
+    color: white;
+    border: none;
+}
+
+.btn-custom-review {
+    background-color: #DEAD6F;
+    color: white;
+    border: none;
+}
+
+.btn-custom:hover {
+    opacity: 0.8;
+}
+
+.table-custom th,
+.table-custom td {
+    text-align: center;
+    vertical-align: middle;
+    padding: 10px;
+}
+
+.table-custom th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+.voucher-select {
+    width: 300px;
+}
+
+.highlight-label {
+    font-weight: bold;
+    font-size: 1.2em;
+}
