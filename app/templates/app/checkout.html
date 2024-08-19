@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load static %}
+{% load humanize %}
+{% block content %}
+<div class="container-fluid py-5">
+    <div class="container py-5">
+        <h1 class="mb-4">{% trans "Billing details" %}</h1>
+        <form action="{% url 'place_order' %}" method="POST">
+            {% csrf_token %}
+            <div class="row g-5">
+                <div class="col-md-12 col-lg-6 col-xl-6">
+                    <div class="form-item">
+                        <label class="form-label my-3" for="user_name">{% trans "User Name:" %}</label>
+                        <input type="text" class="form-control" readonly value="{{ user.first_name }} {{ user.last_name }}" />
+                    </div>
+                    <div class="form-item">
+                        <label class="form-label my-3">{% trans "Address" %} <sup>*</sup></label>
+                        <input type="text" class="form-control" id="default_user_address" name="default_user_address" value="{{ user.default_address }}">
+                        <div>
+                            <label class="form-label my-3">{% trans "Select a specific location or change location:" %}</label>
+                            <div id="location-form">
+                                <label for="location-input">{% trans "Enter your location:" %}</label>
+                                <input type="text" id="location-input" placeholder="{% trans 'Enter an address, city, or coordinates' %}" />
+                                <button id="location-form-button" type="button">{% trans "Locate" %}</button>
+                            </div>
+
+                            <div id="map" class="map-location"></div>
+
+                            <div id="save-location-form">
+                                <input type="hidden" id="latitude" name="latitude">
+                                <input type="hidden" id="longitude" name="longitude">
+                                <button id="save-location-button" type="button">{% trans "Save Location" %}</button>
+                            </div>
+
+                            <p id="address"></p>
+                            <p id="selected-coordinates"></p>
+                        </div>
+                    </div>
+
+                    <div class="form-item">
+                        <label class="form-label my-3">{% trans "Phone Number" %}<sup>*</sup></label>
+                        <input type="tel" class="form-control" value="{{ user.default_phone_number}}" readonly>
+                    </div>
+                    <div class="form-item">
+                        <label class="form-label my-3">{% trans "Email Address" %}<sup>*</sup></label>
+                        <input type="email" class="form-control" value="{{ user.email }}" readonly>
+                    </div>
+                    <div class="form-item mt-5">
+                        <textarea name="text" class="form-control" spellcheck="false" cols="30" rows="11" placeholder="{% trans 'Order Notes (Optional)' %}"></textarea>
+                    </div>
+                </div>
+                <div class="col-md-12 col-lg-6 col-xl-6">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">{% trans "Products" %}</th>
+                                    <th scope="col">{% trans "Properties" %}</th>
+                                    <th scope="col">{% trans "Price" %}</th>
+                                    <th scope="col">{% trans "Quantity" %}</th>
+                                    <th scope="col">{% trans "Total" %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in cart_items %}
+                                <tr>
+                                    <td class="py-3">{{ item.product_detail.product.name }}</td>
+                                    <td class="py-3">{{ item.product_detail.size }} / {{ item.product_detail.color }}</td>
+                                    <td class="py-3 text-center">{{ item.product_detail.price|intcomma }} {% trans "VND" %}</td>
+                                    <td class="py-3 text-center">{{ item.quantity }}</td>
+                                    <td class="py-3" id="total-{{ item.id }}">{{ item.total|intcomma }} {% trans "VND" %}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="row g-4 justify-content-end">
+                        <div class="col-8"></div>
+                        <div class="col-sm-8 col-md-7 col-lg-8 col-xl-8">
+                            <div class="bg-light rounded">
+                                <div class="p-4">
+                                    <h1 class="display-6 mb-4"><span class="fw-normal">{% trans "Total"%}</span></h1>
+                                    <div class="d-flex justify-content-between mb-4">
+                                        <h5 class="mb-0 me-4">{% trans "Products Price:"%}</h5>
+                                        <p class="mb-0" id="subtotal">{{subtotal|intcomma }}</p>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <h5 class="mb-0 me-4">{% trans "Shipping" %}</h5>
+                                        <div class="">
+                                            <p class="mb-0" id="shipping_fee">{{shipping_fee|intcomma }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <h5 class="mb-0 me-4">{% trans "Discount" %}</h5>
+                                        <div class="">
+                                            <p class="mb-0" id="discount_fee">{{ discount_fee|intcomma|default:"0" }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <h5 class="mb-0 me-4">{% trans "Total:"%}</h5>
+                                        <div class="">
+                                            <p class="mb-0" id="total_price">{{total_price|intcomma }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row g-4  border-bottom py-3">
+                        <div class="col-12">
+                            <label class="form-label fw-bold my-3">{% trans "Payment Method" %}</label>
+                            <select class="form-select" name="payment_method" id="payment-method-select">
+                                <option value="Transfer" >{% trans "Direct Bank Transfer" %}</option>
+                                <option value="Delivery" selected>{% trans "Cash On Delivery" %}</option>
+                            </select>
+                            <p class="text-start text-dark mt-3">{% trans "Make your payment directly into our bank account. Please use your Order ID as the payment reference. Your order will not be shipped until the funds have cleared in our account." %}</p>
+                        </div>
+                    </div>
+
+
+                    <!-- Visa Card Information Form -->
+                    <div id="visa-card-info"  class="border-bottom py-3" style="display: none;">
+                        <h4>{% trans "Visa Card Information" %}</h4>
+                        <div class="form-item">
+                            <label class="form-label my-3">{% trans "Card Number" %}</label>
+                            <input type="text" class="form-control" name="card_number" placeholder="{% trans 'Enter your card number' %}">
+                        </div>
+                        <div class="form-item">
+                            <label class="form-label my-3">{% trans "Expiration Date" %}</label>
+                            <input type="text" class="form-control" name="expiration_date" placeholder="{% trans 'MM/YY' %}">
+                        </div>
+                        <div class="form-item">
+                            <label class="form-label my-3">{% trans "CVV" %}</label>
+                            <input type="text" class="form-control" name="cvv" placeholder="{% trans 'Enter your CVV' %}">
+                        </div>
+                        <div class="form-item">
+                            <label class="form-label my-3">{% trans "Cardholder Name" %}</label>
+                            <input type="text" class="form-control" name="cardholder_name" placeholder="{% trans 'Enter the name on your card' %}">
+                        </div>
+                    </div>
+
+                    <div class="row g-4 text-center align-items-center justify-content-center pt-4">
+                        <button type="submit"  class="btn btn-primary border-secondary py-3 px-4 text-uppercase w-100 ">{% trans "Place Order" %}</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    window.OPENCAGE_API_KEY = "{{ OPENCAGE_API_KEY }}";
+</script>
+{% endblock %}
