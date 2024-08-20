@@ -54,6 +54,10 @@ urlpatterns = [
         update_cart_item,
         name='update_cart_item'),
     path(
+        'update-cart-item/',
+        update_cart_item,
+        name='update_cart_item'),
+    path(
         'update-quantity/',
         update_quantity,
         name='update_quantity'),
@@ -73,6 +77,14 @@ urlpatterns = [
         'profile/<int:pk>/',
         profile_view,
         name='profile'),
+    path(
+        'orders/',
+        orders,
+        name='orders'),
+    path(
+        'orders/filter',
+        filter_orders,
+        name='filter_orders'),
     path(
         'checkout/',
         checkout_view,

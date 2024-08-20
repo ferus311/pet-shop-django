@@ -24,7 +24,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from decimal import Decimal
 
 from .models import *
-from .forms import SignInForm, SignUpForm
+from .forms import SignInForm, SignUpForm, OrderFilterForm
 from .constants import DEFAULT_DISPLAY_CATEGORIES, PAGINATE_BY, CITIES
 
 from django.db import transaction
@@ -694,3 +694,30 @@ def submit_review(request):
 
         messages.success(request, _('Thank you for reviewing the product!'))
         return redirect('purchased_products')
+
+
+@login_required
+def orders(request):
+    user = request.user
+    orders = Bill.objects.filter(user=user)
+    context = {
+        'orders': orders,
+        'payment_status_choices': PAYMENT_STATUS_CHOICES,
+    }
+    return render(request, 'app/order_tracking.html', context)
+
+
+@login_required
+def filter_orders(request):
+    user = request.user
+    form = OrderFilterForm(request.GET)
+    if form.is_valid():
+        orders = form.filter(user=user)
+    else:
+        orders = Bill.objects.filter(user=user)
+    context = {
+        'orders': orders,
+        'form': form,
+        'payment_status_choices': PAYMENT_STATUS_CHOICES,
+    }
+    return render(request, 'app/order_tracking.html', context)

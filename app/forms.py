@@ -14,6 +14,7 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.contrib import messages
 from .models import Comment
+from .models import Bill, PAYMENT_STATUS_CHOICES
 
 
 class SignInForm(forms.Form):
@@ -70,6 +71,32 @@ class SignUpForm(UserCreationForm):
         if commit:
             user.save()
         return user
+
+
+class OrderFilterForm(forms.Form):
+    status = forms.ChoiceField(choices=PAYMENT_STATUS_CHOICES, required=False)
+    created_at = forms.DateField(
+        required=False,
+        widget=forms.DateInput(
+            attrs={
+                'type': 'date'}))
+    expired_at = forms.DateField(
+        required=False,
+        widget=forms.DateInput(
+            attrs={
+                'type': 'date'}))
+
+    def filter(self, user):
+        orders = Bill.objects.filter(user=user)
+        if self.cleaned_data['status']:
+            orders = orders.filter(status=self.cleaned_data['status'])
+        if self.cleaned_data['created_at']:
+            orders = orders.filter(
+                created_at__date=self.cleaned_data['created_at'])
+        if self.cleaned_data['expired_at']:
+            orders = orders.filter(
+                expired_at__date=self.cleaned_data['expired_at'])
+        return orders
 
 
 class ReviewForm(forms.ModelForm):
