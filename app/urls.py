@@ -81,4 +81,8 @@ urlpatterns = [
         'place_order/',
         place_order,
         name='place_order'),
+    path(
+        'submit-review/',
+        submit_review,
+        name='submit_review'),
 ]

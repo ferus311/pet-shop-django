@@ -674,3 +674,23 @@ def profile_view(request, pk):
 
     user = get_object_or_404(CustomUser, pk=pk)
     return render(request, 'app/profile.html', {'user': user})
+
+
+@login_required
+def submit_review(request):
+    if request.method == 'POST':
+        product_id = request.POST.get('product_id')
+        star = request.POST.get('star')
+        content = request.POST.get('content')
+        image = request.FILES.get('image')
+        product = Product.objects.get(id=product_id)
+
+        Comment.objects.create(
+            user=request.user,
+            product=product,
+            content=content,
+            star=star,
+        )
+
+        messages.success(request, _('Thank you for reviewing the product!'))
+        return redirect('purchased_products')

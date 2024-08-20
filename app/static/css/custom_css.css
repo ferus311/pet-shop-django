@@ -28,3 +28,15 @@
 #map {
     height: 400px !important;
 }
+
+.img-preview {
+    max-width: 100px;
+    max-height: 100px;
+    margin-right: 10px;
+}
+.remove-btn {
+    display: inline-block;
+    margin-top: 10px;
+    cursor: pointer;
+    color: red;
+}

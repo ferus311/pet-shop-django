@@ -1,0 +1,43 @@
+{% block review_modal %} {% load i18n %}
+<div class="modal fade" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form method="post" action="{% url 'submit_review' %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="modal-header d-flex justify-content-between">
+                    <h5 class="modal-title" id="reviewModalLabel">{% trans "Product Review" %}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="{% trans "Close" %}">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="product_id" id="product_id">
+                    <div class="form-group">
+                        <label for="star" class="form-label">{% trans "Rating" %}</label>
+                        <select name="star" id="star" class="form-control" required>
+                            <option value="5">{% trans "5 stars" %}</option>
+                            <option value="4">{% trans "4 stars" %}</option>
+                            <option value="3">{% trans "3 stars" %}</option>
+                            <option value="2">{% trans "2 stars" %}</option>
+                            <option value="1">{% trans "1 star" %}</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="content" class="form-label">{% trans "Review Content" %}</label>
+                        <textarea name="content" id="content" class="form-control" rows="4" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="image" class="form-label">{% trans "Image" %}</label>
+                        <input type="file" name="image" id="image" class="form-control-file">
+                        <div id="imagePreview" class="mt-2"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">{% trans "Submit Review" %}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock review_modal %}

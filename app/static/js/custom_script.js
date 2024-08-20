@@ -487,7 +487,7 @@
         const itemId = this.id.split('-').pop();
         handleUpdateCartPrice(itemId);
     });
-    
+
     $('#payment-method-select').on('change', function() {
         var visaCardInfo = $('#visa-card-info');
         if ($(this).val() === 'Transfer') {
@@ -496,5 +496,36 @@
             visaCardInfo.hide();
         }
     })
+
+
+    $('#image').off('change').on('change', function(event) {
+        const preview = $('#imagePreview');
+        preview.empty();
+        const file = event.target.files[0];
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = $('<img>', {
+                src: e.target.result,
+                class: 'img-preview'
+            });
+            const removeBtn = $('<span>', {
+                text: 'Xóa ảnh',
+                class: 'remove-btn'
+            }).on('click', function() {
+                img.remove();
+                removeBtn.remove();
+                $('#image').val('');
+            });
+            preview.append(img).append(removeBtn);
+        };
+        reader.readAsDataURL(file);
+    });
+
+    $('#reviewModal').on('show.bs.modal', function(event) {
+        const button = $(event.relatedTarget);
+        const productId = button.data('product-id');
+        const modal = $(this);
+        modal.find('#product_id').val(productId);
+    });
 
 })(jQuery);
