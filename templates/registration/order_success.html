@@ -1,0 +1,39 @@
+{% load i18n %}
+<div style="font-family: Helvetica, Arial, sans-serif; min-width: 1000px; overflow: auto; line-height: 2;">
+    <div style="margin: 50px auto; width: 70%; padding: 20px 0;">
+        <div style="border-bottom: 1px solid #eee;">
+            <a href="" style="font-size: 1.4em; color: #00466a; text-decoration: none; font-weight: 600;">{% trans "Your Brand" %}</a>
+        </div>
+        <p style="font-size: 1.1em;">{% trans "Hi," %} {{ user.first_name }}</p>
+        <p>{% blocktrans %}Thank you for choosing Pet Shop. Your order has been successfully placed. {% endblocktrans %}</p>
+
+        <h2 style="font-size: 1.2em; color: #00466a;">{% trans "Order Details" %}</h2>
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr>
+                    <th style="border: 1px solid #ddd; padding: 8px;">{% trans "Product" %}</th>
+                    <th style="border: 1px solid #ddd; padding: 8px;">{% trans "Quantity" %}</th>
+                    <th style="border: 1px solid #ddd; padding: 8px;">{% trans "Price" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in order_items %}
+                <tr>
+                    <td style="border: 1px solid #ddd; padding: 8px;">{{ item.product_detail.product.name }}</td>
+                    <td style="border: 1px solid #ddd; padding: 8px;">{{ item.quantity }}</td>
+                    <td style="border: 1px solid #ddd; padding: 8px;">{{ item.total }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <p style="font-size: 1.1em;">{% trans "Total:" %} {{ order.total }}</p>
+
+        <p style="font-size: 0.9em;">{% trans "Regards," %}<br />{% trans "Your Brand" %}</p>
+        <hr style="border: none; border-top: 1px solid #eee;" />
+        <div style="float: right; padding: 8px 0; color: #aaa; font-size: 0.8em; line-height: 1; font-weight: 300;">
+            <p>Pet Shop Inc</p>
+            <p>Hanoi-Danang</p>
+        </div>
+    </div>
+</div>

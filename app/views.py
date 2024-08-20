@@ -4,7 +4,7 @@ import unicodedata
 import json
 import os
 from django.template.loader import render_to_string
-from django.core.mail import EmailMultiAlternatives
+from django.core.mail import EmailMultiAlternatives, EmailMessage
 from django.contrib.auth import login, authenticate, get_user_model
 from django.http import JsonResponse
 from django.conf import settings
@@ -543,7 +543,8 @@ def place_order(request):
             messages.error(request, _("Please fill in all required fields."))
             return redirect('checkout')
 
-        total_price = _calculate_cart_totals(request.user)[3]
+        cart_items, subtotal, shipping_fee, total_price = _calculate_cart_totals(
+            request.user)
 
         with transaction.atomic():
             try:
@@ -557,7 +558,7 @@ def place_order(request):
                     status='Pending'
                 )
 
-                for item in CartDetail.objects.filter(cart__user=request.user):
+                for item in cart_items:
                     BillDetail.objects.create(
                         bill=bill,
                         product_detail=item.product_detail,
@@ -574,7 +575,25 @@ def place_order(request):
                     request, _("An error occurred while placing your order. Please try again."))
                 return redirect('checkout')
 
+        subject = _('Order Confirmation')
+        from_email = settings.EMAIL_HOST_USER
+        to_email = request.user.email
+        message = render_to_string('registration/order_success.html', {
+            'user': request.user,
+            'order': bill,
+            'order_items': cart_items,
+        })
+        email = EmailMessage(
+            subject,
+            message,
+            from_email,
+            [to_email],
+        )
+        email.content_subtype = 'html'
+        email.send()
+
         return redirect('index')
+
     else:
         return redirect('checkout')
 
