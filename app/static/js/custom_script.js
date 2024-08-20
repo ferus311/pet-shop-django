@@ -86,7 +86,7 @@
             },
         });
     }
-    
+
 
     $sizeSelect.on('change', filterOptions);
     $colorSelect.on('change', filterOptions);
@@ -303,7 +303,7 @@
     function formatNumberWithCommas(number) {
         return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
-    
+
     $('.btn-plus, .btn-minus').on('click', function() {
         const itemId = $(this).data('item-id');
         const action = $(this).data('action');
@@ -312,7 +312,7 @@
         const subtotalElement = $('#subtotal');
         const totalPriceElement = $('#total_price');
         const errorMessage = $(`#error-message-${itemId}`);
-    
+
         $.ajax({
             url: '/update-quantity/',
             type: 'POST',
@@ -389,19 +389,19 @@
         const $quantityElement = $(`#quantity-${itemId}`);
         const $priceElement = $(`#price-${itemId}`);
         const $totalElement = $(`#total-${itemId}`);
-    
+
         const quantity = parseInt($quantityElement.val(), 10);
         const priceText = $priceElement.text().replace(/[^0-9]/g, '');
         const price = parseFloat(priceText);
-    
+
         if (isNaN(price) || isNaN(quantity)) {
             $totalElement.text('0 VND');
             return;
         }
-    
+
         const total = price * quantity;
         $totalElement.text(formatPrice(total) + ' VND');
-    
+
         await updateSubtotal();
         const subtotalText = $('#subtotal').text().replace(/[^0-9.]/g, '');
         const shippingFeeText = $('#shipping_fee').text().replace(/[^0-9.]/g, '');
@@ -409,7 +409,7 @@
         const subtotal = parseFloat(subtotalText);
         const shippingFee = parseFloat(shippingFeeText);
         const discountFee = parseFloat(discountFeeText);
-        
+
         if (isNaN(subtotal) || isNaN(shippingFee) || isNaN(discountFee)) {
             console.error('Invalid subtotal, shipping fee, or discount fee:', subtotal, shippingFee, discountFee);
             $('#total_price').text('0 VND');
@@ -424,10 +424,10 @@
         const $sizeSelect = $(`#size-select-${itemId}`);
         const $colorSelect = $(`#color-select-${itemId}`);
         const $priceElement = $(`#price-${itemId}`);
-    
+
         const selectedSize = $sizeSelect.val();
         const selectedColor = $colorSelect.val();
-    
+
         await $.ajax({
             url: '/get-available-options/',
             method: 'GET',
@@ -435,7 +435,7 @@
             success: function (data) {
                 const availableSizes = data.sizes || [];
                 const availableColors = data.colors || [];
-    
+
                 $sizeSelect.find('option').each(function () {
                     const optionValue = $(this).val();
                     $(this).prop(
@@ -443,7 +443,7 @@
                         !availableSizes.includes(optionValue)
                     );
                 });
-    
+
                 $colorSelect.find('option').each(function () {
                     const optionValue = $(this).val();
                     $(this).prop(
@@ -451,9 +451,9 @@
                         !availableColors.includes(optionValue)
                     );
                 });
-    
+
                 updatePrice(selectedSize, selectedColor, $priceElement);
-                
+
                 $.ajax({
                     url: '/update-cart-item/',
                     method: 'POST',
@@ -487,4 +487,14 @@
         const itemId = this.id.split('-').pop();
         handleUpdateCartPrice(itemId);
     });
+    
+    $('#payment-method-select').on('change', function() {
+        var visaCardInfo = $('#visa-card-info');
+        if ($(this).val() === 'Transfer') {
+            visaCardInfo.show();
+        } else {
+            visaCardInfo.hide();
+        }
+    })
+
 })(jQuery);

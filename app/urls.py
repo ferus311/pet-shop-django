@@ -73,4 +73,12 @@ urlpatterns = [
         'profile/<int:pk>/',
         profile_view,
         name='profile'),
+    path(
+        'checkout/',
+        checkout_view,
+        name='checkout'),
+    path(
+        'place_order/',
+        place_order,
+        name='place_order'),
 ]

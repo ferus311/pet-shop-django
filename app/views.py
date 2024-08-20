@@ -2,6 +2,7 @@ import pyotp
 import re
 import unicodedata
 import json
+import os
 from django.template.loader import render_to_string
 from django.core.mail import EmailMultiAlternatives
 from django.contrib.auth import login, authenticate, get_user_model
@@ -20,6 +21,7 @@ from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import Q
 from django.utils import timezone
 from django.core.exceptions import ObjectDoesNotExist
+from decimal import Decimal
 
 from .models import *
 from .forms import SignInForm, SignUpForm
@@ -172,7 +174,7 @@ def clean_message(message):
 
 
 def login_view(request):
-    next_url = request.POST.get('next', request.GET.get('next'))
+    next_url = request.POST.get('next', request.GET.get('next', '/'))
     if next_url:
         request.session['next_url'] = next_url
     if request.method == "POST":
@@ -512,6 +514,69 @@ def update_cart_item(request):
     except Exception as e:
         transaction.set_rollback(True)
         return JsonResponse({'error': str(e)}, status=400)
+
+
+@login_required
+def checkout_view(request):
+    cart_items, subtotal, shipping_fee, total_price = _calculate_cart_totals(
+        request.user)
+    OPENCAGE_API_KEY = os.getenv('OPENCAGE_API_KEY')
+    context = {
+        'cart_items': cart_items,
+        'subtotal': subtotal,
+        'shipping_fee': shipping_fee,
+        'total_price': total_price,
+        "OPENCAGE_API_KEY": OPENCAGE_API_KEY,
+    }
+    return render(request, 'app/checkout.html', context=context)
+
+
+@login_required
+def place_order(request):
+    if request.method == 'POST':
+        user = request.user
+        address = request.POST.get('default_user_address')
+        payment_method = request.POST.get('payment_method')
+        note_content = request.POST.get('text')
+
+        if not address or not payment_method:
+            messages.error(request, _("Please fill in all required fields."))
+            return redirect('checkout')
+
+        total_price = _calculate_cart_totals(request.user)[3]
+
+        with transaction.atomic():
+            try:
+                bill = Bill.objects.create(
+                    user=user,
+                    address=address,
+                    phone_number=user.default_phone_number,
+                    payment_method=payment_method,
+                    note_content=note_content,
+                    total=Decimal(total_price),
+                    status='Pending'
+                )
+
+                for item in CartDetail.objects.filter(cart__user=request.user):
+                    BillDetail.objects.create(
+                        bill=bill,
+                        product_detail=item.product_detail,
+                        quantity=item.quantity
+                    )
+                    item.delete()
+
+                messages.success(
+                    request, _("Your order has been placed successfully!"))
+
+            except Exception as e:
+                print(f"An error occurred: {e}")
+                messages.error(
+                    request, _("An error occurred while placing your order. Please try again."))
+                return redirect('checkout')
+
+        return redirect('index')
+    else:
+        return redirect('checkout')
 
 
 @login_required

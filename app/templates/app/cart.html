@@ -1,10 +1,10 @@
-{% extends 'base.html' %} 
+{% extends 'base.html' %}
 {% load static %}
 {% load i18n %}
 {% load humanize %}
 {% block content %}
         <!-- Cart Page Start -->
-        <div class="container-fluid py-5">
+        <div class="container-fluid pb-5">
             <div class="container py-5">
                 <div class="table-responsive">
                     <table class="table">
@@ -106,7 +106,7 @@
                                         <p class="mb-0" id="total_price">{{total_price|intcomma }} {% trans "VND"%}</p>
                                     </div>
                                 </div>
-                            <button class="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4" type="button">{% trans "Proceed Checkout"%}</button>
+                            <button class="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4" type="button"><a href="{% url 'checkout' %}">{% trans "Proceed Checkout"%}</a></button>
                         </div>
                     </div>
                 </div>
@@ -117,5 +117,5 @@
         <!-- Back to Top -->
         <a href="#" class="btn btn-primary border-3 border-primary rounded-circle back-to-top">
             <iconify-icon icon="lucide:move-up"></iconify-icon>
-        </a>  
+        </a>
 {% endblock %}
