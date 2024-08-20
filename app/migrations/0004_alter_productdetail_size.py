@@ -13,6 +13,25 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='productdetail',
             name='size',
-            field=models.CharField(blank=True, choices=[('None', 'None'), ('S', 'S'), ('XS', 'XS'), ('M', 'M'), ('L', 'L'), ('XL', 'XL'), ('XXL', 'XXL')], max_length=255, null=True, verbose_name='size'),
+            field=models.CharField(
+                blank=True,
+                choices=[
+                    ('None',
+                     'None'),
+                    ('S',
+                     'S'),
+                    ('XS',
+                     'XS'),
+                    ('M',
+                     'M'),
+                    ('L',
+                     'L'),
+                    ('XL',
+                     'XL'),
+                    ('XXL',
+                     'XXL')],
+                max_length=255,
+                null=True,
+                verbose_name='size'),
         ),
     ]

@@ -6,64 +6,6 @@
     id="offcanvasCart"
     aria-labelledby="{% trans 'My Cart' %}"
 >
-    <div class="offcanvas-header justify-content-center">
-        <button
-            type="button"
-            class="btn-close"
-            data-bs-dismiss="offcanvas"
-            aria-label="{% trans 'Close' %}"
-        ></button>
-    </div>
-    <div class="offcanvas-body">
-        <div class="order-md-last">
-            <h4 class="d-flex justify-content-between align-items-center mb-3">
-                <span class="text-primary">{% trans 'Your cart' %}</span>
-                <span class="badge bg-primary rounded-circle pt-2">3</span>
-            </h4>
-            <ul class="list-group mb-3">
-                <li class="list-group-item d-flex justify-content-between lh-sm"
-                >
-                    <div>
-                        <h6 class="my-0">Grey Hoodie</h6>
-                        <small class="text-body-secondary">
-                            {% trans 'Brief description' %}
-                        </small>
-                    </div>
-                    <span class="text-body-secondary">$12</span>
-                </li>
-                <li
-                    class="list-group-item d-flex justify-content-between lh-sm"
-                >
-                    <div>
-                        <h6 class="my-0">Dog Food</h6>
-                        <small class="text-body-secondary">
-                            {% trans 'Brief description' %}
-                        </small>
-                    </div>
-                    <span class="text-body-secondary">$8</span>
-                </li>
-                <li
-                    class="list-group-item d-flex justify-content-between lh-sm"
-                >
-                    <div>
-                        <h6 class="my-0">{% trans 'Soft Toy' %}</h6>
-                        <small class="text-body-secondary">
-                            Brief description
-                        </small>
-                    </div>
-                    <span class="text-body-secondary">$5</span>
-                </li>
-                <li class="list-group-item d-flex justify-content-between">
-                    <span class="fw-bold">{% trans 'Total (USD)' %}</span>
-                    <strong>$20</strong>
-                </li>
-            </ul>
-
-            <button class="w-100 btn btn-primary btn-lg" type="submit">
-                {% trans 'Continue to checkout' %}
-            </button>
-        </div>
-    </div>
 </div>
 
 <header>
@@ -302,22 +244,35 @@
                             </li>
 
                             <li class="">
-                                <a
-                                    href="#"
-                                    class="mx-3"
-                                    data-bs-toggle="offcanvas"
-                                    data-bs-target="#offcanvasCart"
-                                    aria-controls="offcanvasCart"
-                                >
-                                    <iconify-icon
-                                        icon="mdi:cart"
-                                        class="fs-4 position-relative"
-                                    ></iconify-icon>
-                                    <span
-                                        class="position-absolute translate-middle badge rounded-circle bg-primary pt-2"
-                                        >03</span
+                                {% if user.is_authenticated %}
+                                    <a
+                                        href="{% url 'cart' %}"
+                                        class="mx-3"
                                     >
-                                </a>
+                                        <iconify-icon
+                                            icon="mdi:cart"
+                                            class="fs-4 position-relative"
+                                        ></iconify-icon>
+                                        <span
+                                            class="position-absolute translate-middle badge rounded-circle bg-primary pt-2"
+                                            >03</span
+                                        >
+                                    </a>
+                                {% else %}
+                                    <a
+                                        href="{% url 'sign-in' %}?next={% url 'cart' %}"
+                                        class="mx-3"
+                                    >
+                                        <iconify-icon
+                                            icon="mdi:cart"
+                                            class="fs-4 position-relative"
+                                        ></iconify-icon>
+                                        <span
+                                            class="position-absolute translate-middle badge rounded-circle bg-primary pt-2"
+                                            >03</span
+                                        >
+                                    </a>
+                                {% endif %}
                             </li>
                         </ul>
                     </div>

@@ -38,6 +38,10 @@ urlpatterns = [
         get_product_detail_id,
         name='get_product_detail_id'),
     path(
+        'search-products/',
+        search_products,
+        name='search_products'),
+    path(
         'add-to-cart/',
         add_to_cart,
         name='add_to_cart'),
@@ -46,21 +50,21 @@ urlpatterns = [
         cart_view,
         name='cart'),
     path(
+        'update-cart-item/',
+        update_cart_item,
+        name='update_cart_item'),
+    path(
         'update-quantity/',
         update_quantity,
         name='update_quantity'),
     path(
-        'remove_from_cart/<int:item_id>/',
-        remove_from_cart,
-        name='remove_from_cart'),
+        'cart/remove/<int:item_id>/',
+        remove_cart_item,
+        name='remove_cart_item'),
     path(
         'verify-input/',
         verify_input,
         name="verify-input"),
-    path(
-        'search-products/',
-        search_products,
-        name='search_products'),
     path(
         'vouchers/',
         voucher_list,
