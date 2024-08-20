@@ -139,36 +139,6 @@ def ShopView(request):
     return render(request, "app/shop.html", context=context)
 
 
-@login_required
-def voucher_list(request):
-    user = request.user
-    vouchers = Voucher.objects.all()
-    voucher_histories = VoucherHistory.objects.filter(user=user)
-    current_year = timezone.now().year
-    category_id = request.GET.get('category')
-    if category_id:
-        vouchers = vouchers.filter(
-            models.Q(is_global=True) | models.Q(category__id=category_id)
-        )
-
-    min_discount = request.GET.get('min_discount')
-    if min_discount:
-        vouchers = vouchers.filter(discount__gte=min_discount)
-
-    max_discount = request.GET.get('max_discount')
-    if max_discount:
-        vouchers = vouchers.filter(discount__lte=max_discount)
-    vouchers_paginated = pagination(vouchers, request)
-    voucher_histories_paginated = pagination(voucher_histories, request)
-
-    context = {
-        'vouchers': vouchers_paginated,
-        'voucher_histories': voucher_histories_paginated,
-        "current_year": current_year,
-    }
-    return render(request, 'app/voucher_list.html', context)
-
-
 def clean_message(message):
     return re.sub("<[^<]+?>", "", str(message))
 
@@ -716,6 +686,133 @@ def submit_review(request):
 
 
 @login_required
+def voucher_list(request):
+    user = request.user
+    vouchers = Voucher.objects.all()
+    voucher_histories = VoucherHistory.objects.filter(user=user)
+    current_year = timezone.now().year
+    category_id = request.GET.get('category')
+    if category_id:
+        vouchers = vouchers.filter(
+            models.Q(is_global=True) | models.Q(category__id=category_id)
+        )
+
+    min_discount = request.GET.get('min_discount')
+    if min_discount:
+        vouchers = vouchers.filter(discount__gte=min_discount)
+
+    max_discount = request.GET.get('max_discount')
+    if max_discount:
+        vouchers = vouchers.filter(discount__lte=max_discount)
+    vouchers_paginated = pagination(vouchers, request)
+    voucher_histories_paginated = pagination(voucher_histories, request)
+
+    context = {
+        'vouchers': vouchers_paginated,
+        'voucher_histories': voucher_histories_paginated,
+        "current_year": current_year,
+    }
+    return render(request, 'app/voucher_list.html', context)
+
+
+@login_required
+def get_available_vouchers(request):
+    user = request.user
+    cart = Cart.objects.get(user=user)
+    cart_items = CartDetail.objects.filter(cart=cart)
+    subtotal = sum(
+        item.product_detail.price *
+        item.quantity for item in cart_items)
+    product_detail_ids = cart_items.values_list(
+        'product_detail__product_id', flat=True)
+    categories = Product.objects.filter(
+        id__in=product_detail_ids).values_list(
+        'category', flat=True).distinct()
+
+    vouchers = Voucher.objects.filter(
+        category__in=categories).order_by('-discount')
+    vouchers = vouchers.exclude(voucherhistory__user=user)
+    vouchers = vouchers.filter(is_global=True) | vouchers.filter(user=user)
+    vouchers = vouchers.filter(min_amount__lte=subtotal)
+
+    category_map = {
+        category.id: category.name for category in Category.objects.filter(
+            id__in=categories)}
+    voucher_list = [
+        {
+            'id': voucher.id,
+            'discount': voucher.discount,
+            'min_amount': float(voucher.min_amount),
+            'is_global': voucher.is_global,
+            'categories': [category_map.get(category.id, "Unknown Category")
+                           for category in voucher.category.all()]
+        }
+        for voucher in vouchers
+    ]
+    return JsonResponse({'vouchers': voucher_list})
+
+
+@login_required
+@require_POST
+def apply_voucher(request):
+    try:
+        cart = Cart.objects.get(user=request.user)
+
+        cart_items = CartDetail.objects.select_related(
+            'product_detail__product__category'
+        ).filter(cart=cart)
+
+        voucher_id = request.POST.get('voucher_id')
+        min_amount = float(request.POST.get('min_amount', 0))
+
+        voucher = get_object_or_404(Voucher, id=voucher_id)
+        voucher_categories = voucher.category.all()
+        discount = voucher.discount
+
+        total_price_voucher = 0.0
+        total_price_other = 0.0
+
+        for item in cart_items:
+            product_price = float(item.product_detail.price) * item.quantity
+            if item.product_detail.product.category in voucher_categories:
+                total_price_voucher += product_price
+            else:
+                total_price_other += product_price
+
+        if total_price_voucher < min_amount:
+            error_message = _(
+                'Subtotal is below the minimum value required for this voucher.')
+            messages.error(request, error_message)
+            return JsonResponse({'success': False, 'error': error_message})
+
+        discount_amount = (total_price_voucher * discount) / 100
+        final_price_voucher = total_price_voucher - discount_amount
+        final_price = final_price_voucher + total_price_other
+
+        return JsonResponse({
+            'success': True,
+            'discount': discount,
+            'final_price': final_price,
+            'discount_amount': discount_amount
+        })
+
+    except Cart.DoesNotExist:
+        error_message = _('Cart does not exist.')
+        messages.error(request, error_message)
+        return JsonResponse({'success': False, 'error': error_message})
+
+    except Voucher.DoesNotExist:
+        error_message = _('Voucher does not exist.')
+        messages.error(request, error_message)
+        return JsonResponse({'success': False, 'error': error_message})
+
+    except Exception as e:
+        error_message = _('An error occurred: ') + str(e)
+        messages.error(request, error_message)
+        return JsonResponse({'success': False, 'error': error_message})
+
+
+@login_required
 def orders(request):
     user = request.user
     orders = Bill.objects.filter(user=user)
@@ -740,3 +837,13 @@ def filter_orders(request):
         'payment_status_choices': PAYMENT_STATUS_CHOICES,
     }
     return render(request, 'app/order_tracking.html', context)
+
+
+@login_required
+@require_POST
+def cancel_order(request, order_id):
+    order = get_object_or_404(Bill, id=order_id, user=request.user)
+    if order.status not in ['Wait_for_delivery', 'Completed', 'Cancelled']:
+        order.status = 'Cancelled'
+        order.save()
+    return redirect('orders')

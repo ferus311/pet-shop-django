@@ -536,4 +536,100 @@
         modal.find('#product_id').val(productId);
     });
 
+
+    function fetchAvailableVouchers() {
+        $.ajax({
+            url: '/get_available_vouchers/', // Cập nhật URL của bạn nếu cần
+            type: 'GET',
+            success: function(response) {
+                const vouchers = response.vouchers;
+                const voucherSelect = $('#voucher-select');
+                const selectVoucherText = voucherSelect.data('select-voucher');
+                const forEveryoneText = voucherSelect.data('for-everyone');
+                const specialForYouText = voucherSelect.data('special-for-you');
+            
+                voucherSelect.empty();
+                voucherSelect.append('<option value="" data-discount="0">' + selectVoucherText + '</option>');
+            
+                vouchers.forEach(function(voucher) {
+                    const categories = voucher.categories.join(', ');
+                    const formattedDiscount = voucher.discount.toLocaleString('en-US');
+                    const availability = voucher.is_global ? forEveryoneText : specialForYouText;
+                    const minAmount = voucher.min_amount.toLocaleString('en-US');
+                    const optionText = categories + ' - ' + formattedDiscount + '%' + availability + ' - Min: ' + minAmount + ' VND';
+            
+                    const option = $('<option></option>')
+                        .val(voucher.id)
+                        .data('discount', voucher.discount)
+                        .data('minAmount', voucher.min_amount)
+                        .data('categories', categories)
+                        .data('is_global', voucher.is_global)
+                        .html(optionText);
+            
+                    voucherSelect.append(option);
+                });
+            },
+            error: function(error) {
+                console.error('Error fetching vouchers:', error);
+            }
+        });
+    }
+
+    fetchAvailableVouchers();
+
+    $('#apply-voucher').click(function() {
+        try {
+            const voucherId = $('#voucher-select').val();
+            const discount = $('#voucher-select option:selected').data('discount');
+            const minAmount = $('#voucher-select option:selected').data('minAmount');
+            const subtotalText = $('#subtotal').text().replace(/,/g, '');
+            const subtotal = parseFloat(subtotalText);
+    
+            const shippingFeeText = $('#shipping_fee').text().replace(/[^0-9.]/g, '');
+            const shippingFee = parseFloat(shippingFeeText);
+    
+            $.ajax({
+                url: '/apply_voucher/',
+                type: 'POST',
+                data: {
+                    'voucher_id': voucherId,
+                    'subtotal': subtotal,
+                    'min_amount': minAmount,
+                    'csrfmiddlewaretoken': getCookie('csrftoken')
+                },
+                success: function(response) {
+                    if (response.success) {
+                        if (subtotal >= minAmount) {
+                            const discount_fee = response.discount_amount;
+                            const totalPrice = response.final_price + shippingFee;         
+                            $('#discount_fee').text('-' + formatPrice(discount_fee) + ' VND');
+                            $('#total_price').text(formatPrice(totalPrice) + ' VND');
+                        } else {
+                            location.reload();
+                        }
+                    } else {
+                        location.reload();
+                    }
+                },
+                error: function(error) {
+                    console.error('Error applying voucher:', error);
+                }
+            });
+        } catch (error) {
+            console.error('An error occurred:', error);
+            alert('An unexpected error occurred. Please try again later.');
+        }
+    });
+
+    $('form').on('submit', function(event) {
+        const cancelButton = $(this).find('.cancel-item');
+        if (cancelButton.length) {
+            event.preventDefault();
+            const confirmationMessage = cancelButton.data('cancel-confirmation');
+            const confirmation = confirm(confirmationMessage);
+            if (confirmation) {
+                this.submit(); 
+            }
+        }
+    });
 })(jQuery);
