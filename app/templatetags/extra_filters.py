@@ -18,3 +18,11 @@ def range_filter(value):
 @register.filter
 def has_half_star(value):
     return HALF_STAR_VALUE <= (value - int(value)) < ROUNDING_VALUE
+
+
+@register.filter
+def multiply(value, arg):
+    try:
+        return value * arg
+    except (ValueError, TypeError):
+        return ''

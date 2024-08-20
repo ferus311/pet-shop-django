@@ -90,6 +90,9 @@ urlpatterns = [
     path('orders/cancel/<int:order_id>/',
          cancel_order,
          name='cancel_order'),
+    path('order/<int:order_id>/',
+         order_detail,
+         name='order_detail'),
     path(
         'checkout/',
         checkout_view,
