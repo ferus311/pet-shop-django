@@ -13,6 +13,7 @@ from django.contrib.auth import login, authenticate, get_user_model
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.contrib import messages
+from .models import Comment
 
 
 class SignInForm(forms.Form):
@@ -69,3 +70,21 @@ class SignUpForm(UserCreationForm):
         if commit:
             user.save()
         return user
+
+
+class ReviewForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['product', 'star', 'content', 'image']
+
+    image = forms.ImageField(
+        widget=forms.ClearableFileInput(
+            attrs={
+                'multiple': False}),
+        required=False)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['star'].widget.attrs.update({'class': 'form-control'})
+        self.fields['content'].widget.attrs.update({'class': 'form-control'})
+        self.fields['image'].widget.attrs.update({'class': 'form-control'})
