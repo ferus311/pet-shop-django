@@ -290,8 +290,16 @@
                 }, 100);
             });
 
-            $('#query-header-search').on('blur', function() {
-                $('#search-results').empty();
+            $('#query-header-search, #search-results').on('focusout', function(event) {
+                setTimeout(function() {
+                    if (!$('#query-header-search').is(':focus') && !$('#search-results').is(':focus')) {
+                        $('#search-results').empty();
+                    }
+                }, 0);
+            });
+
+            $('#search-results').on('mousedown', 'a', function(event) {
+                event.preventDefault();
             });
         }
 
