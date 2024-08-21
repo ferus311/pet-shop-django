@@ -1,0 +1,40 @@
+{% load i18n admin_urls %}
+
+<div class="object-tools d-flex align-items-center">
+    {% if has_add_permission %}
+        <ul class="list-inline mb-0">
+            {% if change %}
+                <li class="list-inline-item">
+                    <a href="{% url opts|admin_urlname:'delete' original.pk %}" class="btn btn-danger">
+                        {% blocktrans with obj=opts.verbose_name %}Delete this {{ obj }}{% endblocktrans %}
+                    </a>
+                </li>
+            {% endif %}
+
+            {% if change %}
+                {% if has_history %}
+                    <li class="list-inline-item">
+                        <a href="{% url opts|admin_urlname:'history' original.pk %}" class="btn btn-info">
+                            {% blocktrans with obj=opts.verbose_name %}History of this {{ obj }}{% endblocktrans %}
+                        </a>
+                    </li>
+                {% endif %}
+                {% if has_view_permission %}
+                    <li class="list-inline-item">
+                        <a href="{% url opts|admin_urlname:'changelist' %}" class="btn btn-secondary">
+                            {% blocktrans with obj=opts.verbose_name_plural %}View all {{ obj }}{% endblocktrans %}
+                        </a>
+                    </li>
+                {% endif %}
+            {% endif %}
+
+            {% if has_add_permission %}
+                <li class="list-inline-item">
+                    <a href="{% url opts|admin_urlname:'add' %}" class="btn btn-success">
+                        {% blocktrans with obj=opts.verbose_name %}Add another {{ obj }}{% endblocktrans %}
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    {% endif %}
+</div>

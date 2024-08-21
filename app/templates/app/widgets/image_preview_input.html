@@ -1,0 +1,17 @@
+{% load static %}
+<div class="custom-image-input-container">
+    {% if widget.value %}
+        <!-- Hiển thị ảnh nếu đã chọn ảnh -->
+        <img src="{{ widget.value.url }}" alt="Image preview" class="image-preview">
+    {% endif %}
+    <!-- Trường input để người dùng chọn ảnh mới -->
+    <input type="file" name="{{ widget.name }}" id="{{ widget.id }}" class="file-input" {% include "django/forms/widgets/attrs.html" %}>
+    {% if widget.is_initial %}
+        <p>
+            <label for="{{ widget.id_for_label }}">
+                <input type="checkbox" name="{{ widget.checkbox_name }}" id="{{ widget.checkbox_id }}" {% include "django/forms/widgets/attrs.html" %}>
+                {{ widget.clear_checkbox_label }}
+            </label>
+        </p>
+    {% endif %}
+</div>

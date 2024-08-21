@@ -1,0 +1,111 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls static custom_tags %}
+
+{% block title %}{{ title | upper }}{% endblock %}
+
+{% block content %}
+<div class="mt-4">
+    {% if adminform.form.instance.product %}
+      <a href="{% url 'admin:app_product_change' adminform.form.instance.product.pk %}" class="btn btn-info">
+        {% trans "Back to Product" %}
+      </a>
+    {% endif %}
+
+    {% if adminform.form.instance.bill %}
+      <a href="{% url 'admin:app_bill_change' adminform.form.instance.bill.pk %}" class="btn btn-info">
+        {% trans "Back to Bill" %}
+      </a>
+    {% endif %}
+</div>
+
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="card-title">{{ title }}</h5>
+        </div>
+        <div class="card-body">
+          <form method="post" enctype="multipart/form-data"{% if adminform.form.is_bound %} novalidate{% endif %}>
+            {% csrf_token %}
+            {{ adminform.form.as_p }}
+
+            {% if formsets %}
+              <div class="formsets">
+                {% for formset in formsets %}
+                  <h4>{{ formset.title }}</h4>
+                  {{ formset.management_form }}
+                  {{ formset.formset.as_p }}
+                {% endfor %}
+              </div>
+            {% endif %}
+
+            <!-- Display basic information about ProductDetail -->
+            {% if adminform.form.instance.pk %}
+            <div class="mt-4">
+              <ul class="list-group">
+                {% if adminform.form.instance.productdetail_set.exists %}
+                  <h5>{% trans "Product Details" %}</h5>
+                  {% for detail in adminform.form.instance.productdetail_set.all %}
+                    <li class="list-group-item">
+                      {% with detail|get_model_opts as opts %}
+                        {% with 'admin:'|add:opts.app_label|add:'_'|add:opts.model_name|add:'_change' as product_detail_url %}
+                          <a href="{% url product_detail_url detail.pk %}">
+                            {{ detail.size }} - {{ detail.color }} ({{
+                            detail.price }})
+                          </a>
+                        {% endwith %}
+                      {% endwith %}
+                    </li>
+                  {% empty %}
+                    <li class="list-group-item">{% trans "No product details available." %}</li>
+                  {% endfor %}
+                {% endif %}
+            
+                {% if adminform.form.instance.billdetail_set.exists %}
+                  <h5>{% trans "Bill Details" %}</h5>
+                  {% for bill in adminform.form.instance.billdetail_set.all %}
+                    <li class="list-group-item">
+                      {% with bill|get_model_opts as opts %}
+                        {% with 'admin:'|add:opts.app_label|add:'_'|add:opts.model_name|add:'_change' as bill_detail_url %}
+                          <a href="{% url bill_detail_url bill.pk %}">
+                            {{ bill.description }} - {{ bill.amount }} ({{ bill.date }})
+                          </a>
+                        {% endwith %}
+                      {% endwith %}
+                    </li>
+                  {% empty %}
+                    <li class="list-group-item">{% trans "No bill details available." %}</li>
+                  {% endfor %}
+                {% endif %}
+              </ul>
+            </div>
+            {% endif %}
+
+            <div class="form-group d-flex mt-3">
+              <!-- Nút Save và Cancel -->
+              <div class="d-flex">
+                  <button type="submit" class="btn btn-primary mr-3">
+                    {% block submit_label %}{% trans "Save" %}{% endblock %}
+                  </button>
+                  {% with 'admin:'|add:opts.app_label|add:'_'|add:opts.model_name|add:'_changelist' as admin_url %}
+                      <a href="{% url admin_url %}" class="btn btn-secondary mr-3">
+                        {% blocktrans %}Cancel{% endblocktrans %}
+                      </a>
+                  {% endwith %}
+              </div>
+          
+              <!-- Nút trong change_form_object_tools.html -->
+              <div class="d-flex">
+                  {% block object_tools %}
+                  {% include "admin/change_form_object_tools.html" %}
+                  {% endblock %}
+              </div>
+          </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

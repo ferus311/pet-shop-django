@@ -1,0 +1,28 @@
+{% load i18n static %}
+
+{% if cl.search_fields %}
+<div id="toolbar" class="input-group d-flex align-items-center">
+  <!-- Form tìm kiếm chính -->
+  <form id="changelist-search" method="get" role="search" class="d-flex align-items-center flex-grow-1">
+    <div class="input-group me-2" style="max-width: 500px;"> <!-- Giới hạn độ dài thanh tìm kiếm -->
+      <input type="text" class="form-control" name="{{ search_var }}" value="{{ cl.query }}" id="searchbar"{% if cl.search_help_text %} aria-describedby="searchbar_helptext"{% endif %} placeholder="{% translate 'Search for...' %}">
+      <input type="submit" class="btn btn-primary" value="{% translate 'Search' %}" />
+    </div>
+    <!-- Kết quả tìm kiếm -->
+    {% if show_result_count %}
+    <div class="ms-3">
+      <span class="small" style="padding-left: 1rem;"> <!-- Điều chỉnh khoảng cách -->
+        {% blocktranslate count counter=cl.result_count %}{{ counter }} result{% plural %}{{ counter }} results{% endblocktranslate %} 
+        (<a href="?{% if cl.is_popup %}{{ is_popup_var }}=1{% if cl.add_facets %}&{% endif %}{% endif %}{% if cl.add_facets %}{{ is_facets_var }}{% endif %}">
+          {% if cl.show_full_result_count %}
+            {% blocktranslate with full_result_count=cl.full_result_count %}{{ full_result_count }} total{% endblocktranslate %}
+          {% else %}
+            {% translate "Show all" %}
+          {% endif %}
+        </a>)
+      </span>
+    </div>
+    {% endif %}
+  </form>
+</div>
+{% endif %}

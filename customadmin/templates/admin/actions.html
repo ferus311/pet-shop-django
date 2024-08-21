@@ -1,0 +1,11 @@
+{% load i18n %}
+<div class="actions">
+  {% block actions %}
+    {% block actions-form %}
+    {% for field in action_form %}{% if field.label %}<label>{{ field.label }} {{ field }}</label>{% else %}{{ field }}{% endif %}{% endfor %}
+    {% endblock %}
+    {% block actions-submit %}
+    <button type="submit" class="button btn btn-primary text-nowrap" title="{% trans "Run the selected action" %}" name="index" value="{{ action_index|default:0 }}">{% trans "Go" %}</button>
+    {% endblock %}
+  {% endblock %}
+</div>
