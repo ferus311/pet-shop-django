@@ -1,9 +1,9 @@
 {% block display_card %} {% load i18n %}
 <nav aria-label="Page navigation">
-    <ul class="pagination">
+    <ul class="pagination row d-flex align-items-center">
         {% if products.has_previous %}
             <li class="page-item">
-                <a class="page-link " href="?page=1{% if query %}&query={{ query }}{% endif %}{% if selected_species %}&species={{ selected_species|join:"&species=" }}{% endif %}{% if sort_option %}&sort={{ sort_option }}{% endif %}" aria-label="Previous">
+                <a class="page-link" href="?page=1{% if query %}&query={{ query }}{% endif %}{% if selected_species %}&species={{ selected_species|join:"&species=" }}{% endif %}{% if sort_option %}&sort={{ sort_option }}{% endif %}" aria-label="Previous">
                     <span class="d-flex align-items-center h-100" aria-hidden="true"><iconify-icon icon="teenyicons:left-solid"></iconify-icon></span>
                 </a>
             </li>

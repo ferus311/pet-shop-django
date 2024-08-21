@@ -16,7 +16,7 @@
                     </div>
                     <div class="form-item">
                         <label class="form-label my-3">{% trans "Address" %} <sup>*</sup></label>
-                        <input type="text" class="form-control" id="default_user_address" name="default_user_address" value="{{ user.default_address }}">
+                        <input type="text" class="form-control" id="default_user_address" name="default_user_address" value="{{ user.default_address }}" required>
                         <div>
                             <label class="form-label my-3">{% trans "Select a specific location or change location:" %}</label>
                             <div id="location-form">
@@ -40,7 +40,7 @@
 
                     <div class="form-item">
                         <label class="form-label my-3">{% trans "Phone Number" %}<sup>*</sup></label>
-                        <input type="tel" class="form-control" value="{{ user.default_phone_number}}" readonly>
+                        <input type="tel" class="form-control" value="{{ user.default_phone_number}}" readonly required>
                     </div>
                     <div class="form-item">
                         <label class="form-label my-3">{% trans "Email Address" %}<sup>*</sup></label>

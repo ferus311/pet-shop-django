@@ -9,7 +9,7 @@
     <div class="card position-relative">
         <a href="{{ product.get_absolute_url }}"
             ><img
-                src="{% if product.image %}{{ product.image }}{% else %}{% static 'images/item1.jpg' %}{% endif %}"
+                src="{% if product.image %}{{ product.image.url }}{% else %}{% static 'images/item1.jpg' %}{% endif %}"
                 class="img-fluid rounded-4"
                 alt="{{ product.name }}"
         /></a>
@@ -36,7 +36,7 @@
                 </span>
 
                 <h3 class="secondary-font text-primary">
-                    ${{ product.price }}
+                    {{ product.price }}₫
                 </h3>
 
                 <div class="d-flex flex-wrap mt-3">

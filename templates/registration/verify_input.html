@@ -12,12 +12,12 @@
             {% csrf_token %}
             <div class="otp-form" id="otpForm">
                 <div class="input-field">
-                    <input type="number" />
-                    <input type="number" disabled />
-                    <input type="number" disabled />
-                    <input type="number" disabled />
-                    <input type="number" disabled />
-                    <input type="number" disabled />
+                    <input class="verify-otp" type="number" />
+                    <input class="verify-otp" type="number" disabled />
+                    <input class="verify-otp" type="number" disabled />
+                    <input class="verify-otp" type="number" disabled />
+                    <input class="verify-otp" type="number" disabled />
+                    <input class="verify-otp" type="number" disabled />
                 </div>
                 <input type="hidden" name="otp" id="combinedOtp" />
                 <button id="verifyButton">{% trans "Verify OTP" %}</button>

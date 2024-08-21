@@ -1,22 +1,25 @@
-{% extends 'base.html' %} 
+{% extends 'base.html' %}
 {% load static %}
 {% load i18n %}
 {% load humanize %}
 {% block content %}
 
-    <div class="container-fluid py-5 mt-5 d-flex justify-content-center" style="background-color: #D9D9D9">
-        <div class="container py-5 d-flex justify-content-center" style ="background: white">
-            <div class="row g-4 mb-5 d-flex justify-content-center">
-                <div class="col-lg-8 col-xl-9 d-flex justify-content-center">
+    <div class="container-fluid py-5 mt-5" style="background-color: #D9D9D9">
+        <div class="container py-5 detail-wrapper" style ="background: white">
+            <div class="row g-4 mb-5 r">
+                <div class="col-lg-12 col-xl-12 ">
                     <div class="row g-4 justify-content-around">
-                        <div class="col-lg-6">
+                        <div class="col-lg-6 image-wrapper">
                             <div class="border rounded">
                                 <a href="#">
-                                    <img src="{{product.image.url}}" class="img-fluid rounded" alt="Image">
+                                    <img
+                                    src="{% if product.image %}{{ product.image.url }}{% else %}{% static 'images/item1.jpg' %}{% endif %}"
+                                    class="img-fluid rounded"
+                                    alt="Image">
                                 </a>
                             </div>
                         </div>
-                        <div class="col-lg-6">
+                        <div class="col-lg-6 des-wrapper">
                             <h4 class="fw-bold mb-3">{{product.name}}</h4>
                             <div class="d-flex align-items-center mb-4">
                                 <span class="me-2">{{ average_rating }}</span>
@@ -47,7 +50,7 @@
                             <p class="mb-3">{% trans "Category:" %} {{category}}</p>
                             <h5 class="fw-bold mb-3" id="price">
                                 {{ product.price|floatformat:0|intcomma }} VND</h5>
-                            <div class="mb-3">
+                            <div class="mb-3 properties">
                                 <label for="size-select" class="form-label">Chọn Size:</label>
                                 {% if sizes %}
                                     <select id="size-select" class="form-select">
@@ -61,7 +64,7 @@
                                     </select>
                                 {% endif %}
                             </div>
-                            <div class="mb-3">
+                            <div class="mb-3 properties">
                                 <label for="color-select" class="form-label">Chọn Màu:</label>
                                 {% if colors %}
                                     <select id="color-select" class="form-select">
@@ -74,12 +77,12 @@
                                         <option value="None">None</option>
                                     </select>
                                 {% endif %}
-                            </div>                                        
+                            </div>
                             <form method="POST" action="{% url 'add_to_cart' %}">
                                 {% csrf_token %}
                                 <input type="hidden" name="product_id" id="product-id" value="{{ product.id }}">
                                 <input type="hidden" name="quantity" value="1">
-                                <button type="button" class="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary add-to-cart" data-product-id="{{ product.id }}" data-quantity="1">
+                                <button type="button" class="btn btn-primary border border-secondary rounded-pill px-4 py-2 mb-4 text-white add-to-cart" data-product-id="{{ product.id }}" data-quantity="1">
                                     <iconify-icon icon="gridicons:cart"></iconify-icon> {% trans "Add to cart" %}
                                 </button>
                             </form>
@@ -89,10 +92,12 @@
                                 <div class="nav nav-tabs mb-3">
                                     <button class="nav-link active border-white border-bottom-0" type="button" role="tab"
                                         id="nav-about-tab" data-bs-toggle="tab" data-bs-target="#nav-about"
-                                        aria-controls="nav-about" aria-selected="true">{% trans "Description" %}</button>
+                                        aria-controls="nav-about" aria-selected="true">{% trans "Description" %}
+                                    </button>
                                     <button class="nav-link border-white border-bottom-0" type="button" role="tab"
                                         id="nav-mission-tab" data-bs-toggle="tab" data-bs-target="#nav-mission"
-                                        aria-controls="nav-mission" aria-selected="false">{% trans "Reviews" %}</button>
+                                        aria-controls="nav-mission" aria-selected="false">{% trans "Reviews" %}
+                                    </button>
                                 </div>
                             </nav>
                             <div class="tab-content mb-5">
@@ -164,11 +169,11 @@
                                                                     class="text-primary"
                                                                 ></iconify-icon>
                                                             {% endif %}
-                                                        </div>              
+                                                        </div>
                                                     </div>
                                                     <div>
                                                         <p>{{ comment.content }}</p>
-                                                    </div> 
+                                                    </div>
                                                 </div>
                                             </div>
                                         {% endfor %}
@@ -179,7 +184,7 @@
                     </div>
                 </div>
             </div>
-        </div>       
+        </div>
     </div>
     <!-- Back to Top -->
     <a href="#" class="btn btn-primary border-3 border-primary rounded-circle back-to-top right-0" style="right: 0;position: absolute;"><iconify-icon icon="lucide:move-up" width="1.5em" height="1.5em"></iconify-icon></a>
