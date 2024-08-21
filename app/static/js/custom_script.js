@@ -21,10 +21,12 @@
     }
 
     async function updatePrice(size, color, $priceElement) {
+        const productId = $('#price').data('product-id');
         await $.ajax({
             url: '/get-price/',
             method: 'GET',
             data: {
+                product_id: productId,
                 size: size,
                 color: color || 'None'
             },
@@ -539,7 +541,7 @@
 
     function fetchAvailableVouchers() {
         $.ajax({
-            url: '/get_available_vouchers/', // Cập nhật URL của bạn nếu cần
+            url: '/get_available_vouchers/',
             type: 'GET',
             success: function(response) {
                 const vouchers = response.vouchers;
@@ -568,14 +570,19 @@
             
                     voucherSelect.append(option);
                 });
+                vouchersFetched = true; 
             },
             error: function(error) {
                 console.error('Error fetching vouchers:', error);
             }
         });
     }
-
-    fetchAvailableVouchers();
+    let vouchersFetched = false;
+    $('#voucher-select').on('click', function() {
+        if (!vouchersFetched) {
+            fetchAvailableVouchers();
+        }
+    });
 
     $('#apply-voucher').click(function() {
         try {

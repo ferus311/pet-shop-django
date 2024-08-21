@@ -23,6 +23,7 @@ from django.db.models import Q
 from django.utils import timezone
 from django.core.exceptions import ObjectDoesNotExist
 from decimal import Decimal
+from datetime import timedelta
 from django.db.models import Count
 
 from .models import *
@@ -203,9 +204,11 @@ def login_view(request):
 
 def get_price(request):
     if request.method == "GET":
+        product_id = request.GET.get("product_id")
+        product = get_object_or_404(Product, pk=product_id)
         size = request.GET.get("size")
         color = request.GET.get("color")
-        price = get_price_from_database(size, color)
+        price = get_price_from_database(product, size, color)
 
         if price is not None:
             return JsonResponse({"price": price})
@@ -227,9 +230,9 @@ def get_available_options(request):
     return JsonResponse({"error": "Invalid request method"}, status=400)
 
 
-def get_price_from_database(size, color):
+def get_price_from_database(product, size, color):
     try:
-        product_detail = ProductDetail.objects.get(size=size, color=color)
+        product_detail = ProductDetail.objects.get(product=product, size=size, color=color)
         return product_detail.price
     except ProductDetail.DoesNotExist:
         return None
@@ -433,7 +436,9 @@ def cart_view(request):
         product_id = item.product_detail.product.id
         product = get_object_or_404(Product, pk=product_id)
         product_details = ProductDetail.objects.filter(product=product)
-        sizes.update(product_details.values_list("size", flat=True).distinct())
+        sizes.update(
+            product_details.values_list(
+                "size", flat=True).distinct())
         colors.update(
             product_details.values_list(
                 "color", flat=True).distinct())
@@ -528,15 +533,27 @@ def place_order(request):
 
         with transaction.atomic():
             try:
-                bill = Bill.objects.create(
-                    user=user,
-                    address=address,
-                    phone_number=user.default_phone_number,
-                    payment_method=payment_method,
-                    note_content=note_content,
-                    total=Decimal(total_price),
-                    status='Pending'
-                )
+                if(payment_method == 'Delivery'):
+                    bill = Bill.objects.create(
+                        user=user,
+                        address=address,
+                        phone_number=user.default_phone_number,
+                        payment_method='CASH',
+                        note_content=note_content,
+                        total=Decimal(total_price),
+                        status=_('Wait_for_preparing')
+                    )
+                else:
+                    bill = Bill.objects.create(
+                        user=user,
+                        address=address,
+                        phone_number=user.default_phone_number,
+                        payment_method='BANK',
+                        note_content=note_content,
+                        total=Decimal(total_price),
+                        status=_('Wait_for_pay'),
+                        expired_at = timezone.now() + timedelta(days=1)
+                    )    
 
                 for item in cart_items:
                     BillDetail.objects.create(
@@ -692,7 +709,7 @@ def submit_review(request):
         )
 
         messages.success(request, _('Thank you for reviewing the product!'))
-        return redirect('purchased_products')
+        return redirect('order_detail')
 
 
 @login_required
@@ -818,7 +835,6 @@ def apply_voucher(request):
 
     except Exception as e:
         error_message = _('An error occurred: ') + str(e)
-        messages.error(request, error_message)
         return JsonResponse({'success': False, 'error': error_message})
 
 
@@ -920,3 +936,29 @@ def change_password(request):
         form = PasswordCheckForm()
 
     return render(request, 'app/profile.html', {'form': form, 'user': user})
+
+
+@login_required
+def order_detail(request, order_id):
+    order = get_object_or_404(Bill, id=order_id, user=request.user)
+    order_details = BillDetail.objects.filter(bill=order)
+    sizes = set()
+    colors = set()
+    for item in order_details:
+        product_id = item.product_detail.product.id
+        product = get_object_or_404(Product, pk=product_id)
+        product_details = ProductDetail.objects.filter(product=product)
+        sizes.update(
+            product_details.values_list(
+                "size", flat=True).distinct())
+        colors.update(
+            product_details.values_list(
+                "color", flat=True).distinct())
+    context = {
+        'order': order,
+        'order_details': order_details,
+        'payment_status_choices': PAYMENT_STATUS_CHOICES,
+        'sizes': list(sizes),
+        'colors': list(colors)
+    }
+    return render(request, 'app/order_detail.html', context)

@@ -48,7 +48,7 @@
                                 <a href="#description-section" class="ms-2" id="review-link">{{ review_count }} {% trans "reviews" %}</a>
                             </div>
                             <p class="mb-3">{% trans "Category:" %} {{category}}</p>
-                            <h5 class="fw-bold mb-3" id="price">
+                            <h5 class="fw-bold mb-3" id="price" data-product-id="{{ product.id }}">
                                 {{ product.price|floatformat:0|intcomma }} VND</h5>
                             <div class="mb-3 properties">
                                 <label for="size-select" class="form-label">Chọn Size:</label>

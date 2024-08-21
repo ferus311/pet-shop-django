@@ -87,6 +87,15 @@
     font-weight: bold;
 }
 
+.full-width {
+    width: 100%;
+}
+
+.centered-table th, .centered-table td {
+    padding: 10px; /* Giãn cách các cột */
+    text-align: center; /* Căn giữa nội dung */
+}
+
 .voucher-select {
     width: 300px;
 }

@@ -1,0 +1,80 @@
+{% extends 'base.html' %} 
+{% load static %}
+{% load humanize %}
+{% load i18n %}
+{% load extra_filters %}
+{% block content %}
+<div class="container mt-5">
+    <div class="d-flex justify-content-center row">
+        <div class="col-md-10">
+            <div class="rounded">
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <th>{% trans "Customer" %}:</th>
+                            <td>{{ order.user.username }}</td>
+                        </tr>
+                        <tr>
+                            <th>{% trans "Address" %}:</th>
+                            <td>{{ order.address }}</td>
+                        </tr>
+                        <tr>
+                            <th>{% trans "Phone Number" %}:</th>
+                            <td>{{ order.phone_number }}</td>
+                        </tr>
+                        <tr>
+                            <th>{% trans "Total" %}:</th>
+                            <td>{{ order.total|floatformat:0|intcomma }} VND</td>
+                        </tr>
+                        <tr>
+                            <th>{% trans "Created At" %}:</th>
+                            <td>{{ order.created_at|date:"d/m/Y H:i" }}</td>
+                        </tr>
+                        <tr>
+                            <th>{% trans "Expired At" %}:</th>
+                            <td>{{ order.expired_at|date:"d/m/Y H:i" }}</td>
+                        </tr>
+                        <tr>
+                            <th>{% trans "Status" %}:</th>
+                            <td>{{ order.status }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>{% trans "Order Details" %}</h2>
+                <table class="table-custom full-width centered-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">{% trans "Product" %}</th>
+                            <th scope="col">{% trans "Size" %}</th>
+                            <th scope="col">{% trans "Color" %}</th>
+                            <th scope="col">{% trans "Quantity" %}</th>
+                            <th scope="col">{% trans "Price" %}</th>
+                            <th scope="col">{% trans "Total" %}</th>
+                            <th scope="col">{% trans "Reviews" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for detail in order_details %}
+                        <tr class="cell-1">
+                            <td>{{ detail.product_detail.product.name }}</td>
+                            <td>{{ detail.product_detail.size }}</td>
+                            <td>{{ detail.product_detail.color }}</td>
+                            <td>{{ detail.quantity }}</td>
+                            <td>{{ detail.product_detail.price|floatformat:0|intcomma }} VND</td>
+                            <td>{{ detail.quantity|multiply:detail.product_detail.price|floatformat:0|intcomma }} VND</td>
+                            <td>
+                                <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#reviewModal" data-product-id
+                                ="{{ detail.product_detail.product.id }}"
+                                >{% trans "Reviews" %}</button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% include 'app/review_modal.html'  %}
+{% endblock %}

@@ -173,15 +173,15 @@
                         class="navbar-nav menu-list list-unstyled d-flex gap-md-3 mb-0"
                     >
                         <li class="nav-item">
-                            <a href="{% url 'index' %}" class="nav-link active"
+                            <a href="{% url 'index' %}" class="nav-link {% if request.resolver_match.url_name == 'index' %}active{% endif %}"
                                 >{% trans "Home" %}</a
                             >
                         </li>
                         <li class="nav-item">
-                            <a href="{% url 'shop' %}" class="nav-link">{% trans "Shopping" %}</a>
+                            <a href="{% url 'shop' %}" class="nav-link {% if request.resolver_match.url_name == 'shop' %}active{% endif %}">{% trans "Shopping" %}</a>
                         </li>
                         <li class="nav-item">
-                            <a href="{% url 'orders' %}" class="nav-link">{% trans "Orders Tracking" %}</a>
+                            <a href="{% url 'orders' %}" class="nav-link {% if request.resolver_match.url_name == 'orders' %}active{% endif %}">{% trans "Orders Tracking" %}</a>
                         </li>
                     </ul>
 
