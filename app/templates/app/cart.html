@@ -72,9 +72,28 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="mt-5">
-                    <input type="text" class="border-0 border-bottom rounded me-5 py-3 mb-4" placeholder="Coupon Code">
-                    <button class="btn border-secondary rounded-pill px-4 py-3 text-primary" type="button">{% trans "Apply Coupon" %}</button>
+                <div class="mt-5 ">
+                    <label for="voucher-select" class="me-3 highlight-label">{% trans "Select Voucher" %}:</label>
+                    <div class="mt-5 d-flex align-items-center">
+                        <select id="voucher-select" class="form-select v-custom-select border-secondary rounded me-3 py-3 mb-4 voucher-select"
+                            data-select-voucher="{% trans 'Select a voucher' %}"
+                            data-for-everyone="{% trans ' - For everyone' %}"
+                            data-special-for-you="{% trans ' - Special for you' %}">
+                        {% for voucher in vouchers %}
+                            <option value="{{ voucher.id }}" 
+                                    data-discount="{{ voucher.discount }}" 
+                                    data-minAmount="{{ voucher.min_amount}}">
+                                {{ voucher.categories }} - {{ voucher.discount|intcomma }}{% trans " VND" %} - Min: {{ voucher.min_amount|intcomma }}{% trans " VND" %}
+                                {% if voucher.is_global %}
+                                    {% trans " - For everyone" %}
+                                {% else %}
+                                    {% trans " - Special for you" %}
+                                {% endif %}
+                            </option>
+                        {% endfor %}
+                    </select>
+                        <button id="apply-voucher" class="btn border-secondary rounded-pill px-4 py-3 text-primary" type="button">{% trans "Apply Voucher" %}</button>
+                    </div>            
                 </div>
                 <div class="row g-4 justify-content-end">
                     <div class="col-8"></div>
@@ -106,7 +125,7 @@
                                         <p class="mb-0" id="total_price">{{total_price|intcomma }} {% trans "VND"%}</p>
                                     </div>
                                 </div>
-                            <button class="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4" type="button"><a href="{% url 'checkout' %}">{% trans "Proceed Checkout"%}</a></button>
+                            <button class="btn border-primary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4" type="button"><a href="{% url 'checkout' %}">{% trans "Proceed Checkout"%}</a></button>
                         </div>
                     </div>
                 </div>

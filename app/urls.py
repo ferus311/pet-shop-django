@@ -54,10 +54,6 @@ urlpatterns = [
         update_cart_item,
         name='update_cart_item'),
     path(
-        'update-cart-item/',
-        update_cart_item,
-        name='update_cart_item'),
-    path(
         'update-quantity/',
         update_quantity,
         name='update_quantity'),
@@ -73,6 +69,12 @@ urlpatterns = [
         'vouchers/',
         voucher_list,
         name='voucher_list'),
+    path('apply_voucher/',
+         apply_voucher,
+         name='apply_voucher'),
+    path('get_available_vouchers/',
+         get_available_vouchers,
+         name='get_available_vouchers'),
     path(
         'profile/<int:pk>/',
         profile_view,
@@ -85,6 +87,9 @@ urlpatterns = [
         'orders/filter',
         filter_orders,
         name='filter_orders'),
+    path('orders/cancel/<int:order_id>/',
+         cancel_order,
+         name='cancel_order'),
     path(
         'checkout/',
         checkout_view,
