@@ -12,7 +12,10 @@ def global_context(request):
             num_products=Count("product")).order_by(
             "-num_products",
             "name"),
-        "species": Species.objects.all(),
+        "species": Species.objects.annotate(
+            num_products=Count("product")).order_by(
+            "-num_products",
+            "name"),
     }
 
     if request.user.is_authenticated:

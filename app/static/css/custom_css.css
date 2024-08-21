@@ -116,3 +116,55 @@
 .custom-button-order {
     width: 100px;
 }
+.btn-search {
+    height: 30px;
+    width: 30px;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+}
+
+.image-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.detail-wrapper {
+    min-height: 120vh;
+}
+
+#description-section {
+    padding: 0 150px;
+    min-height: 300px;
+    min-width: 300px;
+}
+.des-wrapper, .image-wrapper {
+    min-height: 420px;
+    min-width: 350px;
+}
+
+.properties {
+    width: 50%;
+}
+
+.pagination li {
+    display: inline-flex;
+    margin: 0;
+    padding: 0;
+    width: fit-content;
+    flex-shrink: unset;
+    justify-content: center;
+    align-items: center;
+    height: 40px;
+}
+.pagination a {
+    height: 40px;
+    display: inline-flex;
+    margin: 0;
+    padding: 0 10px;
+    width: fit-content;
+    justify-content: center;
+    align-items: center;
+}

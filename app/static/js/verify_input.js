@@ -1,5 +1,5 @@
 $(document).ready(function() {
-  const $inputs = $("input[type='number']"),
+  const $inputs = $("input.verify-otp"),
         $button = $("#verifyButton"),
         $combinedOtp = $("#combinedOtp");
 

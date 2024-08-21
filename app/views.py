@@ -23,6 +23,7 @@ from django.db.models import Q
 from django.utils import timezone
 from django.core.exceptions import ObjectDoesNotExist
 from decimal import Decimal
+from django.db.models import Count
 
 from .models import *
 from .forms import SignInForm, SignUpForm, OrderFilterForm, PasswordCheckForm, AvatarUploadForm, UserProfileForm
@@ -32,18 +33,30 @@ from django.db import transaction
 
 def index(request):
     """View function for home page of site."""
-    best_selling_products = Product.objects.all().order_by("-sold_quantity")
+    best_selling_products = Product.objects.all().order_by(
+        "-sold_quantity")[:9]
 
     default_display_category = list(
-        Category.objects.filter(name__in=DEFAULT_DISPLAY_CATEGORIES)
+        Category.objects.annotate(
+            num_products=Count("product")
+        ).filter(
+            name__in=DEFAULT_DISPLAY_CATEGORIES,
+            num_products__gt=0
+        )
     )
     needed_count = DEFAULT_DISPLAY_CATEGORIES.__len__() - len(default_display_category)
     if needed_count > 0:
-        additional_categories = Category.objects.exclude(
-            name__in=DEFAULT_DISPLAY_CATEGORIES).exclude(
-            id__in=[
-                c.id for c in default_display_category])[
-                :needed_count]
+        additional_categories = Category.objects.annotate(
+            num_products=Count("product")
+        ).order_by(
+            "-num_products",
+            "name"
+        ).exclude(
+            name__in=DEFAULT_DISPLAY_CATEGORIES
+        ).exclude(
+            id__in=[c.id for c in default_display_category]
+        )[:needed_count]
+
         default_display_category.extend(additional_categories)
 
     products_by_category = {}
@@ -123,12 +136,9 @@ def ShopView(request):
     elif sort_option == "name":
         products = products.order_by("name")
 
-    categories = Category.objects.all()
-
     products_paginated = pagination(products, request)
 
     context = {
-        "categories": categories,
         "products": products_paginated,
         "query": query,
         "selected_species": selected_species,
