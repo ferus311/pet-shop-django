@@ -59,7 +59,10 @@
                                             <div class="inner-circle"></div>
                                         </div>
                                     </td>
-                                    <td>#SO-{{ order.id }}</td>
+                                    <td>
+                                        <u><a href="{% url 'order_detail' order.id %}">#SO-{{ order.id }}</a>
+                                        </u>                                       
+                                    </td>
                                     <td>{{ order.address }}</td>
                                     <td>{{ order.phone_number }}</td>
                                     <td>{{ order.total|floatformat:0|intcomma }} {% trans "VND" %}</td>
@@ -96,7 +99,7 @@
                                                 {% endif %}
                                             </form>
                                             {% if order.status == "Completed" %}
-                                            <form method="GET" action="">
+                                            <form method="GET" action="{% url 'order_detail' order.id %}">
                                                 <button class="btn btn-custom btn-custom-review review-order" type="submit">
                                                     {% trans "Review" %}
                                                 </button>

@@ -232,7 +232,8 @@ def get_available_options(request):
 
 def get_price_from_database(product, size, color):
     try:
-        product_detail = ProductDetail.objects.get(product=product, size=size, color=color)
+        product_detail = ProductDetail.objects.get(
+            product=product, size=size, color=color)
         return product_detail.price
     except ProductDetail.DoesNotExist:
         return None
@@ -533,7 +534,7 @@ def place_order(request):
 
         with transaction.atomic():
             try:
-                if(payment_method == 'Delivery'):
+                if (payment_method == 'Delivery'):
                     bill = Bill.objects.create(
                         user=user,
                         address=address,
@@ -552,8 +553,8 @@ def place_order(request):
                         note_content=note_content,
                         total=Decimal(total_price),
                         status=_('Wait_for_pay'),
-                        expired_at = timezone.now() + timedelta(days=1)
-                    )    
+                        expired_at=timezone.now() + timedelta(days=1)
+                    )
 
                 for item in cart_items:
                     BillDetail.objects.create(
@@ -624,15 +625,22 @@ def update_quantity(request):
                 cart_item.delete()
                 cart_items, subtotal, shipping_fee, total_price = _calculate_cart_totals(
                     request.user)
+                discount_fee = 0
                 cart.total = subtotal
                 cart.save()
-                return JsonResponse(
-                    {'success': True, 'quantity': 0, 'removed': True})
+                return JsonResponse({
+                    'success': True,
+                    'quantity': 0,
+                    'removed': True,
+                    'subtotal': subtotal,
+                    'total_price': total_price,
+                    'discount_fee': discount_fee,
+                    'message': _('Please select a voucher again.')
+                })
         new_total = cart_item.quantity * product_detail.price
 
         cart_items, subtotal, shipping_fee, total_price = _calculate_cart_totals(
             request.user)
-        print(subtotal)
         cart.total = subtotal
         cart.save()
         return JsonResponse({
@@ -662,6 +670,7 @@ def remove_cart_item(request, item_id):
         cart_item.delete()
         cart_items, subtotal, shipping_fee, total_price = _calculate_cart_totals(
             current_user)
+        discount_fee = 0
         cart.total = subtotal
         cart.save()
         return JsonResponse({
@@ -669,12 +678,9 @@ def remove_cart_item(request, item_id):
             'quantity': 0,
             'removed': True,
             'subtotal': subtotal,
-            'total_price': total_price
-        })
-    except CartDetail.DoesNotExist:
-        return JsonResponse({
-            'success': False,
-            'error': _('Cart item does not exist.')
+            'total_price': total_price,
+            'discount_fee': discount_fee,
+            'message': _('Please select a voucher again.')
         })
     except Exception as e:
         return JsonResponse({
@@ -700,7 +706,6 @@ def submit_review(request):
         content = request.POST.get('content')
         image = request.FILES.get('image')
         product = Product.objects.get(id=product_id)
-
         Comment.objects.create(
             user=request.user,
             product=product,
@@ -836,6 +841,24 @@ def apply_voucher(request):
     except Exception as e:
         error_message = _('An error occurred: ') + str(e)
         return JsonResponse({'success': False, 'error': error_message})
+
+
+def checkout_view(request):
+    cart, created = Cart.objects.get_or_create(
+        user=request.user, defaults={'total': 0})
+    cart_items = CartDetail.objects.filter(cart=cart)
+    for item in cart_items:
+        item.total = item.product_detail.price * item.quantity
+
+    subtotal = sum(
+        item.product_detail.price *
+        item.quantity for item in cart_items)
+
+    if subtotal == 0:
+        messages.error(
+            request,
+            'There is no products in cart. You cannot proceed to checkout.')
+        return redirect('cart')
 
 
 @login_required
