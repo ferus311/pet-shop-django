@@ -348,6 +348,7 @@
                     } else {
                         quantityInput.val(response.quantity);
                         totalElement.text(formatNumberWithCommas(response.total) + ' VND');
+                        $('#discount_fee').text(`${formatNumberWithCommas(response.discount_fee)} VND`);  
                     }
                     $('#subtotal').text(formatNumberWithCommas(response.subtotal) + ' VND');
                     $('#total_price').text(formatNumberWithCommas(response.total_price) + ' VND');

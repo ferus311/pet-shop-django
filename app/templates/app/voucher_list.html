@@ -15,76 +15,156 @@
                 </select>
             </div>
 
-            <div class="col-md-3">
-                <input type="number" name="min_discount" class="form-control" placeholder="{% trans 'Min Discount (%)' %}" value="{{ request.GET.min_discount }}">
+            <div class="col-md-2">
+                <select name="voucher_status" class="form-select custom-scroll">
+                    {% for value, label in voucher_status_choices %}
+                        <option value="{{ value }}" 
+                            {% if request.GET.voucher_status == value %}
+                                selected
+                            {% elif not request.GET.voucher_status and value == 'USABLE' %}
+                                selected
+                            {% endif %}>
+                            {{ label }}
+                        </option>
+                    {% endfor %}
+                </select>
             </div>
 
-            <div class="col-md-3">
-                <input type="number" name="max_discount" class="form-control" placeholder="{% trans 'Max Discount (%)' %}" value="{{ request.GET.max_discount }}">
+            <div class="col-md-2">
+                <input type="number" name="min_discount" class="form-control custom-scroll" placeholder="{% trans 'Min Discount (%)' %}" value="{{ request.GET.min_discount }}">
             </div>
-            <div class="text-center col-md-3">
+
+            <div class="col-md-2">
+                <input type="number" name="max_discount" class="form-control custom-scroll" placeholder="{% trans 'Max Discount (%)' %}" value="{{ request.GET.max_discount }}">
+            </div>
+
+            <div class="text-center col-md-2">
                 <button type="submit" class="btn btn-primary ">{% trans "Filter" %}</button>
             </div>
         </div>
-
-
     </form>
 
     <div class="row justify-content-center mb-5">
-        {% for voucher in vouchers %}
-        <div class="col-md-4 mb-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="card-title mb-0">{% trans "Voucher ID:" %} {{ voucher.id }}</h5>
+        {% if request.GET.voucher_status == 'EXPIRED' %}
+            {% for voucher in vouchers %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="card-title mb-0">{% trans "Voucher ID:" %} {{ voucher.id }}</h5>
+                        </div>
+                        <div class="card-body">
+                            <h6 class="card-subtitle mb-2 text-muted">{% trans "Discount:" %} {{ voucher.discount }}%</h6>
+                            <p class="card-text">
+                                <strong>{% trans "Valid From:" %}</strong>
+                                {{ voucher.started_at|date:"d M H:i" }}{% if voucher.started_at.year != current_year %} {{ voucher.started_at|date:"Y" }}{% endif %} -
+                                <strong>{% trans "Until:" %}</strong>
+                                {{ voucher.ended_at|date:"d M H:i" }}{% if voucher.ended_at.year != current_year %} {{ voucher.ended_at|date:"Y" }}{% endif %}
+                            </p>
+                            <p class="card-text">
+                                <strong>{% trans "Applies:" %}</strong>
+                                {% if voucher.category.exists %}
+                                    {{ voucher.category.all|join:", " }}
+                                {% else %}
+                                    {% trans "All categories" %}
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <h6 class="card-subtitle mb-2 text-muted">{% trans "Discount:" %} {{ voucher.discount }}%</h6>
-                    <p class="card-text">
-                        <strong>{% trans "Valid From:" %}</strong>
-                        {{ voucher.started_at|date:"d M H:i" }}{% if voucher.started_at.year != current_year %} {{ voucher.started_at|date:"Y" }}{% endif %}' -
-                        <strong>{% trans "Until:" %}</strong>
-                        {{ voucher.ended_at|date:"d M H:i" }}{% if voucher.ended_at.year != current_year %} {{ voucher.ended_at|date:"Y" }}{% endif %}'
-                    </p>
-                    <p class="card-text">
-                        <strong>{% trans "Applies:" %}</strong>
-                        {% if voucher.category.exists %}
-                            {{ voucher.category.all|join:", " }}
-                        {% else %}
-                            {% trans "All categories" %}
-                        {% endif %}
-                    </p>
+            {% empty %}
+                <p>{% trans "No Expired Vouchers" %}</p>
+            {% endfor %}
+        {% elif request.GET.voucher_status == 'UPCOMING' %}
+            {% for voucher in vouchers %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="card-title mb-0">{% trans "Voucher ID:" %} {{ voucher.id }}</h5>
+                        </div>
+                        <div class="card-body">
+                            <h6 class="card-subtitle mb-2 text-muted">{% trans "Discount:" %} {{ voucher.discount }}%</h6>
+                            <p class="card-text">
+                                <strong>{% trans "Valid From:" %}</strong>
+                                {{ voucher.started_at|date:"d M H:i" }}{% if voucher.started_at.year != current_year %} {{ voucher.started_at|date:"Y" }}{% endif %} -
+                                <strong>{% trans "Until:" %}</strong>
+                                {{ voucher.ended_at|date:"d M H:i" }}{% if voucher.ended_at.year != current_year %} {{ voucher.ended_at|date:"Y" }}{% endif %}
+                            </p>
+                            <p class="card-text">
+                                <strong>{% trans "Applies:" %}</strong>
+                                {% if voucher.category.exists %}
+                                    {{ voucher.category.all|join:", " }}
+                                {% else %}
+                                    {% trans "All categories" %}
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-footer text-center bg-light">
-                    <a href="{% url 'shop' %}" class="btn btn-secondary btn-block">{% trans "Use now" %}</a>
+            {% empty %}
+                <p>{% trans "No Upcoming Vouchers" %}</p>
+            {% endfor %}
+        {% elif request.GET.voucher_status == 'USED' %}
+            {% for voucher in vouchers %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="card-title mb-0">{% trans "Voucher ID:" %} {{ voucher.id }}</h5>
+                        </div>
+                        <div class="card-body">
+                            <h6 class="card-subtitle mb-2 text-muted">{% trans "Discount:" %} {{ voucher.discount }}%</h6>
+                            <p class="card-text">
+                                <strong>{% trans "Valid From:" %}</strong>
+                                {{ voucher.started_at|date:"d M H:i" }}{% if voucher.started_at.year != current_year %} {{ voucher.started_at|date:"Y" }}{% endif %} -
+                                <strong>{% trans "Until:" %}</strong>
+                                {{ voucher.ended_at|date:"d M H:i" }}{% if voucher.ended_at.year != current_year %} {{ voucher.ended_at|date:"Y" }}{% endif %}
+                            </p>
+                            <p class="card-text">
+                                <strong>{% trans "Applies:" %}</strong>
+                                {% if voucher.category.exists %}
+                                    {{ voucher.category.all|join:", " }}
+                                {% else %}
+                                    {% trans "All categories" %}
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-        {% endfor %}
-        <div class="d-flex justify-content-center">
-            {% include 'components/pagination.html' with products=vouchers %}
-        </div>
-    </div>
-
-    <h2 class="text-center">{% trans "Your Voucher History" %}</h2>
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            {% if voucher_histories %}
-                <ul class="list-group">
-                    {% for history in voucher_histories %}
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <span>{% trans "Voucher ID:" %} {{ history.voucher.id }} - {% trans "Discount:" %} {{ history.voucher.discount }}%</span>
-                            <span>{% trans "Used on:" %} {{ history.created_at|date:"d M Y H:i" }}</span>
-                        </li>
-                    {% endfor %}
-                </ul>
-                <div class="d-flex justify-content-center">
-                    {% include 'components/pagination.html' with products=voucher_histories %}
+            {% empty %}
+                <p>{% trans "No Upcoming Vouchers" %}</p>
+            {% endfor %}
+        {% else %}
+            {% for voucher in vouchers %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="card-title mb-0">{% trans "Voucher ID:" %} {{ voucher.id }}</h5>
+                        </div>
+                        <div class="card-body">
+                            <h6 class="card-subtitle mb-2 text-muted">{% trans "Discount:" %} {{ voucher.discount }}%</h6>
+                            <p class="card-text">
+                                <strong>{% trans "Valid From:" %}</strong>
+                                {{ voucher.started_at|date:"d M H:i" }}{% if voucher.started_at.year != current_year %} {{ voucher.started_at|date:"Y" }}{% endif %} -
+                                <strong>{% trans "Until:" %}</strong>
+                                {{ voucher.ended_at|date:"d M H:i" }}{% if voucher.ended_at.year != current_year %} {{ voucher.ended_at|date:"Y" }}{% endif %}
+                            </p>
+                            <p class="card-text">
+                                <strong>{% trans "Applies:" %}</strong>
+                                {% if voucher.category.exists %}
+                                    {{ voucher.category.all|join:", " }}
+                                {% else %}
+                                    {% trans "All categories" %}
+                                {% endif %}
+                            </p>
+                        </div>
+                        <div class="card-footer text-center bg-light">
+                            <a href="{% url 'shop' %}" class="btn btn-secondary btn-block">{% trans "Use now" %}</a>
+                        </div>
+                    </div>
                 </div>
-            {% else %}
-                <p class="text-center">{% trans "You have not used any vouchers yet." %}</p>
-            {% endif %}
-        </div>
+            {% empty %}
+                <p>{% trans "No Usable Vouchers" %}</p>
+            {% endfor %}
+        {% endif %}
     </div>
 </div>
-
 {% endblock %}
