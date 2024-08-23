@@ -1,13 +1,141 @@
 import unicodedata
+import json
+from unittest.mock import patch
+from app.constants import CITIES
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+from app.models import Cart, CartDetail, ProductDetail, Product, Category
 from django.test import TestCase
 from django.urls import reverse
-from app.models import Cart, CartDetail, ProductDetail, Product, Category
 from django.contrib.auth import get_user_model
-from django.shortcuts import get_object_or_404
-from django.http import JsonResponse
-from app.constants import CITIES
-from unittest.mock import patch
-import json
+
+User = get_user_model()
+
+
+class SignUpTests(TestCase):
+
+    def setUp(self):
+        # Tạo dữ liệu người dùng để kiểm tra trùng lặp
+        self.existing_user = User.objects.create_user(
+            username='existing_user',
+            email='existing@gmail.com',
+            password='TestPassword123'
+        )
+
+    def test_signup_success(self):
+        """Test đăng ký thành công với thông tin hợp lệ"""
+        response = self.client.post(reverse('sign-up'), {
+            'first_name': 'John',
+            'last_name': 'Doe',
+            'username': 'new_user',
+            'email': 'newuser@gmail.com',
+            'password1': 'qwe123!@#',
+            'password2': 'qwe123!@#',
+            'default_phone_number': '0123456789',
+            'default_address': '123 Main St'
+        })
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(User.objects.filter(username='new_user').exists())
+
+    def test_signup_missing_required_fields(self):
+        """Test đăng ký với thông tin bị thiếu"""
+        response = self.client.post(reverse('sign-up'), {
+            'first_name': '',
+            'last_name': '',
+            'username': '',
+            'email': '',
+            'password1': '',
+            'password2': '',
+            'default_phone_number': '',
+            'default_address': ''
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertFormError(response, 'form', 'first_name',
+                             'This field is required.')
+        self.assertFormError(response, 'form', 'last_name',
+                             'This field is required.')
+        # Kiểm tra các field khác tương tự
+
+    def test_signup_password_mismatch(self):
+        """Test đăng ký với mật khẩu không khớp"""
+        response = self.client.post(reverse('sign-up'), {
+            'first_name': 'John',
+            'last_name': 'Doe',
+            'username': 'new_user',
+            'email': 'newuser@gmail.com',
+            'password1': 'TestPassword123',
+            'password2': 'DifferentPassword',
+            'default_phone_number': '0123456789',
+            'default_address': '123 Main St'
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertFormError(response, 'form', 'password2',
+                             "The two password fields didn’t match.")
+
+    def test_signup_username_already_exists(self):
+        """Test đăng ký với tên người dùng đã tồn tại"""
+        response = self.client.post(reverse('sign-up'), {
+            'first_name': 'John',
+            'last_name': 'Doe',
+            'username': 'existing_user',
+            'email': 'anotheremail@gmail.com',
+            'password1': 'TestPassword123',
+            'password2': 'TestPassword123',
+            'default_phone_number': '0123456789',
+            'default_address': '123 Main St'
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertFormError(response, 'form', 'username',
+                             'A user with that username already exists.')
+
+    def test_signup_email_already_exists(self):
+        """Test đăng ký với email đã tồn tại"""
+        response = self.client.post(reverse('sign-up'), {
+            'first_name': 'John',
+            'last_name': 'Doe',
+            'username': 'new_user',
+            'email': 'existing@gmail.com',
+            'password1': 'TestPassword123',
+            'password2': 'TestPassword123',
+            'default_phone_number': '0123456789',
+            'default_address': '123 Main St'
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertFormError(response, 'form', 'email',
+                             'A user with that email already exists.')
+
+    def test_signup_invalid_phone_number(self):
+        """Test đăng ký với số điện thoại không hợp lệ"""
+        response = self.client.post(reverse('sign-up'), {
+            'first_name': 'John',
+            'last_name': 'Doe',
+            'username': 'new_user',
+            'email': 'newuser@gmail.com',
+            'password1': 'TestPassword123',
+            'password2': 'TestPassword123',
+            'default_phone_number': '123123123123',
+            'default_address': '123 Main St'
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertFormError(
+            response, 'form', 'default_phone_number', 'Ensure this value has at most 10 characters (it has 12).')
+
+    def test_signup_invalid_email(self):
+        """Test đăng ký với email không hợp lệ"""
+        response = self.client.post(reverse('sign-up'), {
+            'first_name': 'John',
+            'last_name': 'Doe',
+            'username': 'new_user',
+            'email': 'invalid_email',
+            'password1': 'TestPassword123',
+            'password2': 'TestPassword123',
+            'default_phone_number': '1234567890',
+            'default_address': '123 Main St'
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertFormError(response, 'form', 'email',
+                             'Enter a valid email address.')
+
 
 CustomUser = get_user_model()
 
