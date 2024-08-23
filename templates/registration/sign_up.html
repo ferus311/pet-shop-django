@@ -28,6 +28,7 @@
                                                 name="first_name"
                                                 id="first_name"
                                                 placeholder="{% trans 'Enter Your First Name' %}"
+                                                value="{{ form.first_name.value|default_if_none:'' }}"
                                                 required
                                             />
                                         </div>
@@ -40,6 +41,7 @@
                                                 name="last_name"
                                                 id="last_name"
                                                 placeholder="{% trans 'Enter Your Last Name' %}"
+                                                value="{{ form.last_name.value|default_if_none:'' }}"
                                                 required
                                             />
                                         </div>
@@ -52,6 +54,7 @@
                                         name="username"
                                         id="username"
                                         placeholder="{% trans 'Choose a Username' %}"
+                                        value="{{ form.username.value|default_if_none:'' }}"
                                         required
                                     />
                                 </div>
@@ -62,6 +65,7 @@
                                         name="email"
                                         id="email"
                                         placeholder="{% trans 'Enter Your Email Address' %}"
+                                        value="{{ form.email.value|default_if_none:'' }}"
                                         required
                                     />
                                 </div>
@@ -94,6 +98,7 @@
                                         name="default_phone_number"
                                         id="default_phone_number"
                                         placeholder="{% trans 'Enter Your Phone Number' %}"
+                                        value="{{ form.default_phone_number.value|default_if_none:'' }}"
                                         required
                                     />
                                 </div>
@@ -104,8 +109,9 @@
                                         name="default_address"
                                         id="default_address"
                                         placeholder="{% trans 'Enter Your Address' %}"
+                                        value="{{ form.default_address.value|default_if_none:'' }}"
                                         required
-                                    ></input>
+                                    />
                                 </div>
                                 <div class="d-grid gap-2">
                                     <button
