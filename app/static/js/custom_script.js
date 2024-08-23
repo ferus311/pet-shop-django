@@ -20,8 +20,8 @@
         return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     }
 
-    async function updatePrice(size, color, $priceElement) {
-        const productId = $('#price').data('product-id');
+    async function updatePrice(productId, size, color, $priceElement) {
+        let priceText = $priceElement.text();
         await $.ajax({
             url: '/get-price/',
             method: 'GET',
@@ -46,14 +46,18 @@
                     updateTotalPrice(itemId);
                 }
             },
-            error: function (error) {
-                console.error('Error fetching price:', error);
-                $priceElement.text('Error fetching price');
+            error: function (xhr, status, error) {
+                let errorMessage = 'Error fetching price';
+                if (xhr.responseJSON && xhr.responseJSON.error) {
+                    errorMessage = xhr.responseJSON.error;
+                }
+                $priceElement.text(errorMessage);
             },
         });
     }
 
     async function filterOptions() {
+        const productId = $('#price').data('product-id');
         const selectedSize = $sizeSelect.val();
         const selectedColor = $colorSelect.val();
         $.ajax({
@@ -81,7 +85,7 @@
                 });
 
 
-                updatePrice(selectedSize, selectedColor, $priceElement) ;
+                updatePrice(productId, selectedSize, selectedColor, $priceElement) ;
             },
             error: function (error) {
                 console.error('Error fetching available options:', error);
@@ -93,7 +97,11 @@
     $sizeSelect.on('change', filterOptions);
     $colorSelect.on('change', filterOptions);
 
-    filterOptions();
+    const currentPath = window.location.pathname;
+    const productDetailPattern = /^\/product\/\d+\/$/;
+    if (productDetailPattern.test(currentPath)) {
+        filterOptions();
+    }
 
     async function getProductDetailId(productId, selectedColor, selectedSize) {
         try {
@@ -137,7 +145,6 @@
                     'csrfmiddlewaretoken': getCookie('csrftoken')
                 },
                 success: function(response) {
-                    console.log('Item added to cart:', response);
                     location.reload();
                 },
                 error: function(error) {
@@ -311,16 +318,18 @@
 
 
     function formatNumberWithCommas(number) {
+        if (number === undefined || number === null) {
+            return '0';
+        }
         return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
 
     $('.btn-plus, .btn-minus').on('click', function() {
         const itemId = $(this).data('item-id');
         const action = $(this).data('action');
+        const $button = $(this);
         const quantityInput = $(`#quantity-${itemId}`);
         const totalElement = $(`#total-${itemId}`);
-        const subtotalElement = $('#subtotal');
-        const totalPriceElement = $('#total_price');
         const errorMessage = $(`#error-message-${itemId}`);
 
         $.ajax({
@@ -334,14 +343,16 @@
             success: function(response) {
                 if (response.success) {
                     if (response.removed) {
-                        $(`#cart-item-${itemId}`).remove();
-                        location.reload();
+                        $button.closest('tr').remove();   
+                        $('#discount_fee').text(`${formatNumberWithCommas(response.discount_fee)} VND`);                
                     } else {
                         quantityInput.val(response.quantity);
                         totalElement.text(formatNumberWithCommas(response.total) + ' VND');
                     }
-                    subtotalElement.text(formatNumberWithCommas(response.subtotal) + ' VND');
-                    totalPriceElement.text(formatNumberWithCommas(response.total_price) + ' VND');
+                    $('#subtotal').text(formatNumberWithCommas(response.subtotal) + ' VND');
+                    $('#total_price').text(formatNumberWithCommas(response.total_price) + ' VND');
+                    console.log('Cart updated successfully:', response.subtotal);
+                    console.log('Cart updated successfully:', response.total_price);
                 } else {
                     errorMessage.text(response.error);
                     location.reload();
@@ -356,6 +367,7 @@
 
     $('.remove-item').on('click', function() {
         const itemId = $(this).data('item-id');
+        const $button = $(this);
         $.ajax({
             url: `/cart/remove/${itemId}/`,
             type: 'POST',
@@ -368,10 +380,10 @@
             contentType: 'application/json',
             success: function(response) {
                 if (response.success) {
-                    $(`#cart-item-${itemId}`).remove();
-                    $('#subtotal').text(`${response.subtotal} VND`);
-                    $('#total-price').text(`${response.total_price} VND`);
-                    location.reload();
+                    $button.closest('tr').remove(); 
+                    $('#subtotal').text(`${formatNumberWithCommas(response.subtotal)} VND`);
+                    $('#total_price').text(`${formatNumberWithCommas(response.total_price)} VND`);
+                    $('#discount_fee').text(`${formatNumberWithCommas(response.discount_fee)} VND`);
                 } else {
                     console.log('An error occurred while removing the item:', response.error);
                 }
@@ -434,6 +446,7 @@
         const $sizeSelect = $(`#size-select-${itemId}`);
         const $colorSelect = $(`#color-select-${itemId}`);
         const $priceElement = $(`#price-${itemId}`);
+        const productId = $priceElement.data('product-id');
 
         const selectedSize = $sizeSelect.val();
         const selectedColor = $colorSelect.val();
@@ -462,7 +475,7 @@
                     );
                 });
 
-                updatePrice(selectedSize, selectedColor, $priceElement);
+                updatePrice(productId, selectedSize, selectedColor, $priceElement);
 
                 $.ajax({
                     url: '/update-cart-item/',

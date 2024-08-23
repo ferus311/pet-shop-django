@@ -45,7 +45,7 @@
                                     {{ item.product_detail.color }}  
                                 {% endif %}
                             </td>
-                            <td id = "price-{{ item.id }}">{{ item.product_detail.price|intcomma }} {% trans "VND"%}</td>
+                            <td id = "price-{{ item.id }}" data-product-id = {{item.product_detail.product.id}}>{{ item.product_detail.price|intcomma }} {% trans "VND"%}</td>
                             <td>
                                 <div class="input-group quantity mt-4" style="width: 120px; align-items: center; justify-content: flex-start; margin-top: 0;">
                                     <div class="input-group-prepend">
@@ -125,7 +125,7 @@
                                         <p class="mb-0" id="total_price">{{total_price|intcomma }} {% trans "VND"%}</p>
                                     </div>
                                 </div>
-                            <button class="btn border-primary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4" type="button"><a href="{% url 'checkout' %}">{% trans "Proceed Checkout"%}</a></button>
+                            <button id="checkout-button" class="btn border-primary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4" type="button"><a href="{% url 'checkout' %}">{% trans "Proceed Checkout"%}</a></button>
                         </div>
                     </div>
                 </div>

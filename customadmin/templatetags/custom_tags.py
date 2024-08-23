@@ -38,7 +38,10 @@ def format_decimal(value):
 
 @register.simple_tag
 def admin_change_url(obj):
-    return reverse(f'admin:{obj._meta.app_label}_{obj._meta.model_name}_change', args=[obj.pk])
+    return reverse(
+        f'admin:{obj._meta.app_label}_{obj._meta.model_name}_change',
+        args=[
+            obj.pk])
 
 
 @register.filter
