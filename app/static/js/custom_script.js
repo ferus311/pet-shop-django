@@ -567,6 +567,190 @@
         modal.find('#product_id').val(productId);
     });
 
+    function addToCardFromModal(){
+        let productDetails = [];
+        var defaultPrice;
+        function loadOptions(productId) {
+            $.ajax({
+                url: '/get-options-for-cart-modal/',
+                data: {
+                    product_id: productId
+                },
+                success: function(response) {
+                    productDetails = response.product_details;
+                    resetOptions();
+                    updateOptions();
+                    displayPrice();
+                },
+                error: function() {
+                    alert('Failed to load options.');
+                }
+            });
+        }
+
+        function resetOptions() {
+            $('#size-options').empty();
+            $('#color-options').empty();
+            $('#size-select-label').hide();
+            $('#color-select-label').hide();
+            $('.price-wrapper').text('');
+            $("#submit-add-to-cart-btn").prop("disabled", true);
+        }
+
+        function updateOptions() {
+            const sizeOptions = new Set();
+            const colorOptions = new Set();
+            let hasSizeOptions = false;
+            let hasColorOptions = false;
+
+            productDetails.forEach(detail => {
+                if (detail.size) {
+                    sizeOptions.add(detail.size.trim().toLowerCase());
+                    hasSizeOptions = true;
+                }
+                if (detail.color) {
+                    colorOptions.add(detail.color.trim().toLowerCase());
+                    hasColorOptions = true;
+                }
+            });
+
+            if (hasSizeOptions) {
+                $('#size-options').empty();
+                sizeOptions.forEach(size => {
+                    $('#size-options').append(`<div class="option" data-size="${size}">${size}</div>`);
+                });
+                $('#size-select-label').show();
+            } else {
+                $('#size-select-label').hide();
+            }
+
+            if (hasColorOptions) {
+                $('#color-options').empty();
+                colorOptions.forEach(color => {
+                    $('#color-options').append(`<div class="option" data-color="${color}">${color}</div>`);
+                });
+                $('#color-select-label').show();
+            } else {
+                $('#color-select-label').hide();
+            }
+            if (!hasSizeOptions && !hasColorOptions) {
+                $('.price-wrapper').text(defaultPrice);
+                $("#submit-add-to-cart-btn").prop("disabled", false);
+                $('#product_detail_id').val(productDetails[0].id);
+
+            }
+        }
+
+        $('#addToCartModal').on('show.bs.modal', function(event) {
+            const button = $(event.relatedTarget);
+            const productId = button.data('product-id');
+            defaultPrice = button.data('default-price');
+            loadOptions(productId);
+        });
+
+        $(document).on('click', '#size-options .option', function() {
+            const $this = $(this);
+            const selectedSize = $this.data('size');
+
+            if ($this.hasClass('selected')) {
+                $this.removeClass('selected');
+                $('#color-options .option').removeClass('d-none');
+                updatePrice();
+            } else {
+                $('#size-options .option').removeClass('selected');
+                $this.addClass('selected');
+                updateAvailableColors(selectedSize);
+                updatePrice();
+            }
+        });
+
+        $(document).on('click', '#color-options .option', function() {
+            const $this = $(this);
+            const selectedColor = $this.data('color');
+
+            if ($this.hasClass('selected')) {
+                $this.removeClass('selected');
+                $('#size-options .option').removeClass('d-none');
+                updatePrice();
+            } else {
+                $('#color-options .option').removeClass('selected');
+                $this.addClass('selected');
+                updateAvailableSizes(selectedColor);
+                updatePrice();
+            }
+        });
+
+        function updateAvailableColors(selectedSize) {
+            $('#color-options .option').each(function() {
+                const color = $(this).data('color');
+                $(this).toggleClass('d-none', selectedSize && !isColorAvailable(selectedSize, color));
+            });
+        }
+
+        function updateAvailableSizes(selectedColor) {
+            $('#size-options .option').each(function() {
+                const size = $(this).data('size');
+                $(this).toggleClass('d-none', selectedColor && !isSizeAvailable(selectedColor, size));
+            });
+        }
+
+        function isColorAvailable(size, color) {
+            size = size.trim().toLowerCase();
+            color = color.trim().toLowerCase();
+            return productDetails.some(detail => detail.size && detail.size.trim().toLowerCase() === size && detail.color && detail.color.trim().toLowerCase() === color);
+        }
+
+        function isSizeAvailable(color, size) {
+            size = size.trim().toLowerCase();
+            color = color.trim().toLowerCase();
+            return productDetails.some(detail => detail.color && detail.color.trim().toLowerCase() === color && detail.size && detail.size.trim().toLowerCase() === size);
+        }
+
+        function updatePrice() {
+            const selectedSize = $('#size-options .option.selected').data('size');
+            const selectedColor = $('#color-options .option.selected').data('color');
+            const detail = productDetails.find(d =>
+                (!d.size || d.size.trim().toLowerCase() === selectedSize) &&
+                (!d.color || d.color.trim().toLowerCase() === selectedColor)
+            );
+
+            if (detail) {
+                console.log(detail);
+                $('.price-wrapper').text( detail.price);
+                $('#product_detail_id').val(detail.id);
+                $("#submit-add-to-cart-btn").prop("disabled", false);
+            }
+        }
+        function displayPrice() {
+            if (productDetails.length > 0) {
+                $('.price-wrapper').text(defaultPrice);
+            }
+        }
+        $('#submit-add-to-cart-btn').on('click', function(event) {
+            const productDetailId = $('#product_detail_id').val();
+            const quantity = $('#quantity').val() || 1;
+            $.ajax({
+                type: 'POST',
+                url: '/add-to-cart/',
+                data: {
+                    'product_detail_id': productDetailId,
+                    'quantity': quantity,
+                },
+                success: function(response) {
+                    location.reload();
+                },
+                error: function(error) {
+                    console.error('Error adding item to cart:', error);
+                    location.reload();
+                }
+            });
+
+        });
+
+
+    }
+    addToCardFromModal();
+
 
     function fetchAvailableVouchers() {
         $.ajax({
@@ -683,4 +867,41 @@
         $form.submit();
     }
 
+
+    $('.form').on('submit', function(event) {
+        let allValid = true;
+
+        $('input.required').each(function() {
+            const $input = $(this);
+            const $errorMessage = $input.next('.error-message');
+            if ($input.val().trim() === '') {
+                allValid = false;
+                $errorMessage.show();
+                $input.addClass('error');
+            } else {
+                $input.removeClass('error');
+                $errorMessage.hide();
+            }
+        });
+
+        if (!allValid) {
+            event.preventDefault();
+        }
+    });
+
+    $('input.required').on('blur', function() {
+        const $input = $(this);
+        const $errorMessage = $input.next('.error-message');
+        if ($input.val().trim() === '') {
+            $input.addClass('error');
+            $errorMessage.show();
+        } else {
+            $input.removeClass('error');
+            $errorMessage.hide();
+        }
+    });
+    $('.btn-cart').on('click', function() {
+        var productId = $(this).data('product-id');
+        $('#addToCartModal' + productId).modal('show');
+    });
 })(jQuery);

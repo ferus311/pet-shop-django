@@ -277,9 +277,11 @@ def get_product_detail_id(request):
 @login_required
 @require_POST
 @csrf_exempt
-def add_to_cart(request):
+def add_to_cart(request, product_detail_id=None):
     quantity = int(request.POST.get('quantity', 1))
-    product_detail_id = request.POST.get('product_detail_id')
+
+    if product_detail_id is None:
+        product_detail_id = request.POST.get('product_detail_id')
 
     product_detail = ProductDetail.objects.get(id=product_detail_id)
 
@@ -298,6 +300,7 @@ def add_to_cart(request):
         new_quantity = quantity
 
     if new_quantity > product_detail.remain_quantity:
+        cart_details.delete()
         messages.error(request, _('Sorry, We have ran out of this type'))
         return JsonResponse({'success': False, 'message': _(
             'Sorry, We have ran out of this type')}, status=400)
@@ -520,6 +523,22 @@ def checkout_view(request):
         "OPENCAGE_API_KEY": OPENCAGE_API_KEY,
     }
     return render(request, 'app/checkout.html', context=context)
+
+
+def get_options_for_cart_modal(request):
+    if request.method == 'GET':
+        product_id = request.GET.get('product_id')
+        product = get_object_or_404(Product, pk=product_id)
+        product_details = ProductDetail.objects.filter(product=product)
+        options = [{
+            'id': item.id,
+            'size': item.size,
+            'color': item.color,
+            'price': item.price,
+            'remain_quantity': item.remain_quantity
+        } for item in product_details]
+        return JsonResponse({'product_details': options})
+    return JsonResponse({"error": _("Invalid request method")}, status=400)
 
 
 @login_required
@@ -753,7 +772,7 @@ def submit_review(request):
 @login_required
 def voucher_list(request):
     user = request.user
-    vouchers = Voucher.objects.all()
+    vouchers = Voucher.objects.filter(Q(user=user) | Q(is_global=True))
     voucher_histories = VoucherHistory.objects.filter(user=user)
     current_year = timezone.now().year
 

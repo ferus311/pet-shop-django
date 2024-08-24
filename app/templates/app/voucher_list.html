@@ -18,7 +18,7 @@
             <div class="col-md-2">
                 <select name="voucher_status" class="form-select custom-scroll">
                     {% for value, label in voucher_status_choices %}
-                        <option value="{{ value }}" 
+                        <option value="{{ value }}"
                             {% if request.GET.voucher_status == value %}
                                 selected
                             {% elif not request.GET.voucher_status and value == 'USABLE' %}
