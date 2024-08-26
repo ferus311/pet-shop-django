@@ -20,7 +20,7 @@
           <div>{{ cl.formset.management_form }}</div>
         {% endif %}
 
-        {% if action_form and actions_on_top and cl.show_admin_actions %}{% admin_actions %}{% endif %}
+        {% if action_form and actions_on_top and cl.show_admin_actions and opts.model_name != 'customuser' %}{% admin_actions %}{% endif %}
 
         <!-- Hiển thị bảng dữ liệu -->
         <table class="table table-bordered">
@@ -40,7 +40,9 @@
                 {% endif %}
               {% endfor %}
               <th>{{ _("Actions") }}</th> <!-- Cột Actions -->
-              <th>{{ _("Select") }}</th> <!-- Cột Select mới -->
+              {% if opts.model_name != 'customuser' %}
+                <th>{{ _("Select") }}</th> <!-- Cột Select mới -->
+              {% endif %}
             </tr>
           </thead>
           <tbody>
@@ -66,16 +68,18 @@
                     <a href="{% url 'admin:'|add:opts.app_label|add:'_'|add:opts.model_name|add:'_change' obj.pk %}" class="btn btn-info btn-sm me-2" style="flex: 1;">
                       {{ _("Edit") }}
                     </a>
-                    <a href="{% url 'admin:'|add:opts.app_label|add:'_'|add:opts.model_name|add:'_delete' obj.pk %}" class="btn btn-danger btn-sm" style="flex: 1;">
-                      {{ _("Delete") }}
-                    </a>
-                  </div>
-                </td>
-                <td class="text-center">
-                  {% if obj.pk %}
-                    <input type="checkbox" name="_selected_action" value="{{ obj.pk }}" class="form-check-input">
-                  {% endif %}
-                </td>
+                    {% if opts.model_name != 'customuser' %}
+                      <a href="{% url 'admin:'|add:opts.app_label|add:'_'|add:opts.model_name|add:'_delete' obj.pk %}" class="btn btn-danger btn-sm" style="flex: 1;">
+                        {{ _("Delete") }}
+                      </a>
+                    </div>
+                  </td>
+                  <td class="text-center">
+                    {% if obj.pk %}
+                      <input type="checkbox" name="_selected_action" value="{{ obj.pk }}" class="form-check-input">
+                    {% endif %}
+                  </td>
+                {% endif %}
               </tr>
             {% empty %}
               <tr>
@@ -85,7 +89,7 @@
           </tbody>
         </table>
 
-        {% if action_form and actions_on_bottom and cl.show_admin_actions %}{% admin_actions %}{% endif %}
+        {% if action_form and actions_on_bottom and cl.show_admin_actions and opts.model_name != 'customuser' %}{% admin_actions %}{% endif %}
 
         {% block pagination %}{% pagination cl %}{% endblock %}
       </div>
