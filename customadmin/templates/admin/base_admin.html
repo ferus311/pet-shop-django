@@ -20,8 +20,20 @@
     <link href="{% static 'admin/asset/css/sb-admin-2.min.css' %}" rel="stylesheet">
     <link href="{% static 'admin/asset/css/base_site.css' %}" rel="stylesheet">
     <link href="{% static 'admin/asset/css/image_preview_input.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/alert.css' %}" />
 </head>
 <body>
+{% if messages %}
+<div class="message-container">
+    <div class="container mt-3">
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
 {% block body %}
 {% endblock %}    
 
@@ -42,7 +54,7 @@
     <script src="{% static 'admin/asset/js/demo/chart-area-demo.js' %}"></script>
     <script src="{% static 'admin/asset/js/demo/chart-pie-demo.js' %}"></script>
 
-
+    <script src="{% static 'js/alert-message.js' %}"></script>
 
 </body>
 
