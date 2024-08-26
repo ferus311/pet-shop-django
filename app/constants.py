@@ -43,6 +43,13 @@ CITIES = [
     'hcm city',
     'hcmcity']
 
+VOUCHER_STATUS_CHOICES = [
+    ('USABLE', _('Usable')),
+    ('EXPIRED', _('Expired')),
+    ('UPCOMING', _('Upcoming')),
+    ('USED', _('Used')),
+]
+
 DEFAULT_USER_AVATAR = "image/upload/v1723017084/wlwartuoohu21c2wzu8k.png"
 MAX_LENGTH_NAME = 255
 MAX_LENGTH_PHONENUM = 10

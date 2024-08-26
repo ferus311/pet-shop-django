@@ -4,9 +4,9 @@ from unittest.mock import patch
 from app.constants import CITIES
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
-from app.models import Cart, CartDetail, ProductDetail, Product, Category
-from django.test import TestCase
+from django.test import TestCase, Client
 from django.urls import reverse
+from app.models import *
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
@@ -118,7 +118,10 @@ class SignUpTests(TestCase):
         })
         self.assertEqual(response.status_code, 200)
         self.assertFormError(
-            response, 'form', 'default_phone_number', 'Ensure this value has at most 10 characters (it has 12).')
+            response,
+            'form',
+            'default_phone_number',
+            'Ensure this value has at most 10 characters (it has 12).')
 
     def test_signup_invalid_email(self):
         """Test đăng ký với email không hợp lệ"""
@@ -329,3 +332,174 @@ class RemoveCartItemTests(TestCase):
             'error': 'An error occurred: Unexpected Error'
         }
         self.assertJSONEqual(response.content, expected_response)
+
+
+class GetAvailableVouchersTests(TestCase):
+    def setUp(self):
+        self.user = CustomUser.objects.create_user(
+            username='testuser', password='12345')
+        self.category = Category.objects.create(name='Test Category')
+        self.product = Product.objects.create(
+            name='Test Product',
+            category=self.category,
+            price=100,
+            average_rating=4.5,
+            sold_quantity=10)
+        self.product_detail = ProductDetail.objects.create(
+            product=self.product, size='M', color='Red', price=100, remain_quantity=10)
+        self.cart = Cart.objects.create(user=self.user, total=100)
+        self.cart_detail = CartDetail.objects.create(
+            cart=self.cart, product_detail=self.product_detail, quantity=1)
+        self.voucher = Voucher.objects.create(
+            discount=20,
+            min_amount=50.0,
+            started_at=timezone.localtime() - timezone.timedelta(days=1),
+            ended_at=timezone.localtime() + timezone.timedelta(days=1),
+            is_global=True
+        )
+        self.voucher.category.add(self.category)
+        self.client.login(username='testuser', password='12345')
+
+    def test_get_available_vouchers_success(self):
+        response = self.client.get(reverse('get_available_vouchers'))
+        self.assertEqual(response.status_code, 200)
+        vouchers = response.json()['vouchers']
+        self.assertEqual(len(vouchers), 1)
+        self.assertEqual(vouchers[0]['id'], self.voucher.id)
+        self.assertEqual(vouchers[0]['discount'], 20)
+        self.assertEqual(vouchers[0]['min_amount'], 50.0)
+        self.assertTrue('Test Category' in vouchers[0]['categories'])
+
+    def test_no_vouchers_due_to_min_amount(self):
+        self.voucher.min_amount = 1000.0
+        self.voucher.save()
+
+        response = self.client.get(reverse('get_available_vouchers'))
+        self.assertEqual(response.status_code, 200)
+        vouchers = response.json()['vouchers']
+        self.assertEqual(len(vouchers), 0)
+
+    def test_voucher_history_exclusion(self):
+        VoucherHistory.objects.create(user=self.user, voucher=self.voucher)
+
+        response = self.client.get(reverse('get_available_vouchers'))
+        self.assertEqual(response.status_code, 200)
+        vouchers = response.json()['vouchers']
+        self.assertEqual(len(vouchers), 0)
+
+
+class VoucherListViewTests(TestCase):
+    def setUp(self):
+        # Tạo người dùng
+        self.user = CustomUser.objects.create_user(
+            username='testuser', password='12345')
+        self.client = Client()
+        self.client.login(username='testuser', password='12345')
+
+        # Tạo danh mục
+        self.category_cat = Category.objects.create(name='Cat')
+        self.category_dog = Category.objects.create(name='Dog')
+
+        # Tạo sản phẩm và chi tiết sản phẩm
+        self.product_cat = Product.objects.create(
+            name='Cat Food',
+            category=self.category_cat,
+            price=100,
+            average_rating=4.5)
+        self.product_detail_cat = ProductDetail.objects.create(
+            product=self.product_cat, size='M', color='Red', price=100, remain_quantity=10)
+
+        self.product_dog = Product.objects.create(
+            name='Dog Food',
+            category=self.category_dog,
+            price=150,
+            average_rating=4.0)
+        self.product_detail_dog = ProductDetail.objects.create(
+            product=self.product_dog, size='L', color='Blue', price=150, remain_quantity=5)
+
+        # Tạo giỏ hàng và chi tiết giỏ hàng
+        self.cart = Cart.objects.create(user=self.user, total=100)
+        self.cart_detail_cat = CartDetail.objects.create(
+            cart=self.cart, product_detail=self.product_detail_cat, quantity=1)
+        self.cart_detail_dog = CartDetail.objects.create(
+            cart=self.cart, product_detail=self.product_detail_dog, quantity=1)
+
+        self.voucher1 = Voucher.objects.create(
+            discount=10,
+            min_amount=50.0,
+            started_at=timezone.localtime() - timezone.timedelta(days=10),
+            ended_at=timezone.localtime() + timezone.timedelta(days=10),
+            is_global=True
+        )
+        self.voucher1.category.add(self.category_cat)
+
+        self.voucher2 = Voucher.objects.create(
+            discount=20,
+            min_amount=50.0,
+            started_at=timezone.localtime() - timezone.timedelta(days=20),
+            ended_at=timezone.localtime() - timezone.timedelta(days=5),
+            is_global=True
+        )
+        self.voucher2.category.add(self.category_dog)
+
+        self.voucher_history = VoucherHistory.objects.create(
+            user=self.user, voucher=self.voucher1)
+
+    def test_voucher_list_view(self):
+        response = self.client.get(reverse('voucher_list'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'app/voucher_list.html')
+        self.assertIn('vouchers', response.context)
+        self.assertIn('voucher_histories', response.context)
+
+    def test_voucher_list_view_with_category_filter(self):
+        response = self.client.get(
+            reverse('voucher_list'), {
+                'category': self.category_cat.id})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context['vouchers']), 1)
+        self.assertEqual(response.context['vouchers'][0], self.voucher1)
+
+    def test_voucher_list_view_with_min_discount_filter(self):
+        response = self.client.get(
+            reverse('voucher_list'), {
+                'min_discount': 15})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context['vouchers']), 1)
+        self.assertEqual(response.context['vouchers'][0], self.voucher2)
+
+    def test_voucher_list_view_with_max_discount_filter(self):
+        response = self.client.get(
+            reverse('voucher_list'), {
+                'max_discount': 15})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context['vouchers']), 1)
+        self.assertEqual(response.context['vouchers'][0], self.voucher1)
+
+    def test_voucher_list_view_with_voucher_status_filter(self):
+        response = self.client.get(
+            reverse('voucher_list'), {
+                'voucher_status': 'EXPIRED'})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context['vouchers']), 1)
+        self.assertEqual(response.context['vouchers'][0], self.voucher2)
+
+        response = self.client.get(
+            reverse('voucher_list'), {
+                'voucher_status': 'USABLE'})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context['vouchers']), 1)
+        self.assertEqual(response.context['vouchers'][0], self.voucher1)
+
+        response = self.client.get(
+            reverse('voucher_list'), {
+                'voucher_status': 'UPCOMING'})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context['vouchers']), 0)
+
+        response = self.client.get(
+            reverse('voucher_list'), {
+                'voucher_status': 'USED'})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context['vouchers']), 1)
+        self.assertEqual(response.context['vouchers'][0], self.voucher1)

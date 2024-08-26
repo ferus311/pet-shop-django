@@ -28,7 +28,7 @@ from django.db.models import Count
 
 from .models import *
 from .forms import SignInForm, SignUpForm, OrderFilterForm, PasswordCheckForm, AvatarUploadForm, UserProfileForm
-from .constants import DEFAULT_DISPLAY_CATEGORIES, PAGINATE_BY, CITIES
+from .constants import DEFAULT_DISPLAY_CATEGORIES, PAGINATE_BY, CITIES, VOUCHER_STATUS_CHOICES
 from django.db import transaction
 
 
@@ -723,11 +723,10 @@ def voucher_list(request):
     vouchers = Voucher.objects.all()
     voucher_histories = VoucherHistory.objects.filter(user=user)
     current_year = timezone.now().year
+
     category_id = request.GET.get('category')
     if category_id:
-        vouchers = vouchers.filter(
-            models.Q(is_global=True) | models.Q(category__id=category_id)
-        )
+        vouchers = vouchers.filter(category__id=category_id)
 
     min_discount = request.GET.get('min_discount')
     if min_discount:
@@ -736,6 +735,20 @@ def voucher_list(request):
     max_discount = request.GET.get('max_discount')
     if max_discount:
         vouchers = vouchers.filter(discount__lte=max_discount)
+
+    voucher_status = request.GET.get('voucher_status')
+    now = timezone.now()
+    if voucher_status == 'EXPIRED':
+        vouchers = vouchers.filter(ended_at__lt=now)
+    elif voucher_status == 'USABLE':
+        vouchers = vouchers.filter(started_at__lte=now, ended_at__gte=now)
+    elif voucher_status == 'UPCOMING':
+        vouchers = vouchers.filter(started_at__gt=now)
+    elif voucher_status == 'USED':
+        used_voucher_ids = voucher_histories.values_list(
+            'voucher_id', flat=True)
+        vouchers = vouchers.filter(id__in=used_voucher_ids)
+
     vouchers_paginated = pagination(vouchers, request)
     voucher_histories_paginated = pagination(voucher_histories, request)
 
@@ -743,6 +756,7 @@ def voucher_list(request):
         'vouchers': vouchers_paginated,
         'voucher_histories': voucher_histories_paginated,
         "current_year": current_year,
+        "voucher_status_choices": VOUCHER_STATUS_CHOICES,
     }
     return render(request, 'app/voucher_list.html', context)
 
@@ -761,12 +775,15 @@ def get_available_vouchers(request):
         id__in=product_detail_ids).values_list(
         'category', flat=True).distinct()
 
+    now = timezone.localtime()
     vouchers = Voucher.objects.filter(
-        category__in=categories).order_by('-discount')
+        category__in=categories,
+        started_at__lte=now,
+        ended_at__gte=now
+    ).order_by('-discount')
     vouchers = vouchers.exclude(voucherhistory__user=user)
     vouchers = vouchers.filter(is_global=True) | vouchers.filter(user=user)
     vouchers = vouchers.filter(min_amount__lte=subtotal)
-
     category_map = {
         category.id: category.name for category in Category.objects.filter(
             id__in=categories)}
@@ -841,24 +858,6 @@ def apply_voucher(request):
     except Exception as e:
         error_message = _('An error occurred: ') + str(e)
         return JsonResponse({'success': False, 'error': error_message})
-
-
-def checkout_view(request):
-    cart, created = Cart.objects.get_or_create(
-        user=request.user, defaults={'total': 0})
-    cart_items = CartDetail.objects.filter(cart=cart)
-    for item in cart_items:
-        item.total = item.product_detail.price * item.quantity
-
-    subtotal = sum(
-        item.product_detail.price *
-        item.quantity for item in cart_items)
-
-    if subtotal == 0:
-        messages.error(
-            request,
-            'There is no products in cart. You cannot proceed to checkout.')
-        return redirect('cart')
 
 
 @login_required
