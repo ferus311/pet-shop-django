@@ -431,26 +431,31 @@ def cart_view(request):
     current_user = request.user
     cart_items, subtotal, shipping_fee, total_price = _calculate_cart_totals(
         current_user)
-    sizes = set()
-    colors = set()
+    product_details_dict = {}
+
     for item in cart_items:
         product_id = item.product_detail.product.id
         product = get_object_or_404(Product, pk=product_id)
         product_details = ProductDetail.objects.filter(product=product)
-        sizes.update(
-            product_details.values_list(
-                "size", flat=True).distinct())
-        colors.update(
-            product_details.values_list(
-                "color", flat=True).distinct())
+
+        sizes = product_details.values_list("size", flat=True).distinct()
+        colors = product_details.values_list("color", flat=True).distinct()
+
+        product_details_dict[product_id] = {
+            'sizes': list(sizes),
+            'colors': list(colors)
+        }
+
+        has_out_of_stock = any(
+            not item.product_detail or item.product_detail.remain_quantity == 0 for item in cart_items)
 
     context = {
         'cart_items': cart_items,
         'subtotal': subtotal,
         'shipping_fee': shipping_fee,
         'total_price': total_price,
-        'sizes': list(sizes),
-        'colors': list(colors)
+        'product_details_dict': product_details_dict,
+        'has_out_of_stock': has_out_of_stock,
     }
 
     return render(request, 'app/cart.html', context)
@@ -637,6 +642,31 @@ def update_quantity(request):
                     'discount_fee': discount_fee,
                     'message': _('Please select a voucher again.')
                 })
+        elif action == 'update_quantity':
+            new_quantity = int(request.POST.get('quantity'))
+            if new_quantity < 1:
+                cart_item.delete()
+                cart_items, subtotal, shipping_fee, total_price = _calculate_cart_totals(
+                    request.user)
+                discount_fee = 0
+                cart.total = subtotal
+                cart.save()
+                return JsonResponse({
+                    'success': True,
+                    'quantity': 0,
+                    'removed': True,
+                    'subtotal': subtotal,
+                    'total_price': total_price,
+                    'discount_fee': discount_fee,
+                    'message': _('Please select a voucher again.')
+                })
+            elif new_quantity <= product_detail.remain_quantity:
+                cart_item.quantity = new_quantity
+                cart_item.save()
+            else:
+                messages.error(request, _('Maximum product type available.'))
+                return JsonResponse({'success': False, 'error': _(
+                    'Quantity exceeds available stock.')})
         new_total = cart_item.quantity * product_detail.price
 
         cart_items, subtotal, shipping_fee, total_price = _calculate_cart_totals(
@@ -651,13 +681,13 @@ def update_quantity(request):
             'shipping_fee': shipping_fee,
             'total_price': total_price
         })
-    except ProductDetail.DoesNotExist:
-        return JsonResponse({'success': False,
-                             'error': _('Product detail does not exist.')})
+    except CartDetail.DoesNotExist:
+        return JsonResponse({'success': False, 'error': _(
+            'Product detail does not exist.')}, status=404)
     except Exception as e:
         messages.error(request, _('An error occurred: ') + str(e))
-        return JsonResponse({'success': False,
-                             'error': _('An error occurred: ') + str(e)})
+        return JsonResponse({'success': False, 'error': _(
+            'An error occurred: ') + str(e)}, status=500)
 
 
 @login_required

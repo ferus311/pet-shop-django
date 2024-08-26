@@ -503,3 +503,134 @@ class VoucherListViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.context['vouchers']), 1)
         self.assertEqual(response.context['vouchers'][0], self.voucher1)
+
+
+class UpdateQuantityTest(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.user = CustomUser.objects.create_user(
+            username='testuser', password='12345')
+        self.category = Category.objects.create(name='Test Category')
+        self.product = Product.objects.create(
+            name='Test Product',
+            category=self.category,
+            price=100,
+            average_rating=4.5,
+            sold_quantity=10)
+        self.product_detail = ProductDetail.objects.create(
+            product=self.product, size='M', color='Red', price=100, remain_quantity=10)
+        self.cart = Cart.objects.create(user=self.user, total=100)
+        self.cart_detail = CartDetail.objects.create(
+            cart=self.cart, product_detail=self.product_detail, quantity=1)
+        self.client.login(username='testuser', password='12345')
+
+    def test_update_quantity_success(self):
+        self.client.login(username='testuser', password='12345')
+        response = self.client.post(reverse('update_quantity'), {
+            'item_id': self.cart_detail.id,
+            'action': 'update_quantity',
+            'quantity': 5
+        })
+        self.cart_detail.refresh_from_db()
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(self.cart_detail.quantity, 5)
+
+    def test_update_quantity_exceeds_stock(self):
+        self.client.login(username='testuser', password='12345')
+        response = self.client.post(reverse('update_quantity'), {
+            'item_id': self.cart_detail.id,
+            'action': 'update_quantity',
+            'quantity': 15
+        })
+        self.cart_detail.refresh_from_db()
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            self.cart_detail.quantity,
+            1)  # Quantity should not change
+        self.assertContains(response, 'Quantity exceeds available stock.')
+
+    def test_update_quantity_remove_item(self):
+        self.client.login(username='testuser', password='12345')
+        response = self.client.post(reverse('update_quantity'), {
+            'item_id': self.cart_detail.id,
+            'action': 'update_quantity',
+            'quantity': 0
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(
+            CartDetail.objects.filter(
+                id=self.cart_detail.id).exists())
+
+    def test_update_quantity_invalid_item(self):
+        self.client.login(username='testuser', password='12345')
+        response = self.client.post(reverse('update_quantity'), {
+            'item_id': 9999,  # Non-existent item ID
+            'action': 'update_quantity',
+            'quantity': 5
+        })
+        self.assertEqual(response.status_code, 404)
+        self.assertIn(
+            'Product detail does not exist',
+            response.content.decode())
+
+
+class CartViewTest(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.user = CustomUser.objects.create_user(
+            username='testuser', password='12345')
+        self.category = Category.objects.create(name='Test Category')
+        self.product1 = Product.objects.create(
+            name='Test Product 1',
+            category=self.category,
+            price=100,
+            average_rating=4.5,
+            sold_quantity=10)
+        self.product2 = Product.objects.create(
+            name='Test Product 2',
+            category=self.category,
+            price=200,
+            average_rating=4.0,
+            sold_quantity=5)
+        self.product_detail1 = ProductDetail.objects.create(
+            product=self.product1, size='M', color='Red', price=100, remain_quantity=10)
+        self.product_detail2 = ProductDetail.objects.create(
+            product=self.product2, size='L', color='Blue', price=200, remain_quantity=5)
+        self.cart = Cart.objects.create(user=self.user, total=300)
+        self.cart_detail1 = CartDetail.objects.create(
+            cart=self.cart, product_detail=self.product_detail1, quantity=1)
+        self.cart_detail2 = CartDetail.objects.create(
+            cart=self.cart, product_detail=self.product_detail2, quantity=1)
+        self.client.login(username='testuser', password='12345')
+
+    def test_cart_view(self):
+        response = self.client.get(reverse('cart'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'app/cart.html')
+
+        # Check context data
+        self.assertIn('cart_items', response.context)
+        self.assertIn('subtotal', response.context)
+        self.assertIn('shipping_fee', response.context)
+        self.assertIn('total_price', response.context)
+        self.assertIn('product_details_dict', response.context)
+        self.assertIn('has_out_of_stock', response.context)
+
+        cart_items = response.context['cart_items']
+        self.assertEqual(len(cart_items), 2)
+
+        product_details_dict = response.context['product_details_dict']
+        self.assertIn(self.product1.id, product_details_dict)
+        self.assertIn(self.product2.id, product_details_dict)
+        self.assertEqual(
+            product_details_dict[self.product1.id]['sizes'], ['M'])
+        self.assertEqual(
+            product_details_dict[self.product1.id]['colors'], ['Red'])
+        self.assertEqual(
+            product_details_dict[self.product2.id]['sizes'], ['L'])
+        self.assertEqual(
+            product_details_dict[self.product2.id]['colors'], ['Blue'])
+
+        has_out_of_stock = response.context['has_out_of_stock']
+        self.assertFalse(has_out_of_stock)

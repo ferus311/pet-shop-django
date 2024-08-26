@@ -2,6 +2,7 @@
 {% load static %}
 {% load i18n %}
 {% load humanize %}
+{% load extra_filters %}
 {% block content %}
         <!-- Cart Page Start -->
         <div class="container-fluid pb-5">
@@ -21,31 +22,46 @@
                         </thead>
                         <tbody>
                           {% for item in cart_items %}
-                          <tr>
+                          {% if not item.product_detail or item.product_detail.remain_quantity == 0 %}
+                            <tr>
+                                <td colspan="7" class="text-center alert-text">
+                                    {% trans "Sorry, We have ran out of this type of product. Please remove and select another." %}
+                                </td>
+                            </tr>
+                           {% endif %}
+                            <tr id="row-{{ item.id }}" class="{% if not item.product_detail or item.product_detail.remain_quantity == 0 %}out-of-stock{% endif %}">
                             <td>{{ item.product_detail.product.name }}</td>
                             <td>
-                                {% if sizes %}
-                                    <select id="size-select-{{ item.id }}" class="form-select">
-                                        {% for size in sizes %}
-                                            <option value="{{ size }}" {% if size == item.product_detail.size %}selected{% endif %}>{{ size }}</option>
-                                        {% endfor %}
-                                    </select>                               
+                                {% with product_details_dict|get_item:item.product_detail.product.id as product_details %}
+                                {% if product_details.sizes %}
+                                <select id="size-select-{{ item.id }}" class="form-select">
+                                    {% for size in product_details.sizes %}
+                                    <option value="{{ size }}" {% if size == item.product_detail.size %}selected{% endif %}>{{ size }}</option>
+                                    {% endfor %}
+                                </select>
                                 {% else %}
-                                    {{ item.product_detail.size }}  
+                                <span>{{ item.product_detail.size }}</span>
                                 {% endif %}
                             </td>
                             <td>
-                                {% if colors %}
-                                    <select id="color-select-{{ item.id }}" class="form-select">
-                                        {% for color in colors %}
-                                            <option value="{{ color }}" {% if color == item.product_detail.color %}selected{% endif %}>{{ color }}</option>
-                                        {% endfor %}
-                                    </select>                               
+                                {% if product_details.colors %}
+                                <select id="color-select-{{ item.id }}" class="form-select">
+                                    {% for color in product_details.colors %}
+                                    <option value="{{ color }}" {% if color == item.product_detail.color %}selected{% endif %}>{{ color }}</option>
+                                    {% endfor %}
+                                </select>
                                 {% else %}
-                                    {{ item.product_detail.color }}  
+                                <span>{{ item.product_detail.color }}</span>
+                                {% endif %}
+                                {% endwith %}
+                            </td>
+                            <td id="price-{{ item.id }}" data-product-id="{{ item.product_detail.product.id }}">
+                                {% if not item.product_detail or item.product_detail.remain_quantity == 0 %}
+                                    0 VND
+                                {% else %}
+                                    {{ item.product_detail.price|intcomma }} {% trans "VND" %}
                                 {% endif %}
                             </td>
-                            <td id = "price-{{ item.id }}" data-product-id = {{item.product_detail.product.id}}>{{ item.product_detail.price|intcomma }} {% trans "VND"%}</td>
                             <td>
                                 <div class="input-group quantity mt-4" style="width: 120px; align-items: center; justify-content: flex-start; margin-top: 0;">
                                     <div class="input-group-prepend">
@@ -53,7 +69,7 @@
                                             <iconify-icon icon="ic:baseline-minus" width="1em" height="1em"></iconify-icon>
                                         </button>
                                     </div>
-                                    <input type="text" class="form-control form-control-sm text-center border-0" value="{{ item.quantity }}" id="quantity-{{ item.id }}" style="height: 2em; width: 3em; margin-left: -1.5em;" readonly>
+                                    <input type="text" class="form-control form-control-sm text-center border-0 quantity-input" value="{{ item.quantity }}" id="quantity-{{ item.id }}" data-item-id="{{ item.id }}" style="height: 2em; width: 3em; margin-left: -1.5em;">
                                     <div class="input-group-append">
                                         <button class="btn btn-sm btn-plus rounded-circle bg-light border d-flex align-items-center justify-content-center" type="button" style="width: 2em; height: 2em;" data-item-id="{{ item.id }}" data-action="increase">
                                             <iconify-icon icon="ic:baseline-plus" width="1em" height="1em"></iconify-icon>
@@ -61,8 +77,14 @@
                                     </div>
                                 </div>
                             </td>
-                            <td id="total-{{ item.id }}">{{ item.total|intcomma }} {% trans "VND" %}</td>
-                            <td>
+                            <td id="total-{{ item.id }}">
+                                {% if not item.product_detail or item.product_detail.remain_quantity == 0 %}
+                                    0 VND
+                                {% else %}
+                                    {{ item.total|intcomma }} {% trans "VND" %}
+                                {% endif %}
+                            </td>
+                            <td class>
                                 <button data-item-id="{{ item.id }}" class="btn btn-danger remove-item" type="button">
                                     {% trans "Remove" %}
                                 </button>
@@ -104,8 +126,14 @@
                                     Cart <span class="fw-normal">{% trans "Total"%}</span>
                                 </h1>
                                 <div class="d-flex justify-content-between mb-4">
-                                    <h5 class="mb-0 me-4">{% trans "Subtotal:"%}</h5>
-                                    <p class="mb-0" id="subtotal">{{subtotal|intcomma }} {% trans "VND" %}</p>
+                                    <h5 class="mb-0 me-4">{% trans "Subtotal:" %}</h5>
+                                    <p class="mb-0" id="subtotal">
+                                        {% if has_out_of_stock %}
+                                            0 {% trans "VND" %}
+                                        {% else %}
+                                            {{ subtotal|intcomma }} {% trans "VND" %}
+                                        {% endif %}
+                                    </p>
                                 </div>
                                 <div class="d-flex justify-content-between">
                                     <h5 class="mb-0 me-4">{% trans "Shipping" %}</h5>
@@ -120,9 +148,15 @@
                                     </div>
                                 </div>
                                 <div class="d-flex justify-content-between">
-                                    <h5 class="mb-0 me-4">{% trans "Total:"%}</h5>
+                                    <h5 class="mb-0 me-4">{% trans "Total:" %}</h5>
                                     <div class="">
-                                        <p class="mb-0" id="total_price">{{total_price|intcomma }} {% trans "VND"%}</p>
+                                        <p class="mb-0" id="total_price">
+                                            {% if has_out_of_stock %}
+                                                0 {% trans "VND" %}
+                                            {% else %}
+                                                {{ total_price|intcomma }} {% trans "VND" %}
+                                            {% endif %}
+                                        </p>
                                     </div>
                                 </div>
                             <button id="checkout-button" class="btn border-primary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4" type="button"><a href="{% url 'checkout' %}">{% trans "Proceed Checkout"%}</a></button>
