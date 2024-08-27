@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .forms import ProductForm, ProductDetailForm, BillForm, CustomUserForm, VoucherForm
+from .forms import ProductForm, ProductDetailForm, BillForm, CustomUserForm, VoucherForm, VoucherHistoryForm
 from .models import (
     CustomUser, Category, Product, ProductDetail, Bill, BillDetail,
     Comment, Voucher, VoucherHistory, Cart, CartDetail
@@ -89,6 +89,7 @@ class VoucherAdmin(admin.ModelAdmin):
 
 @admin.register(VoucherHistory)
 class VoucherHistoryAdmin(admin.ModelAdmin):
+    form = VoucherHistoryForm
     list_display = ('id', 'user', 'voucher')
     search_fields = ('user__username', 'voucher__id')
     ordering = ('user',)

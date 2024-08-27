@@ -3,7 +3,7 @@ import pyotp
 from .models import CustomUser
 from django import forms
 from django.utils.translation import gettext_lazy as _
-from .models import CustomUser, Product, ProductDetail, Bill, Voucher
+from .models import CustomUser, Product, ProductDetail, Bill, Voucher, VoucherHistory
 from .constants import (MAX_LENGTH_NAME, MAX_LENGTH_PASSWORD, REGEX_USERNAME,
                         REGEX_USERNAME, REGEX_PHONENUM, REGEX_EMAIL)
 from django.contrib.auth.forms import UserCreationForm
@@ -362,3 +362,17 @@ class PasswordCheckForm(forms.Form):
                     _("Passwords do not match!")
                 )
         return cleaned_data
+
+
+class VoucherHistoryForm(forms.ModelForm):
+    class Meta:
+        model = VoucherHistory
+        fields = '__all__'
+        widgets = {
+            'user': forms.Select(
+                attrs={
+                    'class': 'form-control'}),
+            'voucher': forms.Select(
+                attrs={
+                    'class': 'form-control'})
+        }
