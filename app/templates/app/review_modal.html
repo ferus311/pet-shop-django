@@ -2,7 +2,7 @@
 <div class="modal fade" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <form method="post" action="{% url 'submit_review' %}" enctype="multipart/form-data">
+            <form method="post" action="{% url 'submit_review' order_id=order.id %}" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="modal-header d-flex justify-content-between">
                     <h5 class="modal-title" id="reviewModalLabel">{% trans "Product Review" %}</h5>

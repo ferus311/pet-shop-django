@@ -64,9 +64,15 @@
                             <td>{{ detail.product_detail.price|floatformat:0|intcomma }} VND</td>
                             <td>{{ detail.quantity|multiply:detail.product_detail.price|floatformat:0|intcomma }} VND</td>
                             <td>
-                                <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#reviewModal" data-product-id
-                                ="{{ detail.product_detail.product.id }}"
-                                >{% trans "Reviews" %}</button>
+                                {% if order.status == 'Completed' %}
+                                    {% if detail.product_detail.product.id not in reviewed_products %}
+                                        <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#reviewModal" data-product-id="{{ detail.product_detail.product.id }}">
+                                            {% trans "Reviews" %}
+                                        </button>
+                                    {% else %}
+                                        <span class="badge badge-success badge-reviewed">{% trans "Reviewed" %}</span>
+                                    {% endif %}
+                                {% endif %}
                             </td>
                         </tr>
                         {% endfor %}
