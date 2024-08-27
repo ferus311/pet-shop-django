@@ -40,7 +40,7 @@
                             value="{{ query }}"
                             type="text"
                             class="form-control border-0 bg-transparent flex-grow-1"
-                            placeholder="Search for more than 10,000 products"
+                            placeholder="{% trans 'Search for more than 10,000 products' %}"
                             autocomplete="off"
                         />
                         <button type="submit" class="btn btn-primary btn-search">
@@ -52,10 +52,10 @@
             </div>
 
             <div
-                class="col-sm-8 col-lg-4 d-flex justify-content-end gap-5 align-items-center mt-4 mt-sm-0 justify-content-center justify-content-sm-end"
+                class="col-sm-8 col-lg-4 d-flex justify-content-end gap-5 align-items-center mt-4 mt-sm-0"
             >
                 {% if user.is_authenticated %}
-                <div class="support-box text-end d-none d-xl-block">
+                <div class="support-box text-end d-xl-block">
                     <span class="fs-6 secondary-font text-muted">{% trans 'Name' %}</span>
                     <h5 class="mb-0">{{user.first_name}} {{user.last_name}}</h5>
                 </div>
@@ -64,7 +64,7 @@
                     <button type="submit" class="btn btn-link" style="padding: 0;">{% trans "Logout"%}</button>
                   </form>
                 {% else %}
-                <div class="support-box text-end d-none d-xl-block mt-3">
+                <div class="support-box text-end  d-xl-block">
                     <form action="{% url 'sign-in' %}" method="get" class="d-inline">
                         <button type="submit" class="btn btn-primary me-2 text-uppercase fs-6">{% trans 'Sign In' %}</button>
                     </form>
@@ -101,7 +101,7 @@
 
                     <li>
                         <a
-                            href="#"
+                            href="{% url 'cart' %}"
                             class="mx-3"
                             data-bs-toggle="offcanvas"
                             data-bs-target="#offcanvasCart"
@@ -155,23 +155,50 @@
                     ></button>
                 </div>
                 <div class="offcanvas-body justify-content-between">
-                    {% if user.is_superuser %}
-                    <div class="d-flex justify-content-center align-items-center">
-                        <a href="{% url 'admin:index' %}" class="d-flex align-items-center mx-3">
-                            <iconify-icon
-                                icon="mdi:account-cog"
-                                class="fs-4"
-                            ></iconify-icon>
-                            <span class="ms-2">{% trans "ADMIN SITE" %}</span>
-                        </a>
+                    <div class="border-0 mb-0 d-flex align-items-center">
+                        <div>
+                            <form
+                                class="language-form"
+                                id="languageForm"
+                                action="{% url 'set_language' %}"
+                                method="post"
+                            >
+                                {% csrf_token %}
+                                <label class="language-label" for="language"
+                                    >{% trans "Lang" %}:</label
+                                >
+                                <select
+                                    class="language-select"
+                                    name="language"
+                                    id="language"
+                                    onChange="changeLanguage(this.value)"
+                                >
+                                    {% for lang_code, lange_name in LANGUAGES %} {% if lang_code == LANGUAGE_CODE %}
+                                    <option value="{{ lang_code }}" selected>
+                                        {{ lange_name }}
+                                    </option>
+                                    {% else %}
+                                    <option value="{{ lang_code }}">
+                                        {{ lange_name }}
+                                    </option>
+                                    {% endif %} {% endfor %}
+                                </select>
+                            </form>
+                        </div>
+                        {% if user.is_superuser %}
+                        <div class="d-flex justify-content-center align-items-center">
+                            <a href="{% url 'admin:index' %}" class="d-flex align-items-center mx-3">
+                                <iconify-icon
+                                    icon="mdi:account-cog"
+                                    class="fs-4"
+                                ></iconify-icon>
+                                <span class="ms-2">{% trans "ADMIN SITE" %}</span>
+                            </a>
+                        </div>
+                        {% endif %}
                     </div>
-                    {% else %}
-                    <div class="border-0 mb-0 me-5">
-                    </div>
-                    {% endif %}
-                    <ul
-                        class="navbar-nav menu-list list-unstyled d-flex gap-md-3 mb-0"
-                    >
+
+                    <ul class="navbar-nav menu-list list-unstyled d-flex gap-md-3 mb-0">
                         <li class="nav-item">
                             <a href="{% url 'index' %}" class="nav-link {% if request.resolver_match.url_name == 'index' %}active{% endif %}"
                                 >{% trans "Home" %}</a

@@ -180,7 +180,7 @@
 
 .out-of-stock {
     opacity: 0.5;
-    pointer-events: none; 
+    pointer-events: none;
 }
 
 .out-of-stock .remove-item {
@@ -190,4 +190,8 @@
 
 .alert-text {
     font-weight: bold;
+}
+
+.no-capitalize {
+    text-transform: none;
 }

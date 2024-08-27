@@ -147,5 +147,10 @@
         button.parent().parent().find('input').val(newVal);
     });
 
+    function changeLanguage(languageCode) {
+        const form = $('#languageForm');
+        form.find('input[name="language"]').val(languageCode);
+        form.submit();
+    }
 })(jQuery);
 

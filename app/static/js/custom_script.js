@@ -396,7 +396,7 @@
             contentType: 'application/json',
             success: function(response) {
                 if (response.success) {
-                    $button.closest('tr').remove(); 
+                    $button.closest('tr').remove();
                     $('#subtotal').text(`${formatNumberWithCommas(response.subtotal)} VND`);
                     $('#total_price').text(`${formatNumberWithCommas(response.total_price)} VND`);
                     $('#discount_fee').text(`${formatNumberWithCommas(response.discount_fee)} VND`);
@@ -578,17 +578,17 @@
                 const selectVoucherText = voucherSelect.data('select-voucher');
                 const forEveryoneText = voucherSelect.data('for-everyone');
                 const specialForYouText = voucherSelect.data('special-for-you');
-            
+
                 voucherSelect.empty();
                 voucherSelect.append('<option value="" data-discount="0">' + selectVoucherText + '</option>');
-            
+
                 vouchers.forEach(function(voucher) {
                     const categories = voucher.categories.join(', ');
                     const formattedDiscount = voucher.discount.toLocaleString('en-US');
                     const availability = voucher.is_global ? forEveryoneText : specialForYouText;
                     const minAmount = voucher.min_amount.toLocaleString('en-US');
                     const optionText = categories + ' - ' + formattedDiscount + '%' + availability + ' - Min: ' + minAmount + ' VND';
-            
+
                     const option = $('<option></option>')
                         .val(voucher.id)
                         .data('discount', voucher.discount)
@@ -596,10 +596,10 @@
                         .data('categories', categories)
                         .data('is_global', voucher.is_global)
                         .html(optionText);
-            
+
                     voucherSelect.append(option);
                 });
-                vouchersFetched = true; 
+                vouchersFetched = true;
             },
             error: function(error) {
                 console.error('Error fetching vouchers:', error);
@@ -620,10 +620,10 @@
             const minAmount = $('#voucher-select option:selected').data('minAmount');
             const subtotalText = $('#subtotal').text().replace(/,/g, '');
             const subtotal = parseFloat(subtotalText);
-    
+
             const shippingFeeText = $('#shipping_fee').text().replace(/[^0-9.]/g, '');
             const shippingFee = parseFloat(shippingFeeText);
-    
+
             $.ajax({
                 url: '/apply_voucher/',
                 type: 'POST',
@@ -637,7 +637,7 @@
                     if (response.success) {
                         if (subtotal >= minAmount) {
                             const discount_fee = response.discount_amount;
-                            const totalPrice = response.final_price + shippingFee;         
+                            const totalPrice = response.final_price + shippingFee;
                             $('#discount_fee').text('-' + formatPrice(discount_fee) + ' VND');
                             $('#total_price').text(formatPrice(totalPrice) + ' VND');
                         } else {
@@ -664,8 +664,23 @@
             const confirmationMessage = cancelButton.data('cancel-confirmation');
             const confirmation = confirm(confirmationMessage);
             if (confirmation) {
-                this.submit(); 
+                this.submit();
             }
         }
     });
+    window.changeLanguage = function(languageCode) {
+        const $form = $('#languageForm');
+        $form.find('input[name="language"]').val(languageCode);
+
+        document.body.classList.remove('english-font', 'vietnamese-font');
+
+        if (languageCode === 'en') {
+            document.body.classList.add('english-font');
+        } else if (languageCode === 'vi') {
+            document.body.classList.add('vietnamese-font');
+        }
+
+        $form.submit();
+    }
+
 })(jQuery);
