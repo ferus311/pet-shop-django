@@ -324,46 +324,61 @@
         return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
 
-    $('.btn-plus, .btn-minus').on('click', function() {
-        const itemId = $(this).data('item-id');
-        const action = $(this).data('action');
-        const $button = $(this);
-        const quantityInput = $(`#quantity-${itemId}`);
-        const totalElement = $(`#total-${itemId}`);
-        const errorMessage = $(`#error-message-${itemId}`);
+    function updateCartQuantity(action, itemId, quantity = null) {
+        const data = {
+            'item_id': itemId,
+            'action': action,
+            'csrfmiddlewaretoken': getCookie('csrftoken')
+        };
+        if (quantity !== null) {
+            data.quantity = quantity;
+        }
 
         $.ajax({
             url: '/update-quantity/',
             type: 'POST',
-            data: {
-                'item_id': itemId,
-                'action': action,
-                'csrfmiddlewaretoken': getCookie('csrftoken')
-            },
+            data: data,
             success: function(response) {
                 if (response.success) {
+                    const quantityInput = $(`#quantity-${itemId}`);
+                    const totalElement = $(`#total-${itemId}`);
+                    const errorMessage = $(`#error-message-${itemId}`);
+
                     if (response.removed) {
-                        $button.closest('tr').remove();   
-                        $('#discount_fee').text(`${formatNumberWithCommas(response.discount_fee)} VND`);                
+                        $('#row-' + itemId).remove();
                     } else {
                         quantityInput.val(response.quantity);
                         totalElement.text(formatNumberWithCommas(response.total) + ' VND');
-                        $('#discount_fee').text(`${formatNumberWithCommas(response.discount_fee)} VND`);  
                     }
+
                     $('#subtotal').text(formatNumberWithCommas(response.subtotal) + ' VND');
                     $('#total_price').text(formatNumberWithCommas(response.total_price) + ' VND');
-                    console.log('Cart updated successfully:', response.subtotal);
-                    console.log('Cart updated successfully:', response.total_price);
+                    $('#discount_fee').text(formatNumberWithCommas(response.discount_fee) + ' VND');
                 } else {
-                    errorMessage.text(response.error);
+                    console.log(response.error);
                     location.reload();
                 }
             },
             error: function(xhr, errmsg, err) {
+                const errorMessage = $(`#error-message-${itemId}`);
                 errorMessage.text(`Error: ${errmsg}`);
                 location.reload();
             }
         });
+    }
+
+    // Lắng nghe sự kiện click cho nút tăng và giảm
+    $('.btn-plus, .btn-minus').on('click', function() {
+        const itemId = $(this).data('item-id');
+        const action = $(this).data('action');
+        updateCartQuantity(action, itemId);
+    });
+
+    // Lắng nghe sự kiện thay đổi cho input số lượng
+    $('.quantity-input').on('change', function() {
+        const itemId = $(this).data('item-id');
+        const newQuantity = parseInt(this.value, 10);
+        updateCartQuantity('update_quantity', itemId, newQuantity);
     });
 
     $('.remove-item').on('click', function() {

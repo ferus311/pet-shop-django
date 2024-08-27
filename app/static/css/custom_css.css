@@ -177,3 +177,17 @@
     justify-content: center;
     align-items: center;
 }
+
+.out-of-stock {
+    opacity: 0.5;
+    pointer-events: none; 
+}
+
+.out-of-stock .remove-item {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.alert-text {
+    font-weight: bold;
+}
