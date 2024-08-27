@@ -117,11 +117,26 @@ CSS STRUCTURE:
 
 /* Fonts */
 :root {
-  --body-font: 'Chilanka', cursive;
-  --heading-font: 'Chilanka', cursive;
-  --secondary-font: 'Montserrat', sans-serif;
+    --body-font: 'LXGW WenKai TC', serif;
+    --heading-font: 'LXGW WenKai TC', serif;
+  }
+
+.english-font {
+    --body-font: 'Chilanka', cursive;
+    --heading-font: 'Chilanka', cursive;
 }
 
+.vietnamese-font {
+    --body-font: 'LXGW WenKai TC', serif;
+    --heading-font: 'LXGW WenKai TC', serif;
+}
+body {
+    font-family: var(--body-font);
+  }
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--heading-font);
+  }
 
 body {
   --bs-link-color: #333;
@@ -135,7 +150,7 @@ body {
 
   --bs-light-rgb: 248, 248, 248;
 
-  --bs-font-sans-serif: 'Chilanka', cursive;
+  /* --bs-font-sans-serif: 'Chilanka', cursive; */
   --bs-body-font-family: var(--bs-font-sans-serif);
   --bs-body-font-size: 1rem;
   --bs-body-font-weight: 400;

@@ -744,7 +744,10 @@ def submit_review(request):
         )
 
         messages.success(request, _('Thank you for reviewing the product!'))
-        return redirect('order_detail')
+
+        # Lấy URL của trang trước đó
+        previous_url = request.META.get('HTTP_REFERER', '/')
+        return redirect(previous_url)
 
 
 @login_required

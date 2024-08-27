@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-16 11:13+0700\n"
+"POT-Creation-Date: 2024-08-27 11:18+0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,867 +18,1573 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: .\app\constants.py:4
+#: app/constants.py:4
 msgid "Male"
 msgstr "Nam"
 
-#: .\app\constants.py:5
+#: app/constants.py:5
 msgid "Female"
 msgstr "Nữ"
 
-#: .\app\constants.py:6
+#: app/constants.py:6
 msgid "Other"
 msgstr "Khác"
 
-#: .\app\constants.py:10
+#: app/constants.py:10
 msgid "None"
 msgstr "Rỗng"
 
-#: .\app\constants.py:20
+#: app/constants.py:20
 msgid "Wait for pay"
 msgstr "Chờ thanh toán"
 
-#: .\app\constants.py:21
+#: app/constants.py:21
 msgid "Wait for preparing"
 msgstr "Chờ chuẩn bị"
 
-#: .\app\constants.py:22
+#: app/constants.py:22
 msgid "Wait for delivery"
 msgstr "Chờ giao hàng"
 
-#: .\app\constants.py:23
+#: app/constants.py:23
 msgid "Completed"
 msgstr "Hoàn thành"
 
-#: .\app\constants.py:24
+#: app/constants.py:24
 msgid "Cancelled"
 msgstr "Đã hủy"
 
-#: .\app\constants.py:28
+#: app/constants.py:28
 msgid "Cash"
 msgstr "Tiền mặt"
 
-#: .\app\constants.py:29
+#: app/constants.py:29
 msgid "Visa"
 msgstr "Thẻ Visa"
 
-#: .\app\constants.py:30
+#: app/constants.py:30
 msgid "Bank"
 msgstr "Ngân hàng"
 
-#: .\app\forms.py:27 .\app\forms.py:55
+#: app/constants.py:47
+msgid "Usable"
+msgstr "Có thể sử dụng"
+
+#: app/constants.py:48
+msgid "Expired"
+msgstr "Hết hạn"
+
+#: app/constants.py:49
+msgid "Upcoming"
+msgstr "Sắp tới"
+
+#: app/constants.py:50
+msgid "Used"
+msgstr "Đã sử dụng"
+
+#: app/forms.py:34 app/forms.py:62
 msgid "Username can only contain alphanumeric characters and the underscore."
 msgstr "Tên người dùng chỉ có thể chứa ký tự chữ và số và dấu gạch dưới."
 
-#: .\app\forms.py:43 .\app\models.py:32
-#, fuzzy
-#| msgid "A user with that username already exists."
+#: app/forms.py:50 app/models.py:32
 msgid "A user with that email already exists."
-msgstr "Người dùng với tên đăng nhập đó đã tồn tại."
+msgstr "Người dùng với email đó đã tồn tại."
 
-#: .\app\forms.py:45
+#: app/forms.py:52
 msgid "Email invalid."
-msgstr ""
+msgstr "Email không hợp lệ."
 
-#: .\app\forms.py:52 .\app\models.py:25
+#: app/forms.py:59 app/models.py:25
 msgid "A user with that username already exists."
 msgstr "Người dùng với tên đăng nhập đó đã tồn tại."
 
-#: .\app\forms.py:63 .\app\models.py:56
+#: app/forms.py:70 app/forms.py:318 app/models.py:56
 msgid "Phone number must be 10 digits and start with 0."
 msgstr "Số điện thoại phải có 10 chữ số và bắt đầu bằng số 0."
 
-#: .\app\models.py:27
+#: app/forms.py:337 app/templates/app/profile.html:53
+msgid "Current Password"
+msgstr "Mật khẩu hiện tại"
+
+#: app/forms.py:342 app/templates/app/profile.html:58
+msgid "New Password"
+msgstr "Mật khẩu mới"
+
+#: app/forms.py:346
+msgid "Password must be at least 8 characters long."
+msgstr "Mật khẩu phải dài ít nhất 8 ký tự."
+
+#: app/forms.py:349 app/templates/app/profile.html:62
+msgid "Confirm Password"
+msgstr "Xác nhận mật khẩu"
+
+#: app/forms.py:362 app/templates/app/profile.html:65
+msgid "Passwords do not match!"
+msgstr "Mật khẩu không khớp!"
+
+#: app/models.py:27
 msgid "username"
 msgstr "tên đăng nhập"
 
-#: .\app\models.py:34
+#: app/models.py:34
 msgid "email"
 msgstr "email"
 
-#: .\app\models.py:37
+#: app/models.py:37
 msgid "first name"
 msgstr "tên"
 
-#: .\app\models.py:39
+#: app/models.py:39
 msgid "last name"
 msgstr "họ"
 
-#: .\app\models.py:45
+#: app/models.py:45
 msgid "gender"
 msgstr "giới tính"
 
-#: .\app\models.py:48
+#: app/models.py:48
 msgid "avatar"
 msgstr "Ảnh đại diện"
 
-#: .\app\models.py:50
+#: app/models.py:50
 msgid "default address"
 msgstr "địa chỉ mặc định"
 
-#: .\app\models.py:61
+#: app/models.py:61
 msgid "default phone number"
 msgstr "số điện thoại mặc định"
 
-#: .\app\models.py:65
+#: app/models.py:65
 msgid "banned status"
-msgstr "bị chặn"
+msgstr "trạng thái bị chặn"
 
-#: .\app\models.py:72
+#: app/models.py:72
 msgid "OTP secret"
 msgstr "Mã OTP"
 
-#: .\app\models.py:77
+#: app/models.py:77
 msgid "OTP created at"
 msgstr "Mã OTP được tạo vào lúc"
 
-#: .\app\models.py:80 .\app\models.py:130 .\app\models.py:166
-#: .\app\models.py:205 .\app\models.py:248 .\app\models.py:299
-#: .\app\models.py:323 .\app\models.py:349 .\app\models.py:389
-#: .\app\models.py:437 .\app\models.py:461
+#: app/models.py:80 app/models.py:130 app/models.py:166 app/models.py:205
+#: app/models.py:248 app/models.py:299 app/models.py:323 app/models.py:349
+#: app/models.py:389 app/models.py:423 app/models.py:439 app/models.py:463
 msgid "created at"
 msgstr "được tạo vào lúc"
 
-#: .\app\models.py:82 .\app\models.py:134 .\app\models.py:168
-#: .\app\models.py:209 .\app\models.py:250 .\app\models.py:301
-#: .\app\models.py:325 .\app\models.py:351 .\app\models.py:391
-#: .\app\models.py:439 .\app\models.py:463
+#: app/models.py:82 app/models.py:134 app/models.py:168 app/models.py:209
+#: app/models.py:250 app/models.py:301 app/models.py:325 app/models.py:351
+#: app/models.py:391 app/models.py:441 app/models.py:465
 msgid "updated at"
 msgstr "được cập nhật vào lúc"
 
-#: .\app\models.py:106
+#: app/models.py:106
 msgid "Email must end with @gmail.com"
 msgstr "Email phải kết thúc bằng @gmail.com"
 
-#: .\app\models.py:110
+#: app/models.py:110
 msgid "Email prefix cannot be the same as username prefix."
 msgstr "Tiền tố email không thể giống với tiền tố tên đăng nhập."
 
-#: .\app\models.py:117 .\app\models.py:271 .\app\models.py:343
-#: .\app\models.py:385 .\app\models.py:419 .\app\models.py:433
+#: app/models.py:117 app/models.py:271 app/models.py:343 app/models.py:385
+#: app/models.py:419 app/models.py:435
 msgid "user"
 msgstr "người dùng"
 
-#: .\app\models.py:118
+#: app/models.py:118
 msgid "users"
 msgstr "người dùng"
 
-#: .\app\models.py:125 .\app\models.py:151 .\app\models.py:200
+#: app/models.py:125 app/models.py:151 app/models.py:200
 msgid "name"
 msgstr "tên"
 
-#: .\app\models.py:126
+#: app/models.py:126
 msgid "Enter the name of the category."
 msgstr "Nhập tên của danh mục."
 
-#: .\app\models.py:144 .\app\models.py:154
+#: app/models.py:144 app/models.py:154
 msgid "category"
 msgstr "danh mục"
 
-#: .\app\models.py:145 .\app\models.py:368
+#: app/models.py:145 app/models.py:368
 msgid "categories"
 msgstr "danh mục"
 
-#: .\app\models.py:152 .\app\models.py:231
+#: app/models.py:152 app/models.py:231
 msgid "image"
 msgstr "hình ảnh"
 
-#: .\app\models.py:158 .\app\models.py:245
+#: app/models.py:158 app/models.py:245
 msgid "price"
 msgstr "giá"
 
-#: .\app\models.py:161
+#: app/models.py:161
 msgid "description"
 msgstr "mô tả"
 
-#: .\app\models.py:162
+#: app/models.py:162
 msgid "average rating"
 msgstr "đánh giá trung bình"
 
-#: .\app\models.py:164
-#, fuzzy
-#| msgid "quantity"
+#: app/models.py:164
 msgid "sold quantity"
-msgstr "số lượng"
+msgstr "số lượng đã bán"
 
-#: .\app\models.py:191 .\app\models.py:229 .\app\models.py:345
+#: app/models.py:191 app/models.py:229 app/models.py:345
 msgid "product"
 msgstr "sản phẩm"
 
-#: .\app\models.py:192 .\app\models.py:214
+#: app/models.py:192 app/models.py:214
 msgid "products"
 msgstr "sản phẩm"
 
-#: .\app\models.py:201
-#, fuzzy
-#| msgid "Enter the name of the category."
+#: app/models.py:201
 msgid "Enter the name of species."
-msgstr "Nhập tên của danh mục."
+msgstr "Nhập tên của loài."
 
-#: .\app\models.py:215
+#: app/models.py:215
 msgid "Products by species"
 msgstr "Sản phẩm theo loài"
 
-#: .\app\models.py:222 .\app\models.py:223
+#: app/models.py:222 app/models.py:223
 msgid "species"
 msgstr "loài"
 
-#: .\app\models.py:236
+#: app/models.py:236
 msgid "size"
 msgstr "kích thước"
 
-#: .\app\models.py:241
+#: app/models.py:241
 msgid "color"
 msgstr "màu sắc"
 
-#: .\app\models.py:246
+#: app/models.py:246
 msgid "remaining quantity"
 msgstr "số lượng còn lại"
 
-#: .\app\models.py:264 .\app\models.py:320 .\app\models.py:458
+#: app/models.py:264 app/models.py:320 app/models.py:460
 msgid "product detail"
 msgstr "chi tiết sản phẩm"
 
-#: .\app\models.py:265
+#: app/models.py:265
 msgid "product details"
 msgstr "chi tiết sản phẩm"
 
-#: .\app\models.py:272
+#: app/models.py:272
 msgid "address"
 msgstr "địa chỉ"
 
-#: .\app\models.py:275
+#: app/models.py:275
 msgid "phone number"
 msgstr "số điện thoại"
 
-#: .\app\models.py:282 .\app\models.py:413 .\app\models.py:421
+#: app/models.py:282 app/models.py:413 app/models.py:421
 msgid "voucher"
 msgstr "phiếu giảm giá"
 
-#: .\app\models.py:286
+#: app/models.py:286
 msgid "status"
 msgstr "trạng thái"
 
-#: .\app\models.py:288
+#: app/models.py:288
 msgid "note content"
 msgstr "nội dung ghi chú"
 
-#: .\app\models.py:290 .\app\models.py:435
+#: app/models.py:290 app/models.py:437
 msgid "total"
 msgstr "tổng cộng"
 
-#: .\app\models.py:294
+#: app/models.py:294
 msgid "payment method"
 msgstr "phương thức thanh toán"
 
-#: .\app\models.py:297
+#: app/models.py:297
 msgid "expired at"
 msgstr "hết hạn vào"
 
-#: .\app\models.py:310 .\app\models.py:316
+#: app/models.py:310 app/models.py:316
 msgid "bill"
 msgstr "hóa đơn"
 
-#: .\app\models.py:311
+#: app/models.py:311
 msgid "bills"
 msgstr "hóa đơn"
 
-#: .\app\models.py:321 .\app\models.py:459
+#: app/models.py:321 app/models.py:461
 msgid "quantity"
 msgstr "số lượng"
 
-#: .\app\models.py:336
+#: app/models.py:336
 msgid "bill detail"
 msgstr "chi tiết hóa đơn"
 
-#: .\app\models.py:337
+#: app/models.py:337
 msgid "bill details"
 msgstr "chi tiết hóa đơn"
 
-#: .\app\models.py:346
+#: app/models.py:346
 msgid "content"
 msgstr "nội dung"
 
-#: .\app\models.py:347
+#: app/models.py:347
 msgid "star"
 msgstr "sao"
 
-#: .\app\models.py:357
+#: app/models.py:357
 msgid "comment"
 msgstr "bình luận"
 
-#: .\app\models.py:358
+#: app/models.py:358
 msgid "comments"
 msgstr "bình luận"
 
-#: .\app\models.py:362
+#: app/models.py:362
 msgid "discount"
 msgstr "giảm giá"
 
-#: .\app\models.py:363
+#: app/models.py:363
 msgid "started at"
 msgstr "bắt đầu vào"
 
-#: .\app\models.py:364
+#: app/models.py:364
 msgid "ended at"
 msgstr "kết thúc vào"
 
-#: .\app\models.py:369
+#: app/models.py:369
 msgid "Categories this condition applies to."
 msgstr "Danh mục điều kiện này áp dụng cho."
 
-#: .\app\models.py:376
+#: app/models.py:376
 msgid "minimum amount"
 msgstr "số tiền tối thiểu"
 
-#: .\app\models.py:377
+#: app/models.py:377
 msgid "Minimum amount required to apply this voucher."
 msgstr "Số tiền tối thiểu để áp dụng phiếu giảm giá này."
 
-#: .\app\models.py:379
+#: app/models.py:379
 msgid "is global"
 msgstr "là toàn cầu"
 
-#: .\app\models.py:386
+#: app/models.py:386
 msgid "User to whom this voucher is assigned."
 msgstr "Người dùng được chỉ định phiếu giảm giá này."
 
-#: .\app\models.py:401
+#: app/models.py:401
 msgid "Date ended must be after date started."
 msgstr "Ngày kết thúc phải sau ngày bắt đầu."
 
-#: .\app\models.py:404
+#: app/models.py:404
 msgid "A non-global voucher must have an assigned user."
 msgstr "Phiếu giảm giá không toàn cầu phải có người dùng được chỉ định."
 
-#: .\app\models.py:407
-#, fuzzy
-#| msgid "A global voucher cant not be assigned to an customer."
+#: app/models.py:407
 msgid "A global voucher can't be assigned to a customer."
 msgstr "Phiếu giảm giá toàn cầu không thể được chỉ định cho một khách hàng."
 
-#: .\app\models.py:414
+#: app/models.py:414
 msgid "vouchers"
 msgstr "phiếu giảm giá"
 
-#: .\app\models.py:427
+#: app/models.py:429
 msgid "voucher history"
 msgstr "lịch sử phiếu giảm giá"
 
-#: .\app\models.py:428
+#: app/models.py:430
 msgid "voucher histories"
 msgstr "lịch sử phiếu giảm giá"
 
-#: .\app\models.py:448 .\app\models.py:454
+#: app/models.py:450 app/models.py:456
 msgid "cart"
 msgstr "giỏ hàng"
 
-#: .\app\models.py:449
+#: app/models.py:451
 msgid "carts"
 msgstr "giỏ hàng"
 
-#: .\app\models.py:469
+#: app/models.py:471
 msgid "cart detail"
 msgstr "chi tiết giỏ hàng"
 
-#: .\app\models.py:470
+#: app/models.py:472
 msgid "cart details"
 msgstr "chi tiết giỏ hàng"
 
-#: .\app\templates\app\product_detail.html:45
-msgid "reviews"
-msgstr "đánh giá"
+#: app/templates/app/cart.html:13
+msgid "Product Name"
+msgstr "Tên sản phẩm"
 
-#: .\app\templates\app\product_detail.html:47
-msgid "Category:"
-msgstr "danh mục"
-
-#: .\app\templates\app\product_detail.html:83
-msgid "Add to cart"
-msgstr "Cho vào giỏ hàng"
-
-#: .\app\templates\app\product_detail.html:92
-msgid "Description"
-msgstr "Mô tả"
-
-#: .\app\templates\app\product_detail.html:95
-msgid "Reviews"
-msgstr "Đánh giá"
-
-#: .\app\templates\app\product_detail.html:106 .\app\templates\app\shop.html:42
-#: .\app\templates\components\header.html:127
-msgid "Name"
-msgstr "Tên"
-
-#: .\app\templates\app\product_detail.html:114
-#, fuzzy
-#| msgid "category"
-msgid "Category"
-msgstr "danh mục"
-
-#: .\app\templates\app\product_detail.html:122
+#: app/templates/app/cart.html:14 app/templates/app/order_detail.html:49
+#: app/templates/app/product_detail.html:127
 msgid "Size"
 msgstr "Kích cỡ"
 
-#: .\app\templates\app\shop.html:4
-msgid "Take care your pet"
-msgstr ""
+#: app/templates/app/cart.html:15 app/templates/app/order_detail.html:50
+msgid "Color"
+msgstr "Màu sắc"
 
-#: .\app\templates\app\shop.html:17
-msgid "keywords"
-msgstr ""
-
-#: .\app\templates\app\shop.html:34
-msgid "Sorting"
-msgstr ""
-
-#: .\app\templates\app\shop.html:44
-msgid "price: low -> hight"
-msgstr ""
-
-#: .\app\templates\app\shop.html:46
-msgid "price: high -> low"
-msgstr ""
-
-#: .\app\templates\app\shop.html:55
-#, fuzzy
-#| msgid "categories"
-msgid "Categories"
-msgstr "danh mục"
-
-#: .\app\templates\app\shop.html:89
-#, fuzzy
-#| msgid "price"
+#: app/templates/app/cart.html:16 app/templates/app/checkout.html:60
+#: app/templates/app/order_detail.html:52 app/templates/app/shop.html:89
+#: templates/registration/order_success.html:16
 msgid "Price"
-msgstr "giá"
+msgstr "Giá"
 
-#: .\app\templates\app\shop.html:98
-#, fuzzy
-#| msgid "in"
-msgid "Min"
-msgstr "trong"
+#: app/templates/app/cart.html:17 app/templates/app/checkout.html:61
+#: app/templates/app/order_detail.html:51
+#: templates/registration/order_success.html:15
+msgid "Quantity"
+msgstr "Số lượng"
 
-#: .\app\templates\app\shop.html:108
-msgid "Max"
+#: app/templates/app/cart.html:18 app/templates/app/cart.html:104
+#: app/templates/app/checkout.html:62 app/templates/app/checkout.html:83
+#: app/templates/app/order_detail.html:26
+#: app/templates/app/order_detail.html:53
+#: app/templates/app/order_tracking.html:46
+msgid "Total"
+msgstr "Tổng cộng"
+
+#: app/templates/app/cart.html:19
+msgid "Handle"
+msgstr "Xử lý"
+
+#: app/templates/app/cart.html:48 app/templates/app/cart.html:64
+#: app/templates/app/cart.html:108 app/templates/app/cart.html:113
+#: app/templates/app/cart.html:117 app/templates/app/cart.html:125
+#: app/templates/app/checkout.html:70 app/templates/app/checkout.html:72
+#: app/templates/app/order_tracking.html:68
+msgid "VND"
+msgstr "VND"
+
+#: app/templates/app/cart.html:67
+msgid "Remove"
+msgstr "Xóa"
+
+#: app/templates/app/cart.html:76
+msgid "Select Voucher"
+msgstr "Chọn phiếu giảm giá"
+
+#: app/templates/app/cart.html:79
+msgid "Select a voucher"
+msgstr "Chọn một phiếu giảm giá"
+
+#: app/templates/app/cart.html:80 app/templates/app/cart.html:88
+msgid " - For everyone"
+msgstr "- Dành cho tất cả"
+
+#: app/templates/app/cart.html:81 app/templates/app/cart.html:90
+msgid " - Special for you"
+msgstr "- Đặc biệt dành cho bạn"
+
+#: app/templates/app/cart.html:86
+msgid " VND"
+msgstr "VND"
+
+#: app/templates/app/cart.html:95
+msgid "Apply Voucher"
+msgstr "Áp dụng phiếu giảm giá"
+
+#: app/templates/app/cart.html:107
+msgid "Subtotal:"
+msgstr "Tổng phụ:"
+
+#: app/templates/app/cart.html:111 app/templates/app/checkout.html:89
+msgid "Shipping"
+msgstr "Vận chuyển"
+
+#: app/templates/app/cart.html:117 app/templates/app/checkout.html:95
+msgid "Discount"
+msgstr "Giảm giá"
+
+#: app/templates/app/cart.html:123 app/templates/app/checkout.html:101
+#: templates/registration/order_success.html:30
+msgid "Total:"
+msgstr "Tổng cộng:"
+
+#: app/templates/app/cart.html:128
+msgid "Proceed Checkout"
+msgstr "Tiến hành thanh toán"
+
+#: app/templates/app/checkout.html:8
+msgid "Billing details"
+msgstr "Chi tiết hóa đơn"
+
+#: app/templates/app/checkout.html:14
+msgid "User Name:"
+msgstr "Tên đăng nhập:"
+
+#: app/templates/app/checkout.html:18 app/templates/app/order_detail.html:18
+#: app/templates/app/order_tracking.html:44 app/templates/app/profile.html:36
+msgid "Address"
+msgstr "Địa chỉ"
+
+#: app/templates/app/checkout.html:21
+msgid "Select a specific location or change location:"
+msgstr "Chọn một vị trí cụ thể hoặc thay đổi vị trí:"
+
+#: app/templates/app/checkout.html:23
+msgid "Enter your location:"
+msgstr "Nhập vị trí của bạn:"
+
+#: app/templates/app/checkout.html:24
+msgid "Enter an address, city, or coordinates"
+msgstr "Nhập một địa chỉ, thành phố, hoặc tọa độ"
+
+#: app/templates/app/checkout.html:25
+msgid "Locate"
+msgstr "Định vị"
+
+#: app/templates/app/checkout.html:33
+msgid "Save Location"
+msgstr "Lưu vị trí"
+
+#: app/templates/app/checkout.html:42 app/templates/app/order_detail.html:22
+#: app/templates/app/order_tracking.html:45 app/templates/app/profile.html:40
+msgid "Phone Number"
+msgstr "Số điện thoại"
+
+#: app/templates/app/checkout.html:46
+msgid "Email Address"
+msgstr "Địa chỉ Email"
+
+#: app/templates/app/checkout.html:50
+msgid "Order Notes (Optional)"
+msgstr "Ghi chú đơn hàng (Tùy chọn)"
+
+#: app/templates/app/checkout.html:58
+msgid "Products"
+msgstr "Sản phẩm"
+
+#: app/templates/app/checkout.html:59
+msgid "Properties"
+msgstr "Thuộc tính"
+
+#: app/templates/app/checkout.html:85
+msgid "Products Price:"
+msgstr "Giá sản phẩm:"
+
+#: app/templates/app/checkout.html:112
+msgid "Payment Method"
+msgstr "Phương thức thanh toán"
+
+#: app/templates/app/checkout.html:114
+msgid "Direct Bank Transfer"
+msgstr "Chuyển khoản trực tiếp"
+
+#: app/templates/app/checkout.html:115
+msgid "Cash On Delivery"
+msgstr "Thanh toán khi nhận hàng"
+
+#: app/templates/app/checkout.html:117
+msgid ""
+"Make your payment directly into our bank account. Please use your Order ID "
+"as the payment reference. Your order will not be shipped until the funds "
+"have cleared in our account."
 msgstr ""
+"Thực hiện thanh toán trực tiếp vào tài khoản ngân hàng của chúng tôi. Vui "
+"lòng sử dụng Mã Đơn Hàng của bạn làm tham chiếu thanh toán. Đơn hàng của bạn "
+"sẽ không được giao cho đến khi khoản tiền đã được xác nhận trong tài khoản "
+"của chúng tôi."
 
-#: .\app\templates\app\shop.html:111 .\app\templates\app\shop.html:131
-msgid "Apply"
-msgstr ""
+#: app/templates/app/checkout.html:124
+msgid "Visa Card Information"
+msgstr "Thông tin thẻ Visa"
 
-#: .\app\templates\app\shop.html:115
-msgid "Additional"
-msgstr ""
+#: app/templates/app/checkout.html:126
+msgid "Card Number"
+msgstr "Số thẻ"
 
-#: .\app\templates\base.html:6
-#: .\templates\registration\password_reset_confirm.html:12
-msgid "Pet Shop"
-msgstr "Shop Thú Cưng"
+#: app/templates/app/checkout.html:127
+msgid "Enter your card number"
+msgstr "Nhập số thẻ của bạn"
 
-#: .\app\templates\components\category_product_isotope.html:11
-msgid "ALL"
-msgstr "TẤT CẢ"
+#: app/templates/app/checkout.html:130
+msgid "Expiration Date"
+msgstr "Ngày hết hạn"
 
-#: .\app\templates\components\category_product_isotope.html:28
-#: .\app\templates\home.html:97
-msgid "Shop Now"
-msgstr "Hãy mua"
+#: app/templates/app/checkout.html:131
+msgid "MM/YY"
+msgstr "MM/YY"
 
-#: .\app\templates\components\category_product_swiper.html:13
-#: .\app\templates\home.html:28 .\app\templates\home.html:162
-msgid "shop now"
-msgstr "hãy mua"
+#: app/templates/app/checkout.html:134
+msgid "CVV"
+msgstr "CVV"
 
-#: .\app\templates\components\header.html:7
-msgid "My Cart"
-msgstr "Giỏ hàng"
+#: app/templates/app/checkout.html:135
+msgid "Enter your CVV"
+msgstr "Nhập CVV của bạn"
 
-#: .\app\templates\components\header.html:14
+#: app/templates/app/checkout.html:138
+msgid "Cardholder Name"
+msgstr "Tên chủ thẻ"
+
+#: app/templates/app/checkout.html:139
+msgid "Enter the name on your card"
+msgstr "Nhập tên trên thẻ của bạn"
+
+#: app/templates/app/checkout.html:144
+msgid "Place Order"
+msgstr "Đặt hàng"
+
+#: app/templates/app/order_detail.html:14
+msgid "Customer"
+msgstr "Khách hàng"
+
+#: app/templates/app/order_detail.html:30
+#: app/templates/app/order_tracking.html:22
+#: app/templates/app/order_tracking.html:47
+msgid "Created At"
+msgstr "Được tạo vào lúc"
+
+#: app/templates/app/order_detail.html:34
+#: app/templates/app/order_tracking.html:26
+#: app/templates/app/order_tracking.html:49
+msgid "Expired At"
+msgstr "Hết hạn vào"
+
+#: app/templates/app/order_detail.html:38
+#: app/templates/app/order_tracking.html:13
+#: app/templates/app/order_tracking.html:48
+msgid "Status"
+msgstr "Trạng thái"
+
+#: app/templates/app/order_detail.html:44
+#: templates/registration/order_success.html:10
+msgid "Order Details"
+msgstr "Chi tiết đơn hàng"
+
+#: app/templates/app/order_detail.html:48
+#: templates/registration/order_success.html:14
+msgid "Product"
+msgstr "Sản phẩm"
+
+#: app/templates/app/order_detail.html:54
+#: app/templates/app/order_detail.html:69
+#: app/templates/app/product_detail.html:99
+msgid "Reviews"
+msgstr "Đánh giá"
+
+#: app/templates/app/order_tracking.html:15
+msgid "All"
+msgstr "Tất cả"
+
+#: app/templates/app/order_tracking.html:30
+#: app/templates/app/voucher_list.html:42
+msgid "Filter"
+msgstr "Lọc"
+
+#: app/templates/app/order_tracking.html:43
+msgid "Order"
+msgstr "Đơn hàng"
+
+#: app/templates/app/order_tracking.html:50
+#: customadmin/templates/admin/change_list.html:42
+msgid "Actions"
+msgstr "Hành động"
+
+#: app/templates/app/order_tracking.html:89
+msgid "Are you sure you want to cancel this order?"
+msgstr "Bạn có chắc chắn muốn hủy đơn hàng này không?"
+
+#: app/templates/app/order_tracking.html:90
+msgid "Cancel Order"
+msgstr "Hủy đơn hàng"
+
+#: app/templates/app/order_tracking.html:97
+msgid "Pay Order"
+msgstr "Thanh toán đơn hàng"
+
+#: app/templates/app/order_tracking.html:104
+msgid "Review"
+msgstr "Đánh giá"
+
+#: app/templates/app/product_detail.html:48
+msgid "reviews"
+msgstr "đánh giá"
+
+#: app/templates/app/product_detail.html:50
+msgid "Category:"
+msgstr "Danh mục:"
+
+#: app/templates/app/product_detail.html:86
+msgid "Add to cart"
+msgstr "Cho vào giỏ hàng"
+
+#: app/templates/app/product_detail.html:95
+msgid "Description"
+msgstr "Mô tả"
+
+#: app/templates/app/product_detail.html:111 app/templates/app/shop.html:42
+#: app/templates/components/header.html:59
+msgid "Name"
+msgstr "Tên"
+
+#: app/templates/app/product_detail.html:119
+msgid "Category"
+msgstr "Danh mục"
+
+#: app/templates/app/profile.html:11
+msgid "User avatar"
+msgstr "Ảnh đại diện người dùng"
+
+#: app/templates/app/profile.html:14
+msgid "Choose Image"
+msgstr "Chọn hình ảnh"
+
+#: app/templates/app/profile.html:15
+msgid "Upload Image"
+msgstr "Tải hình ảnh lên"
+
+#: app/templates/app/profile.html:22
+msgid "First Name"
+msgstr "Tên"
+
+#: app/templates/app/profile.html:26
+msgid "Last Name"
+msgstr "Họ"
+
+#: app/templates/app/profile.html:31
+msgid "Email"
+msgstr "Email"
+
+#: app/templates/app/profile.html:41
+msgid "Invalid phone number!"
+msgstr "Số điện thoại không hợp lệ!"
+
+#: app/templates/app/profile.html:45 app/templates/app/profile.html:70
+#: customadmin/templates/admin/add_form.html:29
+#: customadmin/templates/admin/change_form.html:89
+msgid "Save"
+msgstr "Lưu"
+
+#: app/templates/app/profile.html:46 app/templates/app/profile.html:71
+#: customadmin/templates/admin/add_form.html:31
+#: customadmin/templates/admin/change_form.html:93
+msgid "Cancel"
+msgstr "Hủy bỏ"
+
+#: app/templates/app/profile.html:51
+msgid "Change Password"
+msgstr "Đổi mật khẩu"
+
+#: app/templates/app/profile.html:59
+msgid "Password must be at least 8 characters long!"
+msgstr "Mật khẩu phải có ít nhất 8 ký tự!"
+
+#: app/templates/app/review_modal.html:8
+msgid "Product Review"
+msgstr "Đánh giá sản phẩm"
+
+#: app/templates/app/review_modal.html:9
 msgid "Close"
 msgstr "Đóng"
 
-#: .\app\templates\components\header.html:20
-msgid "Your cart"
-msgstr "giỏ hàng"
+#: app/templates/app/review_modal.html:16
+msgid "Rating"
+msgstr "Đánh giá"
 
-#: .\app\templates\components\header.html:29
-#: .\app\templates\components\header.html:40
-msgid "Brief description"
-msgstr "Mô tả ngắn gọn"
+#: app/templates/app/review_modal.html:18
+msgid "5 stars"
+msgstr "5 sao"
 
-#: .\app\templates\components\header.html:49
-msgid "Soft Toy"
-msgstr "Đồ chơi mềm"
+#: app/templates/app/review_modal.html:19
+msgid "4 stars"
+msgstr "4 sao"
 
-#: .\app\templates\components\header.html:57
-msgid "Total (USD)"
-msgstr "Tổng cộng"
+#: app/templates/app/review_modal.html:20
+msgid "3 stars"
+msgstr "3 sao"
 
-#: .\app\templates\components\header.html:63
-msgid "Continue to checkout"
-msgstr "Tiếp tục thanh toán"
+#: app/templates/app/review_modal.html:21
+msgid "2 stars"
+msgstr "2 sao"
 
-#: .\app\templates\components\header.html:132
+#: app/templates/app/review_modal.html:22
+msgid "1 star"
+msgstr "1 sao"
+
+#: app/templates/app/review_modal.html:26
+msgid "Review Content"
+msgstr "Nội dung đánh giá"
+
+#: app/templates/app/review_modal.html:30
+msgid "Image"
+msgstr "Hình ảnh"
+
+#: app/templates/app/review_modal.html:36
+msgid "Submit Review"
+msgstr "Gửi đánh giá"
+
+#: app/templates/app/shop.html:4
+msgid "Take care your pet"
+msgstr "Chăm sóc thú cưng của bạn"
+
+#: app/templates/app/shop.html:17
+msgid "keywords"
+msgstr "từ khóa"
+
+#: app/templates/app/shop.html:34
+msgid "Sorting"
+msgstr "Sắp xếp"
+
+#: app/templates/app/shop.html:44
+msgid "price: low -> hight"
+msgstr "giá: thấp -> cao"
+
+#: app/templates/app/shop.html:46
+msgid "price: high -> low"
+msgstr "giá: cao -> thấp"
+
+#: app/templates/app/shop.html:55 customadmin/templates/admin/base_site.html:50
+msgid "Categories"
+msgstr "Danh mục"
+
+#: app/templates/app/shop.html:98
+msgid "Min"
+msgstr "Tối thiểu"
+
+#: app/templates/app/shop.html:108
+msgid "Max"
+msgstr "Tối đa"
+
+#: app/templates/app/shop.html:111 app/templates/app/shop.html:131
+msgid "Apply"
+msgstr "Áp dụng"
+
+#: app/templates/app/shop.html:115
+msgid "Additional"
+msgstr "Bổ sung"
+
+#: app/templates/app/voucher_list.html:3
+msgid "Voucher List"
+msgstr "Danh sách phiếu giảm giá"
+
+#: app/templates/app/voucher_list.html:9
+msgid "All Categories"
+msgstr "Tất cả danh mục"
+
+#: app/templates/app/voucher_list.html:34
+msgid "Min Discount (%%)"
+msgstr "Giảm giá tối thiểu (%%)"
+
+#: app/templates/app/voucher_list.html:38
+msgid "Max Discount (%%)"
+msgstr "Giảm giá tối đa (%%)"
+
+#: app/templates/app/voucher_list.html:53
+msgid "Voucher ID:"
+msgstr "Mã phiếu giảm giá:"
+
+#: app/templates/app/voucher_list.html:56
+msgid "Discount:"
+msgstr "Giảm giá:"
+
+#: app/templates/app/voucher_list.html:58
+msgid "Valid From:"
+msgstr "Hiệu lực từ:"
+
+#: app/templates/app/voucher_list.html:60
+msgid "Until:"
+msgstr "Đến:"
+
+#: app/templates/app/voucher_list.html:64
+msgid "Applies:"
+msgstr "Áp dụng:"
+
+#: app/templates/app/voucher_list.html:68
+msgid "All categories"
+msgstr "Tất cả danh mục"
+
+#: app/templates/app/voucher_list.html:75
+msgid "No Expired Vouchers"
+msgstr "Không có phiếu giảm giá đã hết hạn"
+
+#: app/templates/app/voucher_list.html:104
+msgid "No Upcoming Vouchers"
+msgstr "Không có phiếu giảm giá sắp tới"
+
+#: app/templates/app/voucher_list.html:160
+msgid "Use now"
+msgstr "Sử dụng ngay"
+
+#: app/templates/app/voucher_list.html:165
+msgid "No Usable Vouchers"
+msgstr "Không có phiếu giảm giá có thể sử dụng"
+
+#: app/templates/base.html:6
+msgid "Pet Shop"
+msgstr "Shop Thú Cưng"
+
+#: app/templates/components/category_product_isotope.html:11
+msgid "ALL"
+msgstr "TẤT CẢ"
+
+#: app/templates/components/category_product_isotope.html:28
+#: app/templates/home.html:97
+msgid "Shop Now"
+msgstr "Hãy mua ngay"
+
+#: app/templates/components/category_product_swiper.html:13
+#: app/templates/home.html:28 app/templates/home.html:162
+msgid "shop now"
+msgstr "hãy mua ngay"
+
+#: app/templates/components/header.html:7
+msgid "My Cart"
+msgstr "Giỏ hàng của tôi"
+
+#: app/templates/components/header.html:43
+msgid "Search for more than 10,000 products"
+msgstr "Tìm kiếm hơn 10,000 sản phẩm"
+
+#: app/templates/components/header.html:64
 msgid "Logout"
 msgstr "Đăng xuất"
 
-#: .\app\templates\components\header.html:137
-#: .\templates\registration\password_reset_complete.html:12
+#: app/templates/components/header.html:69
 msgid "Sign In"
 msgstr "Đăng nhập"
 
-#: .\app\templates\components\header.html:140
-#: .\templates\registration\sign_in.html:46
+#: app/templates/components/header.html:72
 msgid "Sign Up"
 msgstr "Đăng ký"
 
-#: .\app\templates\components\header.html:266
-msgid "Shop by Category"
-msgstr "Phân loại"
+#: app/templates/components/header.html:168
+msgid "Lang"
+msgstr "Ngôn ngữ"
 
-#: .\app\templates\components\header.html:278
+#: app/templates/components/header.html:195
+msgid "ADMIN SITE"
+msgstr "TRANG QUẢN TRỊ"
+
+#: app/templates/components/header.html:204
 msgid "Home"
 msgstr "Trang chủ"
 
-#: .\app\templates\components\header.html:297
-msgid "Contact"
-msgstr "Liên lạc"
+#: app/templates/components/header.html:208
+msgid "Shopping"
+msgstr "Mua sắm"
 
-#: .\app\templates\components\pagination.html:18
+#: app/templates/components/header.html:211
+msgid "Orders Tracking"
+msgstr "Theo dõi đơn hàng"
+
+#: app/templates/components/pagination.html:18
 msgid "Page"
 msgstr "Trang"
 
-#: .\app\templates\components\pagination.html:18
+#: app/templates/components/pagination.html:18
 msgid "in"
 msgstr "trong"
 
-#: .\app\templates\components\product_card.html:7
+#: app/templates/components/product_card.html:7
 msgid "new"
 msgstr "mới"
 
-#: .\app\templates\home.html:18
-#, python-format
+#: app/templates/home.html:18
 msgid "Save 10 - 20 %% off"
-msgstr ""
+msgstr "Tiết kiệm 10 - 20 %%"
 
-#: .\app\templates\home.html:21
+#: app/templates/home.html:21
 msgid "Best destination for"
 msgstr "Điểm đến tốt nhất cho"
 
-#: .\app\templates\home.html:22
+#: app/templates/home.html:22
 msgid "your pets"
 msgstr "thú cưng của bạn"
 
-#: .\app\templates\home.html:71
+#: app/templates/home.html:71
 msgid "No categories found"
 msgstr "Không tìm thấy danh mục nào"
 
-#: .\app\templates\home.html:88
-#, python-format
+#: app/templates/home.html:88
 msgid "Up to 40%% Off"
 msgstr "Giảm tới 40%%"
 
-#: .\app\templates\home.html:91
-#, fuzzy
-#| msgid "Cancelled"
+#: app/templates/home.html:91
 msgid "Clearance Sale"
-msgstr "Đã hủy"
+msgstr "Xả kho"
 
-#: .\app\templates\home.html:135
+#: app/templates/home.html:135
 msgid "Jonathan Doe"
-msgstr ""
+msgstr "Jonathan Doe"
 
-#: .\app\templates\home.html:138
+#: app/templates/home.html:138
 msgid "Businessman"
 msgstr "Doanh nhân"
 
-#: .\app\templates\home.html:156
+#: app/templates/home.html:156
 msgid "Best selling products"
 msgstr "Sản phẩm bán chạy nhất"
 
-#: .\app\templates\home.html:196
+#: app/templates/home.html:197
 msgid "Latest Blog Post"
 msgstr "Bài đăng blog mới nhất"
 
-#: .\app\templates\home.html:202
+#: app/templates/home.html:203
 msgid "Read all"
 msgstr "Đọc tất cả"
 
-#: .\app\templates\home.html:277 .\app\templates\home.html:311
+#: app/templates/home.html:278 app/templates/home.html:312
 msgid "read more"
 msgstr "đọc thêm"
 
-#: .\app\views.py:151
+#: app/views.py:172
 msgid "Your account is inactive. Please verify your account."
-msgstr ""
-"Tài khoản của bạn chưa được xác thực. Vui lòng xác minh tài khoản của bạn."
+msgstr "Tài khoản của bạn chưa được xác thực. Vui lòng xác minh tài khoản của bạn."
 
-#: .\app\views.py:159
+#: app/views.py:182
 msgid "Your account has been banned."
 msgstr "Tài khoản của bạn đã bị chặn."
 
-#: .\app\views.py:163
+#: app/views.py:186 app/views.py:192
 msgid "You have been logged in successfully."
 msgstr "Đăng nhập thành công."
 
-#: .\app\views.py:166
+#: app/views.py:195
 msgid "Invalid username or password."
 msgstr "Sai tài khoản hoặc mật khẩu"
 
-#: .\app\views.py:241
+#: app/views.py:273
 msgid "Product type does not exist"
 msgstr "Loại sản phẩm không tồn tại"
 
-#: .\app\views.py:269 .\app\views.py:271
+#: app/views.py:301 app/views.py:303
 msgid "Sorry, We have ran out of this type"
 msgstr "Xin lỗi, chúng tôi đã hết loại này"
 
-#: .\app\views.py:281 .\app\views.py:283
+#: app/views.py:313 app/views.py:315
 msgid "Product added to cart successfully!"
 msgstr "Sản phẩm được cho vào giỏ hàng thành công"
 
-#: .\app\views.py:293
+#: app/views.py:325
 msgid "Your OTP Code"
-msgstr "Mã OTP"
+msgstr "Mã OTP của bạn"
 
-#: .\app\views.py:316
-msgid ""
-"Account created successfully. Please check your email to activate your "
-"account."
-msgstr ""
-"Tài khoản đã được tạo thành công. Vui lòng kiểm tra email của bạn để kích "
-"hoạt tài khoản."
+#: app/views.py:348
+msgid "Account created successfully. Please check your email to activate your account."
+msgstr "Tài khoản đã được tạo thành công. Vui lòng kiểm tra email của bạn để kích hoạt tài khoản."
 
-#: .\app\views.py:331
+#: app/views.py:363
 msgid "No user information found."
 msgstr "Không tìm thấy người dùng."
 
-#: .\app\views.py:337
+#: app/views.py:369
 msgid "OTP has been resent to your email."
-msgstr "OTP đã được gửi tới mail của bạn."
+msgstr "OTP đã được gửi tới email của bạn."
 
-#: .\app\views.py:342
+#: app/views.py:374
 msgid "OTP code has expired. Please choose resend OTP"
 msgstr "OTP đã hết hạn. Vui lòng chọn gửi lại OTP"
 
-#: .\app\views.py:349
-#, fuzzy
-#| msgid "Your account has been banned."
+#: app/views.py:381
 msgid "Your account has been activated."
-msgstr "Tài khoản của bạn đã bị chặn."
+msgstr "Tài khoản của bạn đã được kích hoạt."
 
-#: .\app\views.py:353
+#: app/views.py:385
 msgid "Invalid OTP code."
 msgstr "OTP không hợp lệ"
 
-#: .\pet_shop\settings.py:131
+#: app/views.py:480 app/views.py:482 app/views.py:656
+msgid "Product detail does not exist."
+msgstr "Chi tiết sản phẩm không tồn tại"
+
+#: app/views.py:485 app/views.py:617
+msgid "Maximum product type available."
+msgstr "Đã đạt số lượng tối đa loại sản phẩm có sẵn."
+
+#: app/views.py:487 app/views.py:619
+msgid "Quantity exceeds available stock."
+msgstr "Số lượng vượt quá tồn kho có sẵn."
+
+#: app/views.py:499
+msgid "Cart item updated successfully"
+msgstr "Mục giỏ hàng được cập nhật thành công"
+
+#: app/views.py:529
+msgid "Please fill in all required fields."
+msgstr "Vui lòng điền vào tất cả các trường bắt buộc."
+
+#: app/views.py:545
+msgid "Wait_for_preparing"
+msgstr "Chờ chuẩn bị"
+
+#: app/views.py:555
+msgid "Wait_for_pay"
+msgstr "Chờ thanh toán"
+
+#: app/views.py:568
+msgid "Your order has been placed successfully!"
+msgstr "Đơn hàng của bạn đã được đặt thành công!"
+
+#: app/views.py:573
+msgid "An error occurred while placing your order. Please try again."
+msgstr "Đã xảy ra lỗi khi đặt hàng của bạn. Vui lòng thử lại."
+
+#: app/views.py:576
+msgid "Order Confirmation"
+msgstr "Xác nhận đơn hàng"
+
+#: app/views.py:638 app/views.py:683
+msgid "Please select a voucher again."
+msgstr "Vui lòng chọn lại phiếu giảm giá."
+
+#: app/views.py:658 app/views.py:660 app/views.py:688 app/views.py:862
+msgid "An error occurred: "
+msgstr "Đã xảy ra lỗi: "
+
+#: app/views.py:716
+msgid "Thank you for reviewing the product!"
+msgstr "Cảm ơn bạn đã đánh giá sản phẩm!"
+
+#: app/views.py:836
+msgid "Subtotal is below the minimum value required for this voucher."
+msgstr "Tổng phụ thấp hơn giá trị tối thiểu yêu cầu cho phiếu giảm giá này."
+
+#: app/views.py:852
+msgid "Cart does not exist."
+msgstr "Giỏ hàng không tồn tại."
+
+#: app/views.py:857
+msgid "Voucher does not exist."
+msgstr "Phiếu giảm giá không tồn tại."
+
+#: app/views.py:911
+msgid "Your profile has been updated successfully!"
+msgstr "Hồ sơ của bạn đã được cập nhật thành công!"
+
+#: app/views.py:930
+msgid "Your avatar has been updated successfully!"
+msgstr "Ảnh đại diện của bạn đã được cập nhật thành công!"
+
+#: app/views.py:949
+msgid "Current password is incorrect."
+msgstr "Mật khẩu hiện tại không đúng."
+
+#: app/views.py:955
+msgid "Your password was successfully updated!"
+msgstr "Mật khẩu của bạn đã được cập nhật thành công!"
+
+#: app/views.py:959
+msgid "Please correct the errors below."
+msgstr "Vui lòng sửa lỗi dưới đây."
+
+#: customadmin/templates/admin/actions.html:8
+msgid "Run the selected action"
+msgstr "Chạy hành động đã chọn"
+
+#: customadmin/templates/admin/actions.html:8
+msgid "Go"
+msgstr "Thực hiện"
+
+#: customadmin/templates/admin/base_admin.html:10
+msgid "Description of the site"
+msgstr "Mô tả trang web"
+
+#: customadmin/templates/admin/base_admin.html:11
+msgid "Author Name"
+msgstr "Tên tác giả"
+
+#: customadmin/templates/admin/base_site.html:17
+msgid "Pet Shop Admin"
+msgstr "Quản trị Cửa hàng Thú cưng"
+
+#: customadmin/templates/admin/base_site.html:27
+msgid "Dashboard"
+msgstr "Bảng điều khiển"
+
+#: customadmin/templates/admin/base_site.html:35
+msgid "Management"
+msgstr "Quản lý"
+
+#: customadmin/templates/admin/base_site.html:43
+msgid "Shop"
+msgstr "Cửa hàng"
+
+#: customadmin/templates/admin/base_site.html:47
+msgid "Shop Manage:"
+msgstr "Quản lý cửa hàng:"
+
+#: customadmin/templates/admin/base_site.html:49
+msgid "Product-Details"
+msgstr "Chi tiết sản phẩm"
+
+#: customadmin/templates/admin/base_site.html:51
+msgid "Vouchers"
+msgstr "Phiếu giảm giá"
+
+#: customadmin/templates/admin/base_site.html:52
+msgid "Vouchers History"
+msgstr "Lịch sử phiếu giảm giá"
+
+#: customadmin/templates/admin/base_site.html:53
+msgid "Bills"
+msgstr "Hóa đơn"
+
+#: customadmin/templates/admin/base_site.html:62
+msgid "User"
+msgstr "Người dùng"
+
+#: customadmin/templates/admin/base_site.html:70
+msgid "Statistical"
+msgstr "Thống kê"
+
+#: customadmin/templates/admin/base_site.html:77
+msgid "Charts"
+msgstr "Biểu đồ"
+
+#: customadmin/templates/admin/base_site.html:83
+msgid "Tables"
+msgstr "Bảng"
+
+#: customadmin/templates/admin/base_site.html:89
+msgid "Pet Website"
+msgstr "Trang web thú cưng"
+
+#: customadmin/templates/admin/base_site.html:95
+msgid "Return to Homepage"
+msgstr "Trở về trang chủ"
+
+#: customadmin/templates/admin/change_form.html:10
+msgid "Back to Product"
+msgstr "Quay lại Sản phẩm"
+
+#: customadmin/templates/admin/change_form.html:16
+msgid "Back to Bill"
+msgstr "Quay lại Hóa đơn"
+
+#: customadmin/templates/admin/change_form.html:48
+msgid "Product Details"
+msgstr "Chi tiết sản phẩm"
+
+#: customadmin/templates/admin/change_form.html:61
+msgid "No product details available."
+msgstr "Không có chi tiết sản phẩm nào."
+
+#: customadmin/templates/admin/change_form.html:66
+msgid "Bill Details"
+msgstr "Chi tiết hóa đơn"
+
+#: customadmin/templates/admin/change_form.html:78
+msgid "No bill details available."
+msgstr "Không có chi tiết hóa đơn nào."
+
+#: customadmin/templates/admin/change_form_object_tools.html:9
+msgid "Delete this %(obj)s"
+msgstr "Xóa %(obj)s này"
+
+#: customadmin/templates/admin/change_form_object_tools.html:18
+msgid "History of this %(obj)s"
+msgstr "Lịch sử của %(obj)s này"
+
+#: customadmin/templates/admin/change_form_object_tools.html:25
+msgid "View all %(obj)s"
+msgstr "Xem tất cả %(obj)s"
+
+#: customadmin/templates/admin/change_form_object_tools.html:34
+msgid "Add another %(obj)s"
+msgstr "Thêm %(obj)s khác"
+
+#: customadmin/templates/admin/change_list.html:14
+msgid "Add new"
+msgstr "Thêm mới"
+
+#: customadmin/templates/admin/change_list.html:33
+msgid "Gender"
+msgstr "Giới tính"
+
+#: customadmin/templates/admin/change_list.html:43
+msgid "Select"
+msgstr "Chọn"
+
+#: customadmin/templates/admin/change_list.html:67
+msgid "Edit"
+msgstr "Chỉnh sửa"
+
+#: customadmin/templates/admin/change_list.html:70
+msgid "Delete"
+msgstr "Xóa"
+
+#: customadmin/templates/admin/change_list.html:82
+msgid "No data available."
+msgstr "Không có dữ liệu."
+
+#: customadmin/templates/admin/delete_confirmation.html:10
+msgid ""
+"Deleting the %(object_name)s '%(escaped_object)s' would result in deleting "
+"related objects, but your account doesn't have permission to delete the "
+"following types of objects:"
+msgstr ""
+"Xóa %(object_name)s '%(escaped_object)s' sẽ dẫn đến việc xóa các đối tượng "
+"liên quan, nhưng tài khoản của bạn không có quyền xóa các loại đối tượng "
+"sau:"
+
+#: customadmin/templates/admin/delete_confirmation.html:15
+msgid ""
+"Deleting the %(object_name)s '%(escaped_object)s' would require deleting the "
+"following protected related objects:"
+msgstr ""
+"Việc xóa %(object_name)s '%(escaped_object)s' sẽ yêu cầu xóa các đối tượng "
+"liên quan được bảo vệ sau:"
+
+#: customadmin/templates/admin/delete_confirmation.html:20
+msgid ""
+"Are you sure you want to delete the %(object_name)s \"%(escaped_object)s\"? "
+"All of the following related items will be deleted:"
+msgstr ""
+"Bạn có chắc chắn muốn xóa %(object_name)s \"%(escaped_object)s\" không? Tất "
+"cả các mục liên quan sau sẽ bị xóa:"
+
+#: customadmin/templates/admin/delete_confirmation.html:21
+msgid "Objects"
+msgstr "Đối tượng"
+
+#: customadmin/templates/admin/delete_confirmation.html:30
+msgid "Yes, I’m sure"
+msgstr "Vâng, tôi chắc chắn"
+
+#: customadmin/templates/admin/delete_confirmation.html:33
+msgid "No, take me back"
+msgstr "Không, đưa tôi trở lại"
+
+#: customadmin/templates/admin/delete_selected_confirmation.html:11
+msgid ""
+"Deleting the selected %(objects_name)s would result in deleting related "
+"objects, but your account doesn't have permission to delete the following "
+"types of objects:"
+msgstr ""
+"Xóa các %(objects_name)s đã chọn sẽ dẫn đến việc xóa các đối tượng liên "
+"quan, nhưng tài khoản của bạn không có quyền xóa các loại đối tượng sau:"
+
+#: customadmin/templates/admin/delete_selected_confirmation.html:14
+msgid ""
+"Deleting the selected %(objects_name)s would require deleting the following "
+"protected related objects:"
+msgstr ""
+"Việc xóa các %(objects_name)s đã chọn sẽ yêu cầu xóa các đối tượng liên quan "
+"được bảo vệ sau:"
+
+#: customadmin/templates/admin/delete_selected_confirmation.html:17
+msgid ""
+"Are you sure you want to delete the selected %(objects_name)s? All of the "
+"following objects and their related items will be deleted:"
+msgstr ""
+"Bạn có chắc chắn muốn xóa các %(objects_name)s đã chọn không? Tất cả các đối "
+"tượng và các mục liên quan sau sẽ bị xóa:"
+
+#: customadmin/templates/admin/search_form.html:8
+msgid "Search for..."
+msgstr "Tìm kiếm..."
+
+#: customadmin/templates/admin/search_form.html:9
+msgid "Search"
+msgstr "Tìm kiếm"
+
+#: customadmin/templates/admin/search_form.html:15
+msgid "%(counter)s result"
+msgid_plural "%(counter)s results"
+msgstr[0] "%(counter)s kết quả"
+
+#: customadmin/templates/admin/search_form.html:18
+msgid "%(full_result_count)s total"
+msgstr "%(full_result_count)s tổng số"
+
+#: customadmin/templates/admin/search_form.html:20
+msgid "Show all"
+msgstr "Hiển thị tất cả"
+
+#: pet_shop/settings.py:133
 msgid "English"
 msgstr "Tiếng Anh"
 
-#: .\pet_shop\settings.py:132
+#: pet_shop/settings.py:134
 msgid "Vietnamese"
 msgstr "Tiếng Việt"
 
-#: .\templates\registration\password_reset_complete.html:8
+#: templates/registration/order_success.html:5
+#: templates/registration/order_success.html:32
+#: templates/registration/verify_message.html:5
+#: templates/registration/verify_message.html:10
+msgid "Your Brand"
+msgstr "Thương hiệu của bạn"
+
+#: templates/registration/order_success.html:7
+#: templates/registration/verify_message.html:7
+msgid "Hi,"
+msgstr "Chào"
+
+#: templates/registration/order_success.html:8
+msgid ""
+"Thank you for choosing Pet Shop. Your order has been successfully placed. "
+msgstr "Cảm ơn bạn đã chọn Pet Shop. Đơn hàng của bạn đã được đặt thành công."
+
+#: templates/registration/order_success.html:32
+#: templates/registration/verify_message.html:10
+msgid "Regards,"
+msgstr "Trân trọng,"
+
+#: templates/registration/password_reset_complete.html:8
 msgid "Password Successfully Set"
-msgstr ""
+msgstr "Mật khẩu đã được thiết lập thành công"
 
-#: .\templates\registration\password_reset_complete.html:9
+#: templates/registration/password_reset_complete.html:9
 msgid "Your password has been set. You may go ahead and sign in now."
-msgstr ""
+msgstr "Mật khẩu của bạn đã được thiết lập. Bạn có thể tiến hành đăng nhập ngay bây giờ."
 
-#: .\templates\registration\password_reset_confirm.html:11
-#, fuzzy
-#| msgid "Repeat Password"
+#: templates/registration/password_reset_confirm.html:11
 msgid "Reset Your Password"
-msgstr "Nhập lại mật khẩu"
+msgstr "Đặt lại mật khẩu của bạn"
 
-#: .\templates\registration\password_reset_confirm.html:14
+#: templates/registration/password_reset_confirm.html:14
 msgid "Please enter and confirm your new password."
-msgstr ""
+msgstr "Vui lòng nhập và xác nhận mật khẩu mới của bạn."
 
-#: .\templates\registration\password_reset_confirm.html:23
-#, fuzzy
-#| msgid "Password"
+#: templates/registration/password_reset_confirm.html:23
 msgid "New password"
-msgstr "Mật khẩu"
+msgstr "Mật khẩu mới"
 
-#: .\templates\registration\password_reset_confirm.html:36
-#, fuzzy
-#| msgid "Create Password"
+#: templates/registration/password_reset_confirm.html:36
 msgid "Confirm password"
-msgstr "Tạo mật khẩu?"
+msgstr "Xác nhận mật khẩu"
 
-#: .\templates\registration\password_reset_confirm.html:45
-#, fuzzy
-#| msgid "Create Password"
+#: templates/registration/password_reset_confirm.html:45
 msgid "Change my password"
-msgstr "Tạo mật khẩu?"
+msgstr "Thay đổi mật khẩu của tôi"
 
-#: .\templates\registration\password_reset_confirm.html:50
+#: templates/registration/password_reset_confirm.html:50
 msgid "Password Reset Failed"
-msgstr ""
+msgstr "Đặt lại mật khẩu thất bại"
 
-#: .\templates\registration\password_reset_confirm.html:52
+#: templates/registration/password_reset_confirm.html:52
 msgid ""
 "The password reset link was invalid, possibly because it has already been "
 "used. Please request a new password reset."
 msgstr ""
+"Liên kết đặt lại mật khẩu không hợp lệ, có thể vì nó đã được sử dụng. Vui "
+"lòng yêu cầu đặt lại mật khẩu mới."
 
-#: .\templates\registration\password_reset_done.html:7
+#: templates/registration/password_reset_done.html:7
 msgid "Password Reset Email Sent"
-msgstr ""
+msgstr "Email đặt lại mật khẩu đã được gửi"
 
-#: .\templates\registration\password_reset_done.html:9
+#: templates/registration/password_reset_done.html:9
 msgid ""
 "We've emailed you instructions for setting your password. If they haven't "
 "arrived in a few minutes, check your spam folder."
 msgstr ""
+"Chúng tôi đã gửi email cho bạn hướng dẫn đặt lại mật khẩu. Nếu không nhận "
+"được sau vài phút, vui lòng kiểm tra thư mục spam của bạn."
 
-#: .\templates\registration\password_reset_done.html:13
+#: templates/registration/password_reset_done.html:13
 msgid "If you need further assistance, please contact our support team."
-msgstr ""
+msgstr "Nếu bạn cần hỗ trợ thêm, vui lòng liên hệ với đội ngũ hỗ trợ của chúng tôi."
 
-#: .\templates\registration\password_reset_done.html:17
-#: .\templates\registration\password_reset_form.html:35
-#, fuzzy
-#| msgid "Log In"
+#: templates/registration/password_reset_done.html:17
+#: templates/registration/password_reset_form.html:35
 msgid "Back to Log In"
-msgstr "Đăng nhập"
+msgstr "Quay lại Đăng nhập"
 
-#: .\templates\registration\password_reset_email.html:3
+#: templates/registration/password_reset_email.html:3
 msgid "Someone asked for password reset for email"
-msgstr ""
+msgstr "Ai đó đã yêu cầu đặt lại mật khẩu cho email"
 
-#: .\templates\registration\password_reset_email.html:3
+#: templates/registration/password_reset_email.html:3
 msgid ". Follow the link below:"
-msgstr ""
+msgstr ". Theo liên kết dưới đây:"
 
-#: .\templates\registration\password_reset_form.html:10
-#, fuzzy
-#| msgid "Password"
+#: templates/registration/password_reset_form.html:10
 msgid "Password Reset"
-msgstr "Mật khẩu"
+msgstr "Đặt lại mật khẩu"
 
-#: .\templates\registration\password_reset_form.html:11
-#, fuzzy
-#| msgid "Enter Your Email Address"
+#: templates/registration/password_reset_form.html:11
 msgid "Enter Your Email"
-msgstr "Nhập địa chỉ mail"
+msgstr "Nhập Email của bạn"
 
-#: .\templates\registration\password_reset_form.html:21
-#, fuzzy
-#| msgid "email"
-msgid "Email"
-msgstr "email"
-
-#: .\templates\registration\password_reset_form.html:30
-#, fuzzy
-#| msgid "Repeat Password"
+#: templates/registration/password_reset_form.html:30
 msgid "Reset Password"
-msgstr "Nhập lại mật khẩu"
+msgstr "Đặt lại mật khẩu"
 
-#: .\templates\registration\sign_in.html:11
+#: templates/registration/sign_in.html:11
 msgid "Welcome to Pet Shop"
-msgstr "Chào mừng đến với Cửa hàng thú cưng"
+msgstr "Chào mừng đến với Cửa hàng Thú cưng"
 
-#: .\templates\registration\sign_in.html:12
-#: .\templates\registration\sign_in.html:42
+#: templates/registration/sign_in.html:12
 msgid "Log In"
 msgstr "Đăng nhập"
 
-#: .\templates\registration\sign_in.html:22
+#: templates/registration/sign_in.html:22
 msgid "Username"
 msgstr "Tên đăng nhập"
 
-#: .\templates\registration\sign_in.html:32
+#: templates/registration/sign_in.html:32
 msgid "Password"
 msgstr "Mật khẩu"
 
-#: .\templates\registration\sign_in.html:47
-msgid "Don't have an account? Sign Up"
-msgstr "Không có tài khoản? Hãy đăng ký."
-
-#: .\templates\registration\sign_in.html:48
+#: templates/registration/sign_in.html:50
 msgid "Forgot Password?"
 msgstr "Quên mật khẩu?"
 
-#: .\templates\registration\sign_up.html:11
-#, fuzzy
-#| msgid "Don't have an account? Sign Up"
+#: templates/registration/sign_up.html:11
 msgid "You don't have an account?"
-msgstr "Không có tài khoản? Hãy đăng ký."
+msgstr "Bạn không có tài khoản?"
 
-#: .\templates\registration\sign_up.html:12
-#, fuzzy
-#| msgid "Sign Up"
+#: templates/registration/sign_up.html:12
 msgid "Let's Sign Up"
-msgstr "Đăng ký"
+msgstr "Hãy đăng ký"
 
-#: .\templates\registration\sign_up.html:30
+#: templates/registration/sign_up.html:30
 msgid "Enter Your First Name"
-msgstr "Nhập tên"
+msgstr "Nhập tên của bạn"
 
-#: .\templates\registration\sign_up.html:42
+#: templates/registration/sign_up.html:43
 msgid "Enter Your Last Name"
-msgstr "Nhập họ"
+msgstr "Nhập họ của bạn"
 
-#: .\templates\registration\sign_up.html:54
+#: templates/registration/sign_up.html:56
 msgid "Choose a Username"
 msgstr "Chọn tên đăng nhập"
 
-#: .\templates\registration\sign_up.html:64
+#: templates/registration/sign_up.html:67
 msgid "Enter Your Email Address"
-msgstr "Nhập địa chỉ mail"
+msgstr "Nhập địa chỉ email của bạn"
 
-#: .\templates\registration\sign_up.html:75
+#: templates/registration/sign_up.html:79
 msgid "Create Password"
-msgstr "Tạo mật khẩu?"
+msgstr "Tạo mật khẩu"
 
-#: .\templates\registration\sign_up.html:85
+#: templates/registration/sign_up.html:89
 msgid "Repeat Password"
 msgstr "Nhập lại mật khẩu"
 
-#: .\templates\registration\sign_up.html:96
+#: templates/registration/sign_up.html:100
 msgid "Enter Your Phone Number"
-msgstr "Nhập số điện thoại"
+msgstr "Nhập số điện thoại của bạn"
 
-#: .\templates\registration\sign_up.html:106
+#: templates/registration/sign_up.html:111
 msgid "Enter Your Address"
-msgstr "Nhập địa chỉ"
+msgstr "Nhập địa chỉ của bạn"
 
-#: .\templates\registration\sign_up.html:115
-#, fuzzy
-#| msgid "Sign Up"
+#: templates/registration/sign_up.html:121
 msgid "Sign up"
 msgstr "Đăng ký"
 
-#: .\templates\registration\verify_input.html:8
+#: templates/registration/verify_input.html:8
 msgid "Shield Icon"
-msgstr ""
+msgstr "Biểu tượng Shield"
 
-#: .\templates\registration\verify_input.html:10
+#: templates/registration/verify_input.html:10
 msgid "Enter OTP Code"
-msgstr "Nhập OTP"
+msgstr "Nhập mã OTP"
 
-#: .\templates\registration\verify_input.html:23
+#: templates/registration/verify_input.html:23
 msgid "Verify OTP"
 msgstr "Xác thực OTP"
 
-#: .\templates\registration\verify_input.html:29
+#: templates/registration/verify_input.html:29
 msgid "Resend OTP"
 msgstr "Gửi lại OTP"
 
-#: .\templates\registration\verify_message.html:5
-#: .\templates\registration\verify_message.html:10
-msgid "Your Brand"
-msgstr "Thương hiệu của bạn"
-
-#: .\templates\registration\verify_message.html:7
-msgid "Hi,"
-msgstr "Chào"
-
-#: .\templates\registration\verify_message.html:8
+#: templates/registration/verify_message.html:8
 msgid ""
 "Thank you for choosing Pet Shop. Use the following OTP to complete your Sign "
 "Up procedures. OTP is valid for 5 minutes"
@@ -886,15 +1592,26 @@ msgstr ""
 "Cảm ơn bạn đã chọn Pet Shop. Sử dụng OTP sau để hoàn tất thủ tục Đăng Ký của "
 "bạn. OTP có hiệu lực trong 5 phút"
 
-#: .\templates\registration\verify_message.html:10
-msgid "Regards,"
-msgstr "Trân trọng,"
+#~ msgid "Your cart"
+#~ msgstr "Giỏ hàng của bạn"
 
-#~ msgid "Search"
-#~ msgstr "Tìm kiếm"
+#~ msgid "Brief description"
+#~ msgstr "Mô tả ngắn gọn"
+
+#~ msgid "Soft Toy"
+#~ msgstr "Đồ chơi mềm"
+
+#~ msgid "Total (USD)"
+#~ msgstr "Tổng cộng"
+
+#~ msgid "Continue to checkout"
+#~ msgstr "Tiếp tục thanh toán"
 
 #~ msgid "Shop by Category"
-#~ msgstr "Phân loại"
+#~ msgstr "Mua theo danh mục"
+
+#~ msgid "Contact"
+#~ msgstr "Liên hệ"
 
 #~ msgid "Don't have an account? Sign Up"
 #~ msgstr "Không có tài khoản? Hãy đăng ký."
