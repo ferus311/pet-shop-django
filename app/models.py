@@ -125,6 +125,10 @@ class Category(models.Model):
         verbose_name=_('name'),
         help_text=_('Enter the name of the category.'),
     )
+    is_deleted = models.BooleanField(
+        default=False,
+        verbose_name=_('is deleted')
+    )
     created_at = models.DateTimeField(
         auto_now_add=True,
         verbose_name=_('created at'),
@@ -162,6 +166,10 @@ class Product(models.Model):
     average_rating = models.FloatField(verbose_name=_('average rating'))
     sold_quantity = models.PositiveIntegerField(
         default=0, verbose_name=_('sold quantity'))
+    is_deleted = models.BooleanField(
+        default=False,
+        verbose_name=_('is deleted')
+    )
     created_at = models.DateTimeField(
         auto_now_add=True, verbose_name=_('created at'))
     updated_at = models.DateTimeField(
@@ -199,6 +207,10 @@ class Species(models.Model):
         unique=True,
         verbose_name=_('name'),
         help_text=_('Enter the name of species.'),
+    )
+    is_deleted = models.BooleanField(
+        default=False,
+        verbose_name=_('is deleted')
     )
     created_at = models.DateTimeField(
         auto_now_add=True,
@@ -244,6 +256,10 @@ class ProductDetail(models.Model):
     price = models.DecimalField(
         max_digits=10, decimal_places=0, verbose_name=_('price'))
     remain_quantity = models.IntegerField(verbose_name=_('remaining quantity'))
+    is_deleted = models.BooleanField(
+        default=False,
+        verbose_name=_('is deleted')
+    )
     created_at = models.DateTimeField(
         auto_now_add=True, verbose_name=_('created at'))
     updated_at = models.DateTimeField(
@@ -293,6 +309,10 @@ class Bill(models.Model):
         choices=PAYMENT_METHOD_CHOICES,
         verbose_name=_('payment method'),
         null=False)
+    is_deleted = models.BooleanField(
+        default=False,
+        verbose_name=_('is deleted')
+    )
     expired_at = models.DateTimeField(
         blank=True, null=True, verbose_name=_('expired at'))
     created_at = models.DateTimeField(
@@ -319,6 +339,10 @@ class BillDetail(models.Model):
         on_delete=models.CASCADE,
         verbose_name=_('product detail'))
     quantity = models.IntegerField(verbose_name=_('quantity'), null=False)
+    is_deleted = models.BooleanField(
+        default=False,
+        verbose_name=_('is deleted')
+    )
     created_at = models.DateTimeField(
         auto_now_add=True, verbose_name=_('created at'))
     updated_at = models.DateTimeField(
@@ -345,6 +369,10 @@ class Comment(models.Model):
         'Product', on_delete=models.CASCADE, verbose_name=_('product'))
     content = models.TextField(verbose_name=_('content'), null=False)
     star = models.IntegerField(verbose_name=_('star'), null=False)
+    is_deleted = models.BooleanField(
+        default=False,
+        verbose_name=_('is deleted')
+    )
     created_at = models.DateTimeField(
         auto_now_add=True, verbose_name=_('created at'))
     updated_at = models.DateTimeField(
@@ -385,6 +413,10 @@ class Voucher(models.Model):
         verbose_name=_('user'),
         help_text=_('User to whom this voucher is assigned.'),
     )
+    is_deleted = models.BooleanField(
+        default=False,
+        verbose_name=_('is deleted')
+    )
     created_at = models.DateTimeField(
         auto_now_add=True, verbose_name=_('created at'))
     updated_at = models.DateTimeField(
@@ -419,6 +451,10 @@ class VoucherHistory(models.Model):
         'CustomUser', on_delete=models.CASCADE, verbose_name=_('user'))
     voucher = models.ForeignKey(
         'Voucher', on_delete=models.CASCADE, verbose_name=_('voucher'))
+    is_deleted = models.BooleanField(
+        default=False,
+        verbose_name=_('is deleted')
+    )
     created_at = models.DateTimeField(
         auto_now_add=True, verbose_name=_('created at'))
 
@@ -435,6 +471,10 @@ class Cart(models.Model):
         'CustomUser', on_delete=models.CASCADE, verbose_name=_('user'))
     total = models.DecimalField(
         max_digits=10, decimal_places=2, verbose_name=_('total'))
+    is_deleted = models.BooleanField(
+        default=False,
+        verbose_name=_('is deleted')
+    )
     created_at = models.DateTimeField(
         auto_now_add=True, verbose_name=_('created at'))
     updated_at = models.DateTimeField(
@@ -459,6 +499,10 @@ class CartDetail(models.Model):
         on_delete=models.CASCADE,
         verbose_name=_('product detail'))
     quantity = models.IntegerField(verbose_name=_('quantity'))
+    is_deleted = models.BooleanField(
+        default=False,
+        verbose_name=_('is deleted')
+    )
     created_at = models.DateTimeField(
         auto_now_add=True, verbose_name=_('created at'))
     updated_at = models.DateTimeField(

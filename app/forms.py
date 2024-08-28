@@ -3,7 +3,7 @@ import pyotp
 from .models import CustomUser
 from django import forms
 from django.utils.translation import gettext_lazy as _
-from .models import CustomUser, Product, ProductDetail, Bill, Voucher, VoucherHistory
+from .models import CustomUser, Product, ProductDetail, Bill, Voucher, VoucherHistory, Category
 from .constants import (MAX_LENGTH_NAME, MAX_LENGTH_PASSWORD, REGEX_USERNAME,
                         REGEX_USERNAME, REGEX_PHONENUM, REGEX_EMAIL)
 from django.contrib.auth.forms import UserCreationForm
@@ -155,13 +155,22 @@ class ProductForm(forms.ModelForm):
                 attrs={
                     'class': 'form-control',
                     'placeholder': 'Enter sold quantity'}),
+            'is_deleted': forms.CheckboxInput(
+                attrs={
+                    'class': 'form-check-input'}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Filter categories with is_deleted=False
+        self.fields['category'].queryset = Category.objects.filter(
+            is_deleted=False)
 
 
 class ProductDetailForm(forms.ModelForm):
     class Meta:
         model = ProductDetail
-        fields = '__all__'  # Hoặc chỉ định các trường cụ thể nếu không cần tất cả
+        fields = '__all__'
         widgets = {
             'image': ImagePreviewWidget(
                 attrs={
@@ -180,7 +189,16 @@ class ProductDetailForm(forms.ModelForm):
                 attrs={
                     'class': 'form-control',
                     'placeholder': 'Enter remaining quantity'}),
+            'is_deleted': forms.CheckboxInput(
+                attrs={
+                    'class': 'form-check-input'}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Filter categories with is_deleted=False
+        self.fields['product'].queryset = Product.objects.filter(
+            is_deleted=False)
 
 
 class BillForm(forms.ModelForm):
@@ -222,7 +240,16 @@ class BillForm(forms.ModelForm):
                 attrs={
                     'class': 'form-control',
                     'placeholder': 'Select expiration date'}),
+            'is_deleted': forms.CheckboxInput(
+                attrs={
+                    'class': 'form-check-input'}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Filter categories with is_deleted=False
+        self.fields['voucher'].queryset = Voucher.objects.filter(
+            is_deleted=False)
 
 
 class CustomUserForm(forms.ModelForm):
@@ -301,7 +328,16 @@ class VoucherForm(forms.ModelForm):
             'user': forms.Select(
                 attrs={
                     'class': 'form-control'}),
+            'is_deleted': forms.CheckboxInput(
+                attrs={
+                    'class': 'form-check-input'}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Filter categories with is_deleted=False
+        self.fields['category'].queryset = Category.objects.filter(
+            is_deleted=False)
 
 
 class UserProfileForm(forms.ModelForm):
