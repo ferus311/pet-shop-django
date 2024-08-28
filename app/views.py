@@ -748,13 +748,13 @@ def profile_view(request, pk):
 
 
 @login_required
-def submit_review(request):
+def submit_review(request, order_id):
     if request.method == 'POST':
         product_id = request.POST.get('product_id')
         star = request.POST.get('star')
         content = request.POST.get('content')
         image = request.FILES.get('image')
-        product = Product.objects.get(id=product_id)
+        product = get_object_or_404(Product, id=product_id)
         Comment.objects.create(
             user=request.user,
             product=product,
@@ -763,10 +763,7 @@ def submit_review(request):
         )
 
         messages.success(request, _('Thank you for reviewing the product!'))
-
-        # Lấy URL của trang trước đó
-        previous_url = request.META.get('HTTP_REFERER', '/')
-        return redirect(previous_url)
+        return redirect('order_detail', order_id=order_id)
 
 
 @login_required
@@ -1018,6 +1015,13 @@ def order_detail(request, order_id):
     order_details = BillDetail.objects.filter(bill=order)
     sizes = set()
     colors = set()
+
+    reviewed_products = Comment.objects.filter(
+        user=request.user,
+        product__in=[item.product_detail.product for item in order_details],
+        created_at__gte=order.created_at
+    ).values_list('product_id', flat=True)
+
     for item in order_details:
         product_id = item.product_detail.product.id
         product = get_object_or_404(Product, pk=product_id)
@@ -1033,6 +1037,7 @@ def order_detail(request, order_id):
         'order_details': order_details,
         'payment_status_choices': PAYMENT_STATUS_CHOICES,
         'sizes': list(sizes),
-        'colors': list(colors)
+        'colors': list(colors),
+        'reviewed_products': list(reviewed_products),
     }
     return render(request, 'app/order_detail.html', context)

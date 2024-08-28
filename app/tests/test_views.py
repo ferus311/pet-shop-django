@@ -634,3 +634,63 @@ class CartViewTest(TestCase):
 
         has_out_of_stock = response.context['has_out_of_stock']
         self.assertFalse(has_out_of_stock)
+
+
+class SubmitReviewTest(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.user = CustomUser.objects.create_user(
+            username='testuser', password='12345')
+        self.category = Category.objects.create(name='Test Category')
+        self.product = Product.objects.create(
+            name='Test Product',
+            category=self.category,
+            price=100,
+            average_rating=4.5,
+            sold_quantity=10
+        )
+        self.product_detail = ProductDetail.objects.create(
+            product=self.product, size='M', color='Red', price=100, remain_quantity=10)
+        self.bill = Bill.objects.create(user=self.user, total=100.00)
+        self.bill_detail = BillDetail.objects.create(
+            bill=self.bill, product_detail=self.product_detail, quantity=1
+        )
+        self.client.login(username='testuser', password='12345')
+        self.url = reverse('submit_review', args=[self.bill.id])
+
+    def test_submit_review_success(self):
+        response = self.client.post(self.url, {
+            'product_id': self.product.id,
+            'star': 5,
+            'content': 'Great product!',
+        })
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(
+            Comment.objects.filter(
+                user=self.user,
+                product=self.product).exists())
+
+    def test_submit_review_not_logged_in(self):
+        self.client.logout()
+        response = self.client.post(self.url, {
+            'product_id': self.product.id,
+            'star': 5,
+            'content': 'Great product!',
+        })
+        self.assertEqual(response.status_code, 302)
+        self.assertFalse(
+            Comment.objects.filter(
+                user=self.user,
+                product=self.product).exists())
+
+    def test_submit_review_invalid_product(self):
+        response = self.client.post(self.url, {
+            'product_id': 999,  # Invalid product ID
+            'star': 5,
+            'content': 'Great product!',
+        })
+        self.assertEqual(response.status_code, 404)
+        self.assertFalse(
+            Comment.objects.filter(
+                user=self.user,
+                product_id=999).exists())

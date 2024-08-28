@@ -114,9 +114,9 @@ urlpatterns = [
         change_password,
         name='change-password'),
     path(
-        'submit-review/',
-        submit_review,
-        name='submit_review'),
+        'order/<int:order_id>/submit_review/',
+         submit_review,
+         name='submit_review'),
     path(
         'get-options-for-cart-modal/',
         get_options_for_cart_modal,
