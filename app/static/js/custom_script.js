@@ -904,4 +904,19 @@
         var productId = $(this).data('product-id');
         $('#addToCartModal' + productId).modal('show');
     });
+
+    $('#delete-account').on('click', function() {
+        $('#deleteAccountModal').modal('show');
+    });
+    $('#deleteAccountModal').on('hidden.bs.modal', function (e) {
+        // Đảm bảo rằng modal được đóng hoàn toàn và backdrop được loại bỏ
+        $('body').removeClass('modal-open');
+        $('.modal-backdrop').remove();
+    });
+    $('#deleteAccountModal .btn-secondary').on('click', function() {
+        $('#deleteAccountModal').modal('hide');
+    });
+    $('#deleteAccountModal .close').on('click', function() {
+        $('#deleteAccountModal').modal('hide');
+    });
 })(jQuery);

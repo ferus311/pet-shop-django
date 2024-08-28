@@ -694,3 +694,86 @@ class SubmitReviewTest(TestCase):
             Comment.objects.filter(
                 user=self.user,
                 product_id=999).exists())
+
+
+class DeleteAccountTest(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.user = get_user_model().objects.create_user(
+            username='testuser',
+            password='testpassword',
+            email='testuser@example.com',
+            first_name='Test',
+            last_name='User'
+        )
+        self.client.login(username='testuser', password='testpassword')
+
+        self.bill = Bill.objects.create(
+            user=self.user,
+            address='123 Test St',
+            phone_number='0123456789',
+            total=100,
+            status='Pending',
+            payment_method='Credit Card'
+        )
+
+        # Tạo đối tượng Voucher
+        self.voucher = Voucher.objects.create(
+            discount=10.0,
+            started_at=timezone.now(),
+            ended_at=timezone.now() + timedelta(days=30),
+            is_global=True
+        )
+
+        self.voucher_history = VoucherHistory.objects.create(
+            user=self.user,
+            voucher=self.voucher
+        )
+
+        self.cart = Cart.objects.create(
+            user=self.user,
+            total=50.0
+        )
+
+    def test_delete_account_success(self):
+        response = self.client.post(
+            reverse('delete_account'), {
+                'password': 'testpassword'})
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.is_deleted)
+        self.assertEqual(self.user.first_name, 'Deleted')
+        self.assertEqual(self.user.last_name, 'User')
+        self.assertTrue(self.user.username.startswith('deleted_user_'))
+        self.assertRedirects(response, reverse('index'))
+        self.assertFalse(Bill.objects.filter(user=self.user).exists())
+        self.assertFalse(
+            VoucherHistory.objects.filter(
+                user=self.user).exists())
+        self.assertFalse(Cart.objects.filter(user=self.user).exists())
+
+    def test_delete_account_invalid_password(self):
+        response = self.client.post(
+            reverse('delete_account'), {
+                'password': 'wrongpassword'})
+        self.user.refresh_from_db()
+        self.assertFalse(self.user.is_deleted)
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse('profile', args=[self.user.pk]))
+        messages = list(response.wsgi_request._messages)
+        self.assertEqual(len(messages), 1)
+        self.assertEqual(str(messages[0]),
+                         "Invalid password. Please try again.")
+
+    def test_deleted_user_cannot_login(self):
+        self.client.post(
+            reverse('delete_account'), {
+                'password': 'testpassword'})
+        self.user.refresh_from_db()
+
+        login_response = self.client.post(reverse('sign-in'), {
+            'username': 'testuser',
+            'password': 'testpassword'
+        })
+
+        self.assertNotIn('_auth_user_id', self.client.session)
+        self.assertContains(login_response, "Invalid username or password.")
