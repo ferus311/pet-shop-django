@@ -2,7 +2,7 @@
     'use strict';
     var map;
     var marker;
-    const defaultAddress = $('#default_user_address').val();
+    const defaultAddress = $('#location-input').val();
     const apiKey = OPENCAGE_API_KEY;
 
     function initializeMap(lat, lng) {
@@ -61,7 +61,6 @@
     $('#location-form-button').on('click', function(e) {
         e.preventDefault();
         var location = $('#location-input').val();
-        console.log('Location:', location);
 
         getCoordinatesFromAddress(location, function(lat, lng) {
             initializeMap(lat, lng);
@@ -87,10 +86,35 @@
 
         var locationInputValue = $('#location-input').val();
         if (locationInputValue.length > 0) {
-            $('#default_user_address').val(locationInputValue);
+            $('#location-input').val(locationInputValue);
         }
 
         $('#selected-coordinates').text(`Selected Coordinates: Latitude ${lat}, Longitude ${lng}`);
+        const defaulShippingFee = $('#shipping_fee').text();
+        $.ajax({
+            url: '/update-shipping-fee/',
+            data: {
+                address: locationInputValue,
+            },
+            success: function(response) {
+                $('#shipping_fee').text(response.shipping_fee);
+                const preTotal = parseFloat($('#total_price').text().replace(/[^0-9.-]+/g, ''));
+                console.log(preTotal);
 
+                const newTotal = preTotal - defaulShippingFee + response.shipping_fee;
+                console.log(newTotal);
+
+                $('#total_price').text(newTotal);
+
+            },
+            error: function() {
+                alert('Failed to load options.');
+            }
+        });
+
+    });
+
+    $('.reset-address-btn').on('click', function(e) {
+        $('#location-input').val(defaultAddress);
     });
 })(jQuery);

@@ -115,10 +115,14 @@ urlpatterns = [
         name='change-password'),
     path(
         'order/<int:order_id>/submit_review/',
-         submit_review,
-         name='submit_review'),
+        submit_review,
+        name='submit_review'),
     path(
         'get-options-for-cart-modal/',
         get_options_for_cart_modal,
         name='get_options_for_cart_modal'),
+    path(
+        'update-shipping-fee/',
+        calculate_shipping_fee,
+        name='update_shipping_fee'),
 ]

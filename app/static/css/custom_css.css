@@ -235,3 +235,7 @@ input.error {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+
+.reset-address-btn {
+    cursor: pointer;
+}
