@@ -715,15 +715,14 @@
             );
 
             if (detail) {
-                console.log(detail);
-                $('.price-wrapper').text( detail.price);
+                $('.price-wrapper').text( detail.price + '₫');
                 $('#product_detail_id').val(detail.id);
                 $("#submit-add-to-cart-btn").prop("disabled", false);
             }
         }
         function displayPrice() {
             if (productDetails.length > 0) {
-                $('.price-wrapper').text(defaultPrice);
+                $('.price-wrapper').text(defaultPrice + '₫');
             }
         }
         $('#submit-add-to-cart-btn').on('click', function(event) {
@@ -800,6 +799,7 @@
     $('#apply-voucher').click(function() {
         try {
             const voucherId = $('#voucher-select').val();
+            $('#selected_voucher_id').val(voucherId);
             const discount = $('#voucher-select option:selected').data('discount');
             const minAmount = $('#voucher-select option:selected').data('minAmount');
             const subtotalText = $('#subtotal').text().replace(/,/g, '');

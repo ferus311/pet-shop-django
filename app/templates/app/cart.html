@@ -102,8 +102,8 @@
                             data-for-everyone="{% trans ' - For everyone' %}"
                             data-special-for-you="{% trans ' - Special for you' %}">
                         {% for voucher in vouchers %}
-                            <option value="{{ voucher.id }}" 
-                                    data-discount="{{ voucher.discount }}" 
+                            <option value="{{ voucher.id }}"
+                                    data-discount="{{ voucher.discount }}"
                                     data-minAmount="{{ voucher.min_amount}}">
                                 {{ voucher.categories }} - {{ voucher.discount|intcomma }}{% trans " VND" %} - Min: {{ voucher.min_amount|intcomma }}{% trans " VND" %}
                                 {% if voucher.is_global %}
@@ -115,11 +115,13 @@
                         {% endfor %}
                     </select>
                         <button id="apply-voucher" class="btn border-secondary rounded-pill px-4 py-3 text-primary" type="button">{% trans "Apply Voucher" %}</button>
-                    </div>            
+                    </div>
                 </div>
                 <div class="row g-4 justify-content-end">
                     <div class="col-8"></div>
                     <div class="col-sm-8 col-md-7 col-lg-6 col-xl-4">
+                        <form action="{% url 'checkout' %}" method="POST">
+                        {% csrf_token %}
                         <div class="bg-light rounded">
                             <div class="p-4">
                                 <h1 class="display-6 mb-4">
@@ -144,6 +146,7 @@
                                 <div class="d-flex justify-content-between">
                                     <h5 class="mb-0 me-4">{% trans "Discount" %} {% trans "VND" %}</h5>
                                     <div class="">
+                                        <input hidden type="text" name="selected_voucher_id" id="selected_voucher_id" >
                                         <p class="mb-0" id="discount_fee">{{ discount_fee|intcomma|default:"0" }}</p>
                                     </div>
                                 </div>
@@ -159,8 +162,10 @@
                                         </p>
                                     </div>
                                 </div>
-                            <button id="checkout-button" class="btn border-primary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4" type="button"><a href="{% url 'checkout' %}">{% trans "Proceed Checkout"%}</a></button>
+                            </div>
+                            <button id="checkout-button" type="submit" class="btn border-primary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4" type="button">{% trans "Proceed Checkout"%}</button>
                         </div>
+                        </form>
                     </div>
                 </div>
             </div>

@@ -429,6 +429,17 @@ def _calculate_cart_totals(user):
     return cart_items, subtotal, shipping_fee, total_price
 
 
+def calculate_shipping_fee(request, address=None):
+    if address is None:
+        address = request.GET.get('address')
+    user_city = _extract_city(address, CITIES)
+    if user_city in CITIES:
+        shipping_fee = 15000
+    else:
+        shipping_fee = 25000
+    return JsonResponse({"shipping_fee": shipping_fee})
+
+
 @login_required
 def cart_view(request):
     current_user = request.user
@@ -522,6 +533,17 @@ def checkout_view(request):
         'total_price': total_price,
         "OPENCAGE_API_KEY": OPENCAGE_API_KEY,
     }
+    voucher_id = request.POST.get('selected_voucher_id')
+    if voucher_id:
+        voucher_response = apply_voucher(
+            request, voucher_id).content.decode('utf-8')
+        data = json.loads(voucher_response)
+        discount_amount = data['discount_amount']
+        context['voucher_id'] = voucher_id
+        context['discount_amount'] = discount_amount
+        context['total_price'] = round(
+            total_price - Decimal(discount_amount), 0)
+
     return render(request, 'app/checkout.html', context=context)
 
 
@@ -547,14 +569,30 @@ def place_order(request):
         user = request.user
         address = request.POST.get('default_user_address')
         payment_method = request.POST.get('payment_method')
+        voucher_id = request.POST.get('selected_voucher_id')
         note_content = request.POST.get('text')
+
+        cart_items, subtotal, shipping_fee, total_price = _calculate_cart_totals(
+            request.user)
+
+        if voucher_id:
+            voucher_response = apply_voucher(
+                request, voucher_id).content.decode('utf-8')
+            data = json.loads(voucher_response)
+            discount_amount = data['discount_amount']
+            total_price -= Decimal(discount_amount)
 
         if not address or not payment_method:
             messages.error(request, _("Please fill in all required fields."))
             return redirect('checkout')
 
-        cart_items, subtotal, shipping_fee, total_price = _calculate_cart_totals(
-            request.user)
+        if user.default_address != address:
+            request_shipping_fee = calculate_shipping_fee(
+                request, address).content.decode('utf-8')
+            data = json.loads(request_shipping_fee)
+            # calculate total with new shipping fee
+            new_shipping_fee = data['shipping_fee']
+            total_price = total_price - shipping_fee + new_shipping_fee
 
         with transaction.atomic():
             try:
@@ -562,20 +600,23 @@ def place_order(request):
                     bill = Bill.objects.create(
                         user=user,
                         address=address,
+                        voucher=Voucher.objects.get(
+                            id=voucher_id) if voucher_id else None,
                         phone_number=user.default_phone_number,
                         payment_method='CASH',
                         note_content=note_content,
-                        total=Decimal(total_price),
-                        status=_('Wait_for_preparing')
-                    )
+                        total=int(total_price),
+                        status=_('Wait_for_preparing'))
                 else:
                     bill = Bill.objects.create(
                         user=user,
                         address=address,
+                        voucher=Voucher.objects.get(
+                            id=voucher_id) if voucher_id else None,
                         phone_number=user.default_phone_number,
                         payment_method='BANK',
                         note_content=note_content,
-                        total=Decimal(total_price),
+                        total=int(total_price),
                         status=_('Wait_for_pay'),
                         expired_at=timezone.now() + timedelta(days=1)
                     )
@@ -842,7 +883,7 @@ def get_available_vouchers(request):
             'discount': voucher.discount,
             'min_amount': float(voucher.min_amount),
             'is_global': voucher.is_global,
-            'categories': [category_map.get(category.id, "Unknown Category")
+            'categories': [category_map.get(category.id)
                            for category in voucher.category.all()]
         }
         for voucher in vouchers
@@ -852,7 +893,7 @@ def get_available_vouchers(request):
 
 @login_required
 @require_POST
-def apply_voucher(request):
+def apply_voucher(request, voucher_id=None):
     try:
         cart = Cart.objects.get(user=request.user)
 
@@ -860,7 +901,8 @@ def apply_voucher(request):
             'product_detail__product__category'
         ).filter(cart=cart)
 
-        voucher_id = request.POST.get('voucher_id')
+        if voucher_id is None:
+            voucher_id = request.POST.get('voucher_id')
         min_amount = float(request.POST.get('min_amount', 0))
 
         voucher = get_object_or_404(Voucher, id=voucher_id)
@@ -883,9 +925,9 @@ def apply_voucher(request):
             messages.error(request, error_message)
             return JsonResponse({'success': False, 'error': error_message})
 
-        discount_amount = (total_price_voucher * discount) / 100
-        final_price_voucher = total_price_voucher - discount_amount
-        final_price = final_price_voucher + total_price_other
+        discount_amount = int((total_price_voucher * discount) / 100)
+        final_price_voucher = int(total_price_voucher - discount_amount)
+        final_price = int(final_price_voucher + total_price_other)
 
         return JsonResponse({
             'success': True,

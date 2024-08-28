@@ -7,12 +7,16 @@ class AddToCartViewTests(TestCase):
 
     def setUp(self):
         # Create a test user
-        self.user = CustomUser.objects.create_user(username='testuser', password='password')
+        self.user = CustomUser.objects.create_user(
+            username='testuser', password='password')
         self.client.login(username='testuser', password='password')
 
         self.category = Category.objects.create(name="Test Category")
 
-        self.product = Product.objects.create(name="Test Product", category=self.category, average_rating=0.0)
+        self.product = Product.objects.create(
+            name="Test Product",
+            category=self.category,
+            average_rating=0.0)
         self.product_detail = ProductDetail.objects.create(
             product=self.product,
             size='M',
@@ -38,7 +42,8 @@ class AddToCartViewTests(TestCase):
             'cart_length': 1
         })
 
-        cart_detail = CartDetail.objects.filter(cart=self.cart, product_detail=self.product_detail).first()
+        cart_detail = CartDetail.objects.filter(
+            cart=self.cart, product_detail=self.product_detail).first()
         self.assertIsNotNone(cart_detail)
         self.assertEqual(cart_detail.quantity, 1)
 
@@ -57,7 +62,8 @@ class AddToCartViewTests(TestCase):
             'message': 'Sorry, We have ran out of this type'
         })
 
-        cart_detail = CartDetail.objects.filter(cart=self.cart, product_detail=self.product_detail).first()
+        cart_detail = CartDetail.objects.filter(
+            cart=self.cart, product_detail=self.product_detail).first()
         self.assertIsNone(cart_detail)
 
         self.product_detail.refresh_from_db()
