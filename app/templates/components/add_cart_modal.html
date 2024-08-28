@@ -1,0 +1,38 @@
+{% load i18n %}{% load humanize %}
+{% block add_to_cart %}
+<div class="modal fade" id="addToCartModal" tabindex="-1" aria-labelledby="addToCartModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addToCartModalLabel">{% trans "Choose Options" %}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans 'Close' %}"></button>
+            </div>
+            <div class="modal-body">
+                <form id="add-to-cart-form" method="POST" action="{% url 'add_to_cart' %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label id="size-select-label" for="size-select" class="form-label" style="display:none;">{% trans "Choose Size:" %}</label>
+                        <div id="size-options" class="options-wrapper"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label id="color-select-label" for="color-select" class="form-label" style="display:none;">{% trans "Choose Color:" %}</label>
+                        <div id="color-options" class="options-wrapper"></div>
+                    </div>
+                    <div class="row fs-3 d-flex align-items-center">
+                        <label class="col-3 fs-3" for="price-wrapper">{% trans "Price:" %}</label>
+                        <div class="col-9 price-wrapper fs-4 fw-bold"></div>
+                    </div>
+
+                    <input type="hidden" name="product_detail_id" id="product_detail_id" value="{{ product_detail.id }}">
+                    <input type="hidden" name="quantity" value="1">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Close" %}</button>
+                <button type="button" id="submit-add-to-cart-btn" disabled class="btn btn-primary" >{% trans "Add to Cart" %}</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock add_to_cart %}
+

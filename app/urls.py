@@ -117,4 +117,8 @@ urlpatterns = [
         'submit-review/',
         submit_review,
         name='submit_review'),
+    path(
+        'get-options-for-cart-modal/',
+        get_options_for_cart_modal,
+        name='get_options_for_cart_modal'),
 ]

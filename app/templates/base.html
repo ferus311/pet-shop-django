@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load i18n %}{% load humanize %}
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -53,6 +53,7 @@
             {% endblock content %}
             {% include 'components/footer.html' %}
         </div>
+        {% include 'components/add_cart_modal.html' %}
         <script src="{% static 'js/jquery-1.11.0.min.js' %}"></script>
         <script src="{% static 'js/swiper.js' %}"></script>
         <script src="{% static 'js/bootstrap.bundle.js' %}"></script>

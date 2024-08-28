@@ -195,3 +195,39 @@
 .no-capitalize {
     text-transform: none;
 }
+
+input.error {
+    border: 2px solid red;
+}
+
+.options-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.option {
+    display: inline-block;
+    padding: 10px;
+    margin: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.option.selected {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+.option.d-none {
+    display: none;
+}
+
+.category-name {
+    max-width: 400px;
+    overflow: hidden;
+    max-height: 80px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
