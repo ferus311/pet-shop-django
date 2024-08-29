@@ -595,6 +595,8 @@
             $('#color-select-label').hide();
             $('.price-wrapper').text('');
             $("#submit-add-to-cart-btn").prop("disabled", true);
+            $('#product-unavailable').prop("hidden", true);
+            $('#price-wrapper-label').prop("hidden", false);
         }
 
         function updateOptions() {
@@ -613,6 +615,12 @@
                     hasColorOptions = true;
                 }
             });
+
+            if (productDetails.length == 0){
+                $("#submit-add-to-cart-btn").prop("disabled", true);
+                $('#price-wrapper-label').prop("hidden", true);
+                $('#product-unavailable').prop("hidden", false);
+            }
 
             if (hasSizeOptions) {
                 $('#size-options').empty();
@@ -633,7 +641,7 @@
             } else {
                 $('#color-select-label').hide();
             }
-            if (!hasSizeOptions && !hasColorOptions) {
+            if (!hasSizeOptions && !hasColorOptions  && productDetails.length > 0) {
                 $('.price-wrapper').text(defaultPrice);
                 $("#submit-add-to-cart-btn").prop("disabled", false);
                 $('#product_detail_id').val(productDetails[0].id);
@@ -767,10 +775,11 @@
 
                 vouchers.forEach(function(voucher) {
                     const categories = voucher.categories.join(', ');
+                    const discountAmount = voucher.discount_amount.toLocaleString('en-US');
                     const formattedDiscount = voucher.discount.toLocaleString('en-US');
                     const availability = voucher.is_global ? forEveryoneText : specialForYouText;
                     const minAmount = voucher.min_amount.toLocaleString('en-US');
-                    const optionText = categories + ' - ' + formattedDiscount + '%' + availability + ' - Min: ' + minAmount + ' VND';
+                    const optionText = '-' + discountAmount + '₫ ' +  categories + ' - ' + formattedDiscount + '%' + availability + ' - Min: ' + minAmount + ' VND';
 
                     const option = $('<option></option>')
                         .val(voucher.id)

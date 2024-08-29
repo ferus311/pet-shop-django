@@ -19,7 +19,8 @@
                         <div id="color-options" class="options-wrapper"></div>
                     </div>
                     <div class="row fs-3 d-flex align-items-center">
-                        <label class="col-3 fs-3" for="price-wrapper">{% trans "Price:" %}</label>
+                        <label class="col-3 fs-3" for="price-wrapper" id="price-wrapper-label">{% trans "Price:" %}</label>
+                        <span type="text" id="product-unavailable" hidden>{% trans 'This product is currently unavailable' %}</span>
                         <div class="col-9 price-wrapper fs-4 fw-bold"></div>
                     </div>
 
