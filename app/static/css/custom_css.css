@@ -239,3 +239,15 @@ input.error {
 .reset-address-btn {
     cursor: pointer;
 }
+
+.modal-header .close {
+    background-color: transparent; 
+    border: none;
+    font-size: 1.5rem; 
+    color: black;
+}
+
+.modal-header .close:hover {
+    background-color: transparent;
+    color: red;
+}

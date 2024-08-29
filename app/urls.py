@@ -125,4 +125,8 @@ urlpatterns = [
         'update-shipping-fee/',
         calculate_shipping_fee,
         name='update_shipping_fee'),
+    path(
+        'delete-account/',
+        delete_account,
+        name='delete_account'),
 ]

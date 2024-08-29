@@ -1,3 +1,5 @@
+import random
+import string
 import pyotp
 import re
 import unicodedata
@@ -24,12 +26,13 @@ from django.utils import timezone
 from django.core.exceptions import ObjectDoesNotExist
 from decimal import Decimal
 from datetime import timedelta
-from django.db.models import Count
+from django.db.models import Count, Avg
 
 from .models import *
 from .forms import SignInForm, SignUpForm, OrderFilterForm, PasswordCheckForm, AvatarUploadForm, UserProfileForm
 from .constants import DEFAULT_DISPLAY_CATEGORIES, PAGINATE_BY, CITIES, VOUCHER_STATUS_CHOICES
 from django.db import transaction
+from django.contrib.auth import logout
 
 
 def index(request):
@@ -167,6 +170,11 @@ def login_view(request):
             user = authenticate(username=username, password=password)
             try:
                 user = User.objects.get(username=username)
+                if user.is_deleted:
+                    messages.error(request, _("Invalid username or password."))
+                    return render(request,
+                                  'registration/sign_in.html',
+                                  {'form': form})
                 if not user.is_active:
                     messages.error(
                         request, _("Your account is inactive. Please verify your account."))
@@ -242,12 +250,12 @@ def get_price_from_database(product, size, color):
 def product_detail_view(request, id):
     product = get_object_or_404(Product, pk=id)
     product_details = ProductDetail.objects.filter(product=product)
-    average_rating = product.average_rating
     review_count = product.review_count
     sizes = product_details.values_list("size", flat=True).distinct()
     colors = product_details.values_list("color", flat=True).distinct()
     category = product.category
     comments = Comment.objects.filter(product=product).select_related("user")
+    average_rating = comments.aggregate(Avg('star'))['star__avg'] or product.average_rating
 
     context = {
         "product": product,
@@ -628,7 +636,11 @@ def place_order(request):
                         quantity=item.quantity
                     )
                     item.delete()
-
+                if voucher_id:
+                    VoucherHistory.objects.create(
+                        user=user,
+                        voucher_id=voucher_id
+                    )
                 messages.success(
                     request, _("Your order has been placed successfully!"))
 
@@ -802,7 +814,7 @@ def submit_review(request, order_id):
             content=content,
             star=star,
         )
-
+        product.update_rating()
         messages.success(request, _('Thank you for reviewing the product!'))
         return redirect('order_detail', order_id=order_id)
 
@@ -955,6 +967,11 @@ def apply_voucher(request, voucher_id=None):
 def orders(request):
     user = request.user
     orders = Bill.objects.filter(user=user)
+    for order in orders:
+        if order.expired_at and order.expired_at < timezone.now(
+        ) and order.status != 'Cancelled':
+            order.status = 'Cancelled'
+            order.save()
     context = {
         'orders': orders,
         'payment_status_choices': PAYMENT_STATUS_CHOICES,
@@ -1083,3 +1100,36 @@ def order_detail(request, order_id):
         'reviewed_products': list(reviewed_products),
     }
     return render(request, 'app/order_detail.html', context)
+
+
+def generate_random_suffix(length=6):
+    return ''.join(
+        random.choices(
+            string.ascii_lowercase +
+            string.digits,
+            k=length))
+
+
+@login_required
+def delete_account(request):
+    if request.method == 'POST':
+        password = request.POST.get('password')
+        user = authenticate(username=request.user.username, password=password)
+        if user is not None:
+            user.is_deleted = True
+            user.first_name = _('Deleted')
+            user.last_name = _('User')
+            user.username = f'deleted_user_{generate_random_suffix()}'
+            user.save()
+
+            Bill.objects.filter(user=user).delete()
+            VoucherHistory.objects.filter(user=user).delete()
+            Cart.objects.filter(user=user).delete()
+            messages.success(
+                request,
+                _("Your account has been deleted successfully."))
+            logout(request)
+            return redirect('index')
+        else:
+            messages.error(request, _("Invalid password. Please try again."))
+    return redirect('profile', request.user.pk)

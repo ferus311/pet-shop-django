@@ -412,3 +412,7 @@ class VoucherHistoryForm(forms.ModelForm):
                 attrs={
                     'class': 'form-control'})
         }
+
+
+class ConfirmPasswordForm(forms.Form):
+    password = forms.CharField(widget=forms.PasswordInput, label='Password')

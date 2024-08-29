@@ -7,7 +7,7 @@ from cloudinary.models import CloudinaryField
 from django.core.validators import RegexValidator, MinLengthValidator
 from django.utils import timezone
 from datetime import timedelta
-from django.db.models import Min
+from django.db.models import Min, Avg
 from .constants import (
     GENDER_CHOICES, SIZE_CHOICES, PAYMENT_METHOD_CHOICES,
     PAYMENT_STATUS_CHOICES, DEFAULT_USER_AVATAR, MAX_LENGTH_NAME,
@@ -80,7 +80,10 @@ class CustomUser(AbstractUser):
         auto_now_add=True, verbose_name=_('created at'))
     updated_at = models.DateTimeField(
         auto_now=True, verbose_name=_('updated at'))
-
+    is_deleted = models.BooleanField(
+        default=False,
+        verbose_name=_('is deleted')
+    )
     REQUIRED_FIELDS = ['email', 'first_name', 'last_name']
 
     def __str__(self):
@@ -181,6 +184,11 @@ class Product(models.Model):
         if (min_price is not None):
             self.price = min_price
             self.save()
+
+    def update_rating(self):
+        average_rating = self.comment_set.aggregate(Avg('star'))['star__avg']
+        self.average_rating = average_rating if average_rating is not None else self.average_rating
+        self.save()
 
     @property
     def review_count(self):

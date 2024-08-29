@@ -23,10 +23,15 @@ class SoftDeleteAdmin(admin.ModelAdmin):
             obj.is_deleted = True
             obj.save()
             # Add a success message
-            messages.success(request, _(
-                "The selected %(object)s was soft deleted successfully.") % {'object': str(obj)})
+            messages.success(
+                request,
+                _("The selected %(object)s was soft deleted successfully.") % {
+                    'object': str(obj)})
             # Redirect to the changelist page
-            return redirect(reverse('admin:%s_%s_changelist' % (self.opts.app_label, self.opts.model_name)))
+            return redirect(
+                reverse(
+                    'admin:%s_%s_changelist' %
+                    (self.opts.app_label, self.opts.model_name)))
         # If it's a GET request, display the confirmation page as usual
         return super().delete_view(request, object_id, extra_context=extra_context)
 
@@ -83,8 +88,15 @@ class ProductAdmin(SoftDeleteAdmin):
 @admin.register(ProductDetail)
 class ProductDetailAdmin(SoftDeleteAdmin):
     form = ProductDetailForm
-    list_display = ('id', 'product', 'size', 'color', 'price',
-                    'remain_quantity', 'created_at', 'is_deleted')  # Thêm is_deleted
+    list_display = (
+        'id',
+        'product',
+        'size',
+        'color',
+        'price',
+        'remain_quantity',
+        'created_at',
+        'is_deleted')  # Thêm is_deleted
     search_fields = ('product__name', 'size', 'color')
     # Thêm is_deleted vào bộ lọc
     list_filter = ('size', 'color', 'is_deleted')
@@ -94,8 +106,15 @@ class ProductDetailAdmin(SoftDeleteAdmin):
 @admin.register(Bill)
 class BillAdmin(SoftDeleteAdmin):
     form = BillForm
-    list_display = ('id', 'user', 'address', 'phone_number',
-                    'total', 'status', 'created_at', 'is_deleted')  # Thêm is_deleted
+    list_display = (
+        'id',
+        'user',
+        'address',
+        'phone_number',
+        'total',
+        'status',
+        'created_at',
+        'is_deleted')  # Thêm is_deleted
     search_fields = ('user__username', 'address', 'phone_number')
     # Thêm is_deleted vào bộ lọc
     list_filter = ('status', 'payment_method', 'is_deleted')
@@ -125,8 +144,15 @@ class CommentAdmin(SoftDeleteAdmin):
 @admin.register(Voucher)
 class VoucherAdmin(SoftDeleteAdmin):
     form = VoucherForm
-    list_display = ('id', 'discount', 'started_at', 'ended_at',
-                    'is_global', 'user', 'created_at', 'is_deleted')  # Thêm is_deleted
+    list_display = (
+        'id',
+        'discount',
+        'started_at',
+        'ended_at',
+        'is_global',
+        'user',
+        'created_at',
+        'is_deleted')  # Thêm is_deleted
     search_fields = ('user__username',)
     # Thêm is_deleted vào bộ lọc
     list_filter = ('is_global', 'is_deleted')
