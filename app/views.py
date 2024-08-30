@@ -27,6 +27,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from decimal import Decimal
 from datetime import timedelta
 from django.db.models import Count, Avg
+from .utils import build_paginated_url
 
 from .models import *
 from .forms import SignInForm, SignUpForm, OrderFilterForm, PasswordCheckForm, AvatarUploadForm, UserProfileForm
@@ -38,7 +39,7 @@ from django.contrib.auth import logout
 def index(request):
     """View function for home page of site."""
     best_selling_products = Product.objects.all().order_by(
-        "-sold_quantity")[:9]
+        "-sold_quantity")
 
     default_display_category = list(
         Category.objects.annotate(
@@ -68,7 +69,11 @@ def index(request):
         products_by_category[category] = Product.objects.filter(
             category=category)
 
-    products_paginated = pagination(best_selling_products, request)
+    products_paginated, pagination_urls = pagination(
+        best_selling_products,
+        request,
+        order_by="-sold_quantity")
+
     context = {
         "best_selling_products": products_paginated,
         "products_by_category": products_by_category,
@@ -76,16 +81,33 @@ def index(request):
     return render(request, "home.html", context=context)
 
 
-def pagination(products, request):
+def pagination(products, request, order_by='id'):
+    products = products.order_by("is_deleted", order_by)
     paginator = Paginator(products, PAGINATE_BY)
     page = request.GET.get("page")
+
     try:
         products_paginated = paginator.page(page)
     except PageNotAnInteger:
         products_paginated = paginator.page(1)
     except EmptyPage:
         products_paginated = paginator.page(paginator.num_pages)
-    return products_paginated
+
+    pagination_urls = {
+        'first': build_paginated_url(
+            request,
+            1),
+        'previous': build_paginated_url(
+            request,
+            products_paginated.previous_page_number()) if products_paginated.has_previous() else None,
+        'next': build_paginated_url(
+                request,
+                products_paginated.next_page_number()) if products_paginated.has_next() else None,
+        'last': build_paginated_url(
+                    request,
+            products_paginated.paginator.num_pages)}
+
+    return products_paginated, pagination_urls
 
 
 def search_products(request):
@@ -110,7 +132,6 @@ def search_products(request):
 
 
 def ShopView(request):
-    """View function for shop page of site."""
     query = request.GET.get("query", "")
     sort_option = request.GET.get("sort", "name")
     selected_species = request.GET.getlist("species")
@@ -118,7 +139,7 @@ def ShopView(request):
     price_max = request.GET.get("price_max")
     price_min = request.GET.get("price_min")
 
-    products = Product.objects.all()
+    products = Product.objects.all().order_by('is_deleted')
     if query:
         products = products.filter(
             Q(name__icontains=query)
@@ -134,16 +155,21 @@ def ShopView(request):
     if selected_categories:
         products = products.filter(category__id__in=selected_categories)
     if sort_option == "price_asc":
+        option = "price"
         products = products.order_by("price")
     elif sort_option == "price_desc":
+        option = "-price"
         products = products.order_by("-price")
     elif sort_option == "name":
+        option = "name"
         products = products.order_by("name")
 
-    products_paginated = pagination(products, request)
+    products_paginated, pagination_urls = pagination(
+        products, request, order_by=option)
 
     context = {
         "products": products_paginated,
+        "pagination_urls": pagination_urls,
         "query": query,
         "selected_species": selected_species,
         "selected_categories": selected_categories,
@@ -468,8 +494,8 @@ def cart_view(request):
             'colors': list(colors)
         }
 
-        has_out_of_stock = any(
-            not item.product_detail or item.product_detail.remain_quantity == 0 for item in cart_items)
+    has_out_of_stock = any(
+        not item.product_detail or item.product_detail.remain_quantity == 0 for item in cart_items)
 
     context = {
         'cart_items': cart_items,
@@ -566,9 +592,19 @@ def get_options_for_cart_modal(request):
             'color': item.color,
             'price': item.price,
             'remain_quantity': item.remain_quantity
-        } for item in product_details]
+        } for item in product_details if item.remain_quantity > 0]
         return JsonResponse({'product_details': options})
     return JsonResponse({"error": _("Invalid request method")}, status=400)
+
+
+def update_remain_quantity(product_detail, quantity):
+    product_detail.remain_quantity -= quantity
+    product_detail.save()
+
+
+def update_sold_quantity(product, quantity):
+    product.sold_quantity += quantity
+    product.save()
 
 
 @login_required
@@ -630,6 +666,8 @@ def place_order(request):
                     )
 
                 for item in cart_items:
+                    update_remain_quantity(item.product_detail, item.quantity)
+
                     BillDetail.objects.create(
                         bill=bill,
                         product_detail=item.product_detail,
@@ -851,8 +889,9 @@ def voucher_list(request):
             'voucher_id', flat=True)
         vouchers = vouchers.filter(id__in=used_voucher_ids)
 
-    vouchers_paginated = pagination(vouchers, request)
-    voucher_histories_paginated = pagination(voucher_histories, request)
+    vouchers_paginated, pagination_urls = pagination(vouchers, request)
+    voucher_histories_paginated, pagination_urls = pagination(
+        voucher_histories, request)
 
     context = {
         'vouchers': vouchers_paginated,
@@ -889,9 +928,11 @@ def get_available_vouchers(request):
     category_map = {
         category.id: category.name for category in Category.objects.filter(
             id__in=categories)}
+
     voucher_list = [
         {
             'id': voucher.id,
+            'discount_amount': caculate_discount_amount(cart_items, voucher.id),
             'discount': voucher.discount,
             'min_amount': float(voucher.min_amount),
             'is_global': voucher.is_global,
@@ -900,6 +941,10 @@ def get_available_vouchers(request):
         }
         for voucher in vouchers
     ]
+    voucher_list = sorted(
+        voucher_list,
+        key=lambda x: x['discount_amount'],
+        reverse=True)
     return JsonResponse({'vouchers': voucher_list})
 
 
@@ -961,6 +1006,26 @@ def apply_voucher(request, voucher_id=None):
     except Exception as e:
         error_message = _('An error occurred: ') + str(e)
         return JsonResponse({'success': False, 'error': error_message})
+
+
+def caculate_discount_amount(cart_items, voucher_id):
+
+    voucher = get_object_or_404(Voucher, id=voucher_id)
+    voucher_categories = voucher.category.all()
+    discount = voucher.discount
+
+    total_price_voucher = 0.0
+    total_price_other = 0.0
+
+    for item in cart_items:
+        product_price = float(item.product_detail.price) * item.quantity
+        if item.product_detail.product.category in voucher_categories:
+            total_price_voucher += product_price
+        else:
+            total_price_other += product_price
+
+    discount_amount = int((total_price_voucher * discount) / 100)
+    return discount_amount
 
 
 @login_required

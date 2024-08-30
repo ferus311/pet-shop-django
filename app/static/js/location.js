@@ -90,7 +90,7 @@
         }
 
         $('#selected-coordinates').text(`Selected Coordinates: Latitude ${lat}, Longitude ${lng}`);
-        const defaulShippingFee = $('#shipping_fee').text();
+        const defaulShippingFee = parseInt($('#shipping_fee').text().replace(/[^0-9.-]+/g, ''), 10);
         $.ajax({
             url: '/update-shipping-fee/',
             data: {
@@ -98,11 +98,8 @@
             },
             success: function(response) {
                 $('#shipping_fee').text(response.shipping_fee);
-                const preTotal = parseFloat($('#total_price').text().replace(/[^0-9.-]+/g, ''));
-                console.log(preTotal);
-
-                const newTotal = preTotal - defaulShippingFee + response.shipping_fee;
-                console.log(newTotal);
+                const preTotal = parseInt($('#total_price').text().replace(/[^0-9.-]+/g, ''), 10);
+                const newTotal = preTotal - parseInt(defaulShippingFee, 10) + parseInt(response.shipping_fee, 10);
 
                 $('#total_price').text(newTotal);
 
